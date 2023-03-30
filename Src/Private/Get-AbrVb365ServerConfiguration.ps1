@@ -25,7 +25,7 @@ function Get-AbrVB365ServerConfiguration {
     process {
         try {
             $ServerConfig = @()
-            $ServerConfig += Get-VBOVersion
+            $ServerConfig += try {Get-VBOVersion} catch {}
             $ServerConfig += Get-VBOSecuritySettings
 
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
@@ -36,7 +36,12 @@ function Get-AbrVB365ServerConfiguration {
                     Section -Style Heading4 'General Information' {
                         $ServerConfigInfo = @()
                         $inObj = [ordered] @{
-                            'Server Product Version' = $ServerConfig.ProductVersion
+                            'Server Product Version' = Switch ([string]::IsNullOrEmpty($ServerConfig.ProductVersion)) {
+                                $true {'6 or less, please upgrade'}
+                                $false {$ServerConfig.ProductVersion}
+                                default {'Unknown'}
+
+                            }
                             'Certificate Friendly Name' = $ServerConfig.CertificateFriendlyName
                             'Issued To' = $ServerConfig.CertificateIssuedTo
                             'Issued By' = $ServerConfig.CertificateIssuedBy

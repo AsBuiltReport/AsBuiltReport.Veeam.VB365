@@ -45,10 +45,10 @@ function Get-AbrVb365BackupJob {
                                 default {'Unknown'}
                             }
                             'Repository' = $BackupJob.Repository
-                            'Last Status' = $BackupJob.LastStatus
-                            'Last Run' = $BackupJob.LastRun
-                            'Next Run' = $BackupJob.NextRun
-                            'Last Backup' = $BackupJob.LastBackup
+                            'Last Status' = ConvertTo-EmptyToFiller $BackupJob.LastStatus
+                            'Last Run' = ConvertTo-EmptyToFiller $BackupJob.LastRun
+                            'Next Run' = ConvertTo-EmptyToFiller $BackupJob.NextRun
+                            'Last Backup' = ConvertTo-EmptyToFiller $BackupJob.LastBackup
                             'Is Enabled' = ConvertTo-TextYN $BackupJob.IsEnabled
                             'Description' = ConvertTo-EmptyToFiller $BackupJob.Description
 

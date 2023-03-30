@@ -37,10 +37,10 @@ function Get-AbrVB365InstalledLicense {
                         foreach ($License in $Licenses) {
                             Write-PscriboMessage "Discovered $($License.LicensedTo) license."
                             $inObj = [ordered] @{
-                                'Licensed To' = $License.LicensedTo
-                                'Edition' = $License.Package
-                                'Type' = $License.Type
-                                'Status' = $License.Status
+                                'Licensed To' = ConvertTo-EmptyToFiller $License.LicensedTo
+                                'Edition' = ConvertTo-EmptyToFiller $License.Package
+                                'Type' = ConvertTo-EmptyToFiller $License.Type
+                                'Status' = ConvertTo-EmptyToFiller $License.Status
                                 'Expiration Date' = Switch ([string]::IsNullOrEmpty($License.ExpirationDate)) {
                                     $true {"-"; break}
                                     default {$License.ExpirationDate.ToShortDateString()}
@@ -50,7 +50,7 @@ function Get-AbrVB365InstalledLicense {
                                     default {$License.SupportExpirationDate.ToShortDateString()}
                                 }
                                 'Contact Person' = ConvertTo-EmptyToFiller $License.ContactPerson
-                                'Total Number' = $License.TotalNumber
+                                'Total Number' = ConvertTo-EmptyToFiller $License.TotalNumber
                             }
                             $OutObj += [pscustomobject]$inobj
                         }

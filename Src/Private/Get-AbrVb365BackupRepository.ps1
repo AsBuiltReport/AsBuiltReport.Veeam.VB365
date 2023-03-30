@@ -39,7 +39,7 @@ function Get-AbrVB365BackupRepository {
                                 default {'Unknown'}
                             }
                             'Object Storage Encryption Key' = Switch ($Repository.EnableObjectStorageEncryption) {
-                                $true {(Get-VBOEncryptionKey -id bf9310b0-e03b-4d75-8d78-e857f6022a9a).Description}
+                                $true {(Get-VBOEncryptionKey -id $Repository.ObjectStorageEncryptionKey.id).Description}
                                 $false {"Disabled"}
                                 default {"Unknown"}
                             }
