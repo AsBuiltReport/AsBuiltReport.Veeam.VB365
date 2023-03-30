@@ -70,7 +70,7 @@ PowerShell 5.1, and the following PowerShell modules are required for generating
 ### :closed_lock_with_key: Required Privileges
 <!-- ********** Define required privileges ********** -->
 <!-- ********** Try to follow best practices to define least privileges ********** -->
-Only users with Local Administrator group permissions can generate a Veeam VBR As Built Report.
+Only users with Local Administrator group permissions can generate a Veeam VB365 As Built Report.
 
 
 ## :package: Module Installation
