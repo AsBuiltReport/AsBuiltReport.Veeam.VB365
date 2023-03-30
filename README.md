@@ -36,6 +36,14 @@ Veeam VB365 As Built Report is a PowerShell module which works in conjunction wi
 
 Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for more detailed information about this project.
 
+# :books: Sample Reports
+
+## Sample Report - Custom Style
+
+Sample Veeam VB365 As Built report HTML file: [Sample Veeam VB365 As Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/rebelinux/AsBuiltReport.Veeam.VB365/dev/Samples/Sample%20Veeam%20VB365%20As%20Built%20Report.html)
+
+Sample Veeam VB365 As Built report PDF file: [Sample Veeam VB365 As Built Report.pdf](https://github.com/rebelinux/AsBuiltReport.Veeam.VB365/raw/dev/Samples/Sample%20Veeam%20VB365%20As%20Built%20Report.pdf)
+
 # :beginner: Getting Started
 Below are the instructions on how to install, configure and generate a Veeam VB365 As Built report.
 
@@ -136,6 +144,25 @@ There are 3 levels (0-2) of detail granularity for each section as follows;
 |    0    | Disabled          | Does not collect or display any information                                                                                                |
 |    1    | Enabled / Summary | Provides summarised information for a collection of objects                                                                                |
 |    2    | Adv Summary       | Provides condensed, detailed information for a collection of objects                                                                       |
+
+The table below outlines the default and maximum **InfoLevel** settings for each Infrastructure section.
+
+| Sub-Schema   | Default Setting | Maximum Setting |
+|--------------|:---------------:|:---------------:|
+| ServerConfig       |        1        |        1        |
+| License          |        1        |        1        |
+| Proxy         |        1        |        2        |
+| Repository           |        1        |        2        |
+| Organization           |        1        |        2        |
+| EncryptionKey           |        1        |        2        |
+| CloudCredential           |        1        |        2        |
+
+The table below outlines the default and maximum **InfoLevel** settings for each Jobs section.
+
+| Sub-Schema   | Default Setting | Maximum Setting |
+|--------------|:---------------:|:---------------:|
+| BackupJob       |        1        |        2        |
+| BackupCopyJob          |        1        |        2        |
 
 ### Healthcheck
 The **Healthcheck** schema is used to toggle health checks on or off.

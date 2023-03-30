@@ -30,7 +30,7 @@ Author = 'Jonathan Colon'
 Copyright = '(c) 2023 Jonathan Colon. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Repository for AsBuiltReport Veeam Backup & Replication module'
+Description = 'A PowerShell module to generate an as built report on the configuration of Veeam Backup for Microsoft 365.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.1'
@@ -51,7 +51,13 @@ PowerShellVersion = '5.1'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+
+RequiredModules = @(
+    @{
+        ModuleName = 'AsBuiltReport.Core';
+        ModuleVersion = '1.3.0'
+    }
+)
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -69,16 +75,16 @@ PowerShellVersion = '5.1'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*'
+FunctionsToExport = @('Invoke-AsBuiltReport.Veeam.VB365')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = '*'
+# CmdletsToExport = '*'
 
 # Variables to export from this module
-VariablesToExport = '*'
+# VariablesToExport = '*'
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-AliasesToExport = '*'
+# AliasesToExport = '*'
 
 # DSC resources to export from this module
 # DscResourcesToExport = @()
@@ -95,19 +101,19 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('AsBuiltReport', 'Report', 'Veeam', 'VB365', 'Documentation', 'PScribo', 'Windows', 'PSEdition_Desktop', 'PSEdition_Core')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport/master/AsBuiltReport.png'
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = 'https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/blob/master/CHANGELOG.md'
 
     } # End of PSData hashtable
 
