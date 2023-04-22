@@ -29,7 +29,7 @@ function Get-AbrVB365InstalledLicense {
             $Licenses = Get-VBOLicense
             if ($Licenses) {
                 Section -Style Heading2 'Licenses' {
-                    Paragraph "The following table summarises the licencing information within $VeeamBackupServer backup server."
+                    Paragraph "The following table summarizes the licensing information within $VeeamBackupServer backup server."
                     BlankLine
                     $OutObj = @()
                     try {

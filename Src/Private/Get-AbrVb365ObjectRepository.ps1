@@ -68,7 +68,7 @@ function Get-AbrVB365ObjectRepository {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the object repository within within the $VeeamBackupServer backup server."
+                        Paragraph "The following table summarizes the configuration of the object repository within within the $VeeamBackupServer backup server."
                         BlankLine
                         $TableParams = @{
                             Name = "Object Repositories - $VeeamBackupServer"

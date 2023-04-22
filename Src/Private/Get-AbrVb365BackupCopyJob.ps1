@@ -66,7 +66,7 @@ function Get-AbrVb365BackupCopyJob {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the backup copy jobs within the $VeeamBackupServer backup server."
+                        Paragraph "The following table summarizes the configuration of the backup copy jobs within the $VeeamBackupServer backup server."
                         BlankLine
                         $TableParams = @{
                             Name = "Backup Copy Job - $VeeamBackupServer"

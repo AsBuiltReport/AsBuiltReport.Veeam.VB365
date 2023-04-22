@@ -30,7 +30,7 @@ function Get-AbrVB365ServerConfiguration {
 
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
                 Write-PscriboMessage "Collecting Veeam VB365 Server Configuration."
-                Section -Style Heading3 'Server Configuration' {
+                Section -Style Heading2 'Server Configuration' {
                     Paragraph "The following sections detail the server configuration of $VeeamBackupServer backup server."
                     BlankLine
                     Section -Style Heading4 'General Information' {
