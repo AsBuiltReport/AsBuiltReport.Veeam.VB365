@@ -56,7 +56,7 @@ function Get-AbrVB365EncryptionKey {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the encryption key within the $VeeamBackupServer backup server."
+                        Paragraph "The following table summarizes the configuration of the encryption key within the $VeeamBackupServer backup server."
                         BlankLine
                         $TableParams = @{
                             Name = "Encryption Keys - $VeeamBackupServer"
