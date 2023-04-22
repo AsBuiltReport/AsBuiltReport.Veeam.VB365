@@ -64,7 +64,7 @@ function Get-AbrVB365Proxy {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the proxy servers within the $VeeamBackupServer backup server."
+                        Paragraph "The following table summarizes the configuration of the proxy servers within the $VeeamBackupServer backup server."
                         BlankLine
                         $TableParams = @{
                             Name = "Backup Proxies - $VeeamBackupServer"

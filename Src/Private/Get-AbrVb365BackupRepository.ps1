@@ -93,7 +93,7 @@ function Get-AbrVB365BackupRepository {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the backup repository within within the $VeeamBackupServer backup server."
+                        Paragraph "The following table summarizes the configuration of the backup repository within within the $VeeamBackupServer backup server."
                         BlankLine
                         $TableParams = @{
                             Name = "Repositories - $VeeamBackupServer"

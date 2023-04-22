@@ -30,7 +30,7 @@ function Get-AbrVB365ServerComponent {
             if ($ServerComponents) {
                 try {
                     Section -Style Heading2 'Server Components' {
-                        Paragraph "The following table summarises the configuration of the server components within $VeeamBackupServer backup server."
+                        Paragraph "The following table summarizes the configuration of the server components within $VeeamBackupServer backup server."
                         BlankLine
                         $OutObj = @()
                         try {

@@ -68,7 +68,7 @@ function Get-AbrVb365CloudCredential {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the cloud credentials within the $VeeamBackupServer backup server."
+                        Paragraph "The following table summarizes the configuration of the cloud credentials within the $VeeamBackupServer backup server."
                         BlankLine
                         $TableParams = @{
                             Name = "Cloud Credentials - $VeeamBackupServer"

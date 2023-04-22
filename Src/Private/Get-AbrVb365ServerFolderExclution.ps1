@@ -28,7 +28,7 @@ function Get-AbrVB365ServerFolderExclution {
             $RetentionExclusion = Get-VBOGlobalRetentionExclusion
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($FolderExclusion -or $RetentionExclusion)) {
                 Write-PscriboMessage "Collecting Veeam VB365 folder exclusions."
-                Section -Style Heading4 'Folders' {
+                Section -Style Heading3 'Folders' {
                     if ($FolderExclusion) {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Mailbox Folder Exclusion from Backup' {
                             $FolderExclusionInfo = @()
@@ -55,7 +55,7 @@ function Get-AbrVB365ServerFolderExclution {
                         }
                     }
                     if ($RetentionExclusion) {
-                        Section -ExcludeFromTOC -Style NOTOCHeading5 'Mailbox Folder Exclusion from Retention Policy' {
+                        Section -ExcludeFromTOC -Style NOTOCHeading4 'Mailbox Folder Exclusion from Retention Policy' {
                             $RetentionExclusionInfo = @()
                             $inObj = [ordered] @{
                                 'Skip Calendar' = ConvertTo-TextYN $RetentionExclusion.SkipCalendar
