@@ -31,7 +31,7 @@ function Get-AbrVb365OrganizationSyncState {
     process {
         try {
             $Organizations = Get-VBOOrganization -Name $Organization
-            $SyncState = Get-VBOOrganizationSynchronizationState -Organization $Organizations
+            $SyncState = try {Get-VBOOrganizationSynchronizationState -Organization $Organizations} catch {}
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($SyncState)) {
                 Write-PscriboMessage "Collecting Veeam VB365 Office365 Synchronization State Settings."
                 Section -Style Heading4 'Synchronization State' {
