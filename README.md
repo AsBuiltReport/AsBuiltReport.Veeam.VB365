@@ -65,6 +65,7 @@ This report is compatible with the following PowerShell versions;
 PowerShell 5.1, and the following PowerShell modules are required for generating a Veeam VB365 As Built Report.
 
 - [Veeam.Archiver.PowerShell Module](https://helpcenter.veeam.com/docs/vbo365/powershell/getting_started.html?ver=70)
+- [PScriboCharts Module](https://github.com/iainbrighton/PScriboCharts)
 - [AsBuiltReport.Veeam.VB365 Module](https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/)
 
 ### :closed_lock_with_key: Required Privileges
