@@ -5,7 +5,7 @@ function Get-AbrVb365Organization {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVb365Organization {
         try {
             $Organizations = Get-VBOOrganization | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($Organizations)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Backup Organization."
+                Write-PScriboMessage "Collecting Veeam VB365 Backup Organization."
                 Section -Style Heading2 'Organizations' {
                     $OrganizationInfo = @()
                     foreach ($Organization in $Organizations) {
@@ -80,7 +80,7 @@ function Get-AbrVb365Organization {
                     }
 
                     if ($HealthCheck.Infrastructure.Organization) {
-                        $OrganizationInfo | Where-Object { $_.'Use SSL' -eq 'No'} | Set-Style -Style Warning -Property 'Use SSL'
+                        $OrganizationInfo | Where-Object { $_.'Use SSL' -eq 'No' } | Set-Style -Style Warning -Property 'Use SSL'
                         $OrganizationInfo | Where-Object { $_.'BackedUp' -ne 'Yes' } | Set-Style -Style Warning -Property 'BackedUp'
                     }
 
@@ -123,7 +123,7 @@ function Get-AbrVb365Organization {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Organization Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Organization Section: $($_.Exception.Message)"
         }
     }
 

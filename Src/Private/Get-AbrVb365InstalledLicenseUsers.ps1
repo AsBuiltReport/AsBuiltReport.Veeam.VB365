@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicenseUser {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrVB365InstalledLicenseUser {
     )
 
     begin {
-        Write-PscriboMessage "Discovering Veeam VB365 License information from $System."
+        Write-PScriboMessage "Discovering Veeam VB365 License information from $System."
     }
 
     process {
@@ -33,7 +33,7 @@ function Get-AbrVB365InstalledLicenseUser {
                         $OutObj = @()
                         try {
                             foreach ($License in $Licenses) {
-                                Write-PscriboMessage "Discovered $($License.UserName) license."
+                                Write-PScriboMessage "Discovered $($License.UserName) license."
                                 $inObj = [ordered] @{
                                     'User Name' = $License.UserName
                                     'Organization' = $License.OrganizationName
@@ -43,14 +43,13 @@ function Get-AbrVB365InstalledLicenseUser {
                                 }
                                 $OutObj += [pscustomobject]$inobj
                             }
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning "Licensed User Information $($License.UserName) Section: $($_.Exception.Message)"
+                        } catch {
+                            Write-PScriboMessage -IsWarning "Licensed User Information $($License.UserName) Section: $($_.Exception.Message)"
                         }
 
                         if ($HealthCheck.Infrastructure.Status) {
-                            $OutObj | Where-Object { $_.'License Status' -ne 'Licensed'} | Set-Style -Style Critical -Property 'License Status'
-                            $OutObj | Where-Object { $_.'Is Backed Up' -eq 'No'} | Set-Style -Style Warning -Property 'Is Backed Up'
+                            $OutObj | Where-Object { $_.'License Status' -ne 'Licensed' } | Set-Style -Style Critical -Property 'License Status'
+                            $OutObj | Where-Object { $_.'Is Backed Up' -eq 'No' } | Set-Style -Style Warning -Property 'Is Backed Up'
                         }
 
                         $TableParams = @{
@@ -63,13 +62,12 @@ function Get-AbrVB365InstalledLicenseUser {
                         }
                         $OutObj | Table @TableParams
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning "Licensed Users Section: $($_.Exception.Message)"
+                } catch {
+                    Write-PScriboMessage -IsWarning "Licensed Users Section: $($_.Exception.Message)"
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Licensed Users Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Licensed Users Section: $($_.Exception.Message)"
         }
     }
 

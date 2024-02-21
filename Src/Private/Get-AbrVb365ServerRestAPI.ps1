@@ -5,7 +5,7 @@ function Get-AbrVB365ServerRestAPI {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVB365ServerRestAPI {
         try {
             $ServerConfig = Get-VBORestAPISettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
-                Write-PscriboMessage "Collecting Veeam VB365 RESTful API."
+                Write-PScriboMessage "Collecting Veeam VB365 RESTful API."
                 Section -Style Heading3 'RESTful API' {
                     $ServerConfigInfo = @()
                     $inObj = [ordered] @{
@@ -53,7 +53,7 @@ function Get-AbrVB365ServerRestAPI {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "RESTful API Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "RESTful API Section: $($_.Exception.Message)"
         }
     }
 

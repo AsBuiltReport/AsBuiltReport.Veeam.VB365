@@ -5,7 +5,7 @@ function Get-AbrVB365ObjectRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVB365ObjectRepository {
         try {
             $ObjectRepositories = Get-VBOObjectStorageRepository | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Repository -gt 0) -and ($ObjectRepositories)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Object Repository."
+                Write-PScriboMessage "Collecting Veeam VB365 Object Repository."
                 Section -Style Heading2 'Object Repositories' {
                     $ObjectRepositoryInfo = @()
                     foreach ($ObjectRepository in $ObjectRepositories) {
@@ -49,7 +49,7 @@ function Get-AbrVB365ObjectRepository {
                     }
 
                     if ($HealthCheck.Infrastructure.Repository) {
-                        $ObjectRepositoryInfo | Where-Object { $_.'Is Outdated' -eq 'Yes'} | Set-Style -Style Warning -Property 'Is Outdated'
+                        $ObjectRepositoryInfo | Where-Object { $_.'Is Outdated' -eq 'Yes' } | Set-Style -Style Warning -Property 'Is Outdated'
                     }
 
                     if ($InfoLevel.Infrastructure.Repository -ge 2) {
@@ -84,7 +84,7 @@ function Get-AbrVB365ObjectRepository {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Object Repository Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Object Repository Section: $($_.Exception.Message)"
         }
     }
 

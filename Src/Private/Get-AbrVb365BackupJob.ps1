@@ -26,7 +26,7 @@ function Get-AbrVb365BackupJob {
         try {
             $BackupJobs = Get-VBOJob | Sort-Object -Property Name
             if (($InfoLevel.Jobs.BackupJob -gt 0) -and ($BackupJobs)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Backup Jobs."
+                Write-PScriboMessage "Collecting Veeam VB365 Backup Jobs."
                 Section -Style Heading2 'Backup Jobs' {
                     $BackupJobInfo = @()
                     foreach ($BackupJob in $BackupJobs) {
@@ -35,14 +35,14 @@ function Get-AbrVb365BackupJob {
                             'Organization' = $BackupJob.Organization
                             'Job Backup Type' = $BackupJob.JobBackupType
                             'Selected Items' = Switch ([string]::IsNullOrEmpty($BackupJob.SelectedItems)) {
-                                $true {'--'}
-                                $false {$BackupJob.SelectedItems}
-                                default {'Unknown'}
+                                $true { '--' }
+                                $false { $BackupJob.SelectedItems }
+                                default { 'Unknown' }
                             }
                             'Excluded Items' = Switch ([string]::IsNullOrEmpty($BackupJob.ExcludedItems)) {
-                                $true {'--'}
-                                $false {$BackupJob.ExcludedItems}
-                                default {'Unknown'}
+                                $true { '--' }
+                                $false { $BackupJob.ExcludedItems }
+                                default { 'Unknown' }
                             }
                             'Repository' = $BackupJob.Repository
                             'Last Status' = ConvertTo-EmptyToFiller $BackupJob.LastStatus
@@ -57,7 +57,7 @@ function Get-AbrVb365BackupJob {
                     }
 
                     if ($HealthCheck.Jobs.BackupJob) {
-                        $BackupJobInfo | Where-Object { $_.'Is Enabled' -eq 'No'} | Set-Style -Style Warning -Property 'Is Enabled'
+                        $BackupJobInfo | Where-Object { $_.'Is Enabled' -eq 'No' } | Set-Style -Style Warning -Property 'Is Enabled'
                         $BackupJobInfo | Where-Object { $_.'Last Status' -ne 'Success' } | Set-Style -Style Warning -Property 'Last Status'
                     }
 
@@ -74,44 +74,42 @@ function Get-AbrVb365BackupJob {
                         $exampleChart = New-Chart -Name BackupJobs -Width 600 -Height 400
 
                         $addChartAreaParams = @{
-                            Chart                 = $exampleChart
-                            Name                  = 'BackupJobs'
-                            AxisXTitle            = 'Status'
-                            AxisYTitle            = 'Count'
+                            Chart = $exampleChart
+                            Name = 'BackupJobs'
+                            AxisXTitle = 'Status'
+                            AxisYTitle = 'Count'
                             NoAxisXMajorGridLines = $true
                             NoAxisYMajorGridLines = $true
                         }
                         $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
 
                         $addChartSeriesParams = @{
-                            Chart             = $exampleChart
-                            ChartArea         = $exampleChartArea
-                            Name              = 'exampleChartSeries'
-                            XField            = 'Name'
-                            YField            = 'Count'
-                            Palette           = 'Green'
+                            Chart = $exampleChart
+                            ChartArea = $exampleChartArea
+                            Name = 'exampleChartSeries'
+                            XField = 'Name'
+                            YField = 'Count'
+                            Palette = 'Green'
                             ColorPerDataPoint = $true
                         }
                         $sampleData | Add-ColumnChartSeries @addChartSeriesParams
 
                         $addChartTitleParams = @{
-                            Chart     = $exampleChart
+                            Chart = $exampleChart
                             ChartArea = $exampleChartArea
-                            Name      = 'BackupJob'
-                            Text      = 'Jobs Latest Result'
-                            Font      = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
+                            Name = 'BackupJob'
+                            Text = 'Jobs Latest Result'
+                            Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
                         }
                         Add-ChartTitle @addChartTitleParams
 
                         $chartFileItem = Export-Chart -Chart $exampleChart -Path (Get-Location).Path -Format "PNG" -PassThru
 
-                        if ($PassThru)
-                        {
+                        if ($PassThru) {
                             Write-Output -InputObject $chartFileItem
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning "Backup Copy Chart Section: $($_.Exception.Message)"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "Backup Copy Chart Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Jobs.BackupJob -ge 2) {
@@ -156,7 +154,7 @@ function Get-AbrVb365BackupJob {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Backup Copy Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Backup Copy Section: $($_.Exception.Message)"
         }
     }
 

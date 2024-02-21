@@ -27,12 +27,12 @@ function Get-AbrVb365CloudCredential {
             $CloudCredentials = @()
             $CloudCredentials += Get-VBOAmazonS3Account
             $CloudCredentials += Get-VBOAmazonS3CompatibleAccount
-            $CloudCredentials += Get-VBOAzureBlobAccount | Select-Object -Property id, Description, LastModified, @{Name = 'AccessKey'; Expression = {$_.Name}}, @{Name = 'ServiceType'; Expression = {"AzureBlobStorage"}}
+            $CloudCredentials += Get-VBOAzureBlobAccount | Select-Object -Property id, Description, LastModified, @{Name = 'AccessKey'; Expression = { $_.Name } }, @{Name = 'ServiceType'; Expression = { "AzureBlobStorage" } }
 
             # $CloudCredentials += Get-VBOAzureServiceAccount
 
             if (($InfoLevel.Infrastructure.CloudCredential -gt 0) -and ($CloudCredentials)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Cloud Credential."
+                Write-PScriboMessage "Collecting Veeam VB365 Cloud Credential."
                 Section -Style Heading2 'Cloud Credentials' {
                     $CloudCredentialInfo = @()
                     foreach ($CloudCredential in $CloudCredentials) {
@@ -40,10 +40,10 @@ function Get-AbrVb365CloudCredential {
                             'Access Key' = $CloudCredential.AccessKey
                             'Id' = $CloudCredential.Id
                             'Service Type' = Switch ($CloudCredential.ServiceType) {
-                                "AmazonS3Compatible" {"Amazon S3 Compatible"}
-                                "AmazonS3" {"Amazon S3"}
-                                "AmazonS3Compatible" {"Amazon S3 Compatible"}
-                                "AzureBlobStorage" {"Microsoft Azure Storage"}
+                                "AmazonS3Compatible" { "Amazon S3 Compatible" }
+                                "AmazonS3" { "Amazon S3" }
+                                "AmazonS3Compatible" { "Amazon S3 Compatible" }
+                                "AzureBlobStorage" { "Microsoft Azure Storage" }
                             }
                             'Last Modified' = $CloudCredential.LastModified
                             'Description' = $CloudCredential.Description
@@ -84,7 +84,7 @@ function Get-AbrVb365CloudCredential {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Cloud Credential Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Cloud Credential Section: $($_.Exception.Message)"
         }
     }
 

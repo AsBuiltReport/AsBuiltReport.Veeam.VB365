@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationEXConnSetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -32,7 +32,7 @@ function Get-AbrVb365OrganizationEXConnSetting {
         try {
             $Organizations = Get-VBOOrganization -Name $Organization
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($Organizations.Office365ExchangeConnectionSettings)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Office365 Exchange Connection Settings."
+                Write-PScriboMessage "Collecting Veeam VB365 Office365 Exchange Connection Settings."
                 Section -Style Heading4 'Exchange Connection Setting' {
                     $OrganizationInfo = @()
                     foreach ($Org in $Organizations.Office365ExchangeConnectionSettings) {
@@ -60,13 +60,13 @@ function Get-AbrVb365OrganizationEXConnSetting {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
                             }
 
-                            $Org| Table @TableParams
+                            $Org | Table @TableParams
                         }
                     }
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Office365 Exchange Connection Settings Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Office365 Exchange Connection Settings Section: $($_.Exception.Message)"
         }
     }
 

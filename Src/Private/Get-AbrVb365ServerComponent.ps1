@@ -6,7 +6,7 @@ function Get-AbrVB365ServerComponent {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrVB365ServerComponent {
     )
 
     begin {
-        Write-PscriboMessage "Discovering Veeam VB365 Server Components information from $System."
+        Write-PScriboMessage "Discovering Veeam VB365 Server Components information from $System."
     }
 
     process {
@@ -34,8 +34,8 @@ function Get-AbrVB365ServerComponent {
                         BlankLine
                         $OutObj = @()
                         try {
-                            foreach ($ServerComponent in ($ServerComponents | where-Object {$_.Name -notlike "*Veeam Explorer for*" -and $_.Name -notlike "*PowerShell*"})) {
-                                Write-PscriboMessage "Discovered $($ServerComponent.Name) Server Components."
+                            foreach ($ServerComponent in ($ServerComponents | Where-Object { $_.Name -notlike "*Veeam Explorer for*" -and $_.Name -notlike "*PowerShell*" })) {
+                                Write-PScriboMessage "Discovered $($ServerComponent.Name) Server Components."
                                 $inObj = [ordered] @{
                                     'Name' = $ServerComponent.Name
                                     'Server Name' = $ServerComponent.ServerName
@@ -44,13 +44,12 @@ function Get-AbrVB365ServerComponent {
                                 }
                                 $OutObj += [pscustomobject]$inobj
                             }
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning "Server Components Information $($ServerComponent.Name) Section: $($_.Exception.Message)"
+                        } catch {
+                            Write-PScriboMessage -IsWarning "Server Components Information $($ServerComponent.Name) Section: $($_.Exception.Message)"
                         }
 
                         if ($HealthCheck.Infrastructure.ServerComponent) {
-                            $OutObj | Where-Object { $_.'Is Online' -eq 'No'} | Set-Style -Style Warning -Property 'Is Online'
+                            $OutObj | Where-Object { $_.'Is Online' -eq 'No' } | Set-Style -Style Warning -Property 'Is Online'
                         }
 
                         $TableParams = @{
@@ -63,13 +62,12 @@ function Get-AbrVB365ServerComponent {
                         }
                         $OutObj | Table @TableParams
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning "Server Components Section: $($_.Exception.Message)"
+                } catch {
+                    Write-PScriboMessage -IsWarning "Server Components Section: $($_.Exception.Message)"
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Server Component Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Server Component Section: $($_.Exception.Message)"
         }
     }
 

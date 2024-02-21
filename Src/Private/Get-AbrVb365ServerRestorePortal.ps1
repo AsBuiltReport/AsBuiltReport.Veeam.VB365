@@ -5,7 +5,7 @@ function Get-AbrVb365ServerRestorePortal {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVb365ServerRestorePortal {
         try {
             $RestorePortal = Get-VBORestorePortalSettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($RestorePortal)) {
-                Write-PscriboMessage "Collecting Veeam VB365 restore portal."
+                Write-PScriboMessage "Collecting Veeam VB365 restore portal."
                 Section -Style Heading3 'Restore Portal' {
                     $RestorePortalInfo = @()
                     $inObj = [ordered] @{
@@ -54,7 +54,7 @@ function Get-AbrVb365ServerRestorePortal {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Restore Portal Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Restore Portal Section: $($_.Exception.Message)"
         }
     }
 
