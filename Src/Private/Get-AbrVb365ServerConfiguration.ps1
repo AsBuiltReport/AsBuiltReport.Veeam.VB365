@@ -25,7 +25,7 @@ function Get-AbrVB365ServerConfiguration {
     process {
         try {
             $ServerConfig = @()
-            $ServerConfig += try { Get-VBOVersion } catch {}
+            $ServerConfig += try { Get-VBOVersion } catch { Out-Null }
             $ServerConfig += Get-VBOSecuritySettings
 
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {

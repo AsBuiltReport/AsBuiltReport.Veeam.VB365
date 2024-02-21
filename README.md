@@ -184,3 +184,9 @@ PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local
 PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local -Username 'Domain\veeam_admin' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
 
 ```
+
+## :x: Known Issues
+
+- Error when generating a report in Word format.
+  - Error Message: New-AsBuiltReport : The variable '$Images' cannot be retrieved because it has not been set
+  - Fix: Disable the generation of the cover page image. Set ShowCoverPageImage to false
