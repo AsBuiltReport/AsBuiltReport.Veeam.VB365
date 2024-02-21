@@ -54,9 +54,9 @@ The Veeam VB365 As Built Report supports the following Veeam Backup for Microsof
 This report is compatible with the following PowerShell versions;
 
 <!-- ********** Update supported PowerShell versions ********** -->
-| Windows PowerShell 5.1 |     PowerShell 7    |
-|:----------------------:|:--------------------:|
-|   :white_check_mark:   | :x: |
+| Windows PowerShell 5.1 | PowerShell 7 |
+| :--------------------: | :----------: |
+|   :white_check_mark:   |     :x:      |
 ## :wrench: System Requirements
 <!-- ********** Update system requirements ********** -->
 PowerShell 5.1, and the following PowerShell modules are required for generating a Veeam VB365 As Built Report.
@@ -112,23 +112,23 @@ The following provides information of how to configure each schema within the re
 ### Report
 The **Report** schema provides configuration of the Veeam VB365 report information.
 
-| Sub-Schema          | Setting      | Default                        | Description                                                  |
-|---------------------|--------------|--------------------------------|--------------------------------------------------------------|
+| Sub-Schema          | Setting      | Default                     | Description                                                  |
+| ------------------- | ------------ | --------------------------- | ------------------------------------------------------------ |
 | Name                | User defined | Veeam VB365 As Built Report | The name of the As Built Report                              |
-| Version             | User defined | 1.0                            | The report version                                           |
-| Status              | User defined | Released                       | The report release status                                    |
-| ShowCoverPageImage  | true / false | true                           | Toggle to enable/disable the display of the cover page image |
-| ShowTableOfContents | true / false | true                           | Toggle to enable/disable table of contents                   |
-| ShowHeaderFooter    | true / false | true                           | Toggle to enable/disable document headers & footers          |
-| ShowTableCaptions   | true / false | true                           | Toggle to enable/disable table captions/numbering            |
+| Version             | User defined | 1.0                         | The report version                                           |
+| Status              | User defined | Released                    | The report release status                                    |
+| ShowCoverPageImage  | true / false | true                        | Toggle to enable/disable the display of the cover page image |
+| ShowTableOfContents | true / false | true                        | Toggle to enable/disable table of contents                   |
+| ShowHeaderFooter    | true / false | true                        | Toggle to enable/disable document headers & footers          |
+| ShowTableCaptions   | true / false | true                        | Toggle to enable/disable table captions/numbering            |
 
 ### Options
 
 The **Options** schema allows certain options within the report to be toggled on or off.
 
-| Sub-Schema      | Setting      | Default | Description                                                                                                                                                                                 |
-|-----------------|--------------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BackupServerPort | TCP Port  | 9191    | Used to specify the backup service's custom port.
+| Sub-Schema       | Setting  | Default | Description                                       |
+| ---------------- | -------- | ------- | ------------------------------------------------- |
+| BackupServerPort | TCP Port | 9191    | Used to specify the backup service's custom port. |
 
 
 <!-- ********** Add/Remove the number of InfoLevels as required ********** -->
@@ -137,30 +137,30 @@ The **InfoLevel** schema allows configuration of each section of the report at a
 
 There are 3 levels (0-2) of detail granularity for each section as follows;
 
-| Setting | InfoLevel         | Description                                                                                                                                |
-|:-------:|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-|    0    | Disabled          | Does not collect or display any information                                                                                                |
-|    1    | Enabled / Summary | Provides summarised information for a collection of objects                                                                                |
-|    2    | Adv Summary       | Provides condensed, detailed information for a collection of objects                                                                       |
+| Setting | InfoLevel         | Description                                                          |
+| :-----: | ----------------- | -------------------------------------------------------------------- |
+|    0    | Disabled          | Does not collect or display any information                          |
+|    1    | Enabled / Summary | Provides summarised information for a collection of objects          |
+|    2    | Adv Summary       | Provides condensed, detailed information for a collection of objects |
 
 The table below outlines the default and maximum **InfoLevel** settings for each Infrastructure section.
 
-| Sub-Schema   | Default Setting | Maximum Setting |
-|--------------|:---------------:|:---------------:|
-| ServerConfig       |        1        |        1        |
-| License          |        1        |        1        |
-| Proxy         |        1        |        2        |
-| Repository           |        1        |        2        |
-| Organization           |        1        |        2        |
-| EncryptionKey           |        1        |        2        |
-| CloudCredential           |        1        |        2        |
+| Sub-Schema      | Default Setting | Maximum Setting |
+| --------------- | :-------------: | :-------------: |
+| ServerConfig    |        1        |        1        |
+| License         |        1        |        1        |
+| Proxy           |        1        |        2        |
+| Repository      |        1        |        2        |
+| Organization    |        1        |        2        |
+| EncryptionKey   |        1        |        2        |
+| CloudCredential |        1        |        2        |
 
 The table below outlines the default and maximum **InfoLevel** settings for each Jobs section.
 
-| Sub-Schema   | Default Setting | Maximum Setting |
-|--------------|:---------------:|:---------------:|
-| BackupJob       |        1        |        2        |
-| BackupCopyJob          |        1        |        2        |
+| Sub-Schema    | Default Setting | Maximum Setting |
+| ------------- | :-------------: | :-------------: |
+| BackupJob     |        1        |        2        |
+| BackupCopyJob |        1        |        2        |
 
 ### Healthcheck
 The **Healthcheck** schema is used to toggle health checks on or off.

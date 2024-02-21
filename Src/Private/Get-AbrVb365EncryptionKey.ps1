@@ -26,10 +26,10 @@ function Get-AbrVB365EncryptionKey {
         try {
             $EncryptionKeys = Get-VBOEncryptionKey | Sort-Object -Property Description
             if (($InfoLevel.Infrastructure.EncryptionKey -gt 0) -and ($EncryptionKeys)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Encryption Key."
+                Write-PScriboMessage "Collecting Veeam VB365 Encryption Key."
                 Section -Style Heading2 'Encryption Keys' {
                     $EncryptionKeyInfo = @()
-                    $UsedAT = Get-VBORepository | Where-Object {$_.ObjectStorageEncryptionKey.Id -eq $EncryptionKey.Id}
+                    $UsedAT = Get-VBORepository | Where-Object { $_.ObjectStorageEncryptionKey.Id -eq $EncryptionKey.Id }
                     foreach ($EncryptionKey in $EncryptionKeys) {
                         $inObj = [ordered] @{
                             'Id' = $EncryptionKey.Id
@@ -72,7 +72,7 @@ function Get-AbrVB365EncryptionKey {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Encryption Key Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Encryption Key Section: $($_.Exception.Message)"
         }
     }
 

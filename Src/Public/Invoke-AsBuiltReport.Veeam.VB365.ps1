@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:
         Github:
@@ -15,7 +15,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
         https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365
     #>
 
-	# Do not remove or add to these parameters
+    # Do not remove or add to these parameters
     param (
         [String[]] $Target,
         [PSCredential] $Credential
@@ -39,16 +39,16 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             }
         }
     } Catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
+        Write-PScriboMessage -IsWarning $_.Exception.Message
+    }
 
     # Import Report Configuration
-    $Report = $ReportConfig.Report
-    $InfoLevel = $ReportConfig.InfoLevel
-    $Options = $ReportConfig.Options
+    $script:Report = $ReportConfig.Report
+    $script:InfoLevel = $ReportConfig.InfoLevel
+    $script:Options = $ReportConfig.Options
 
     # Used to set values to TitleCase where required
-    $TextInfo = (Get-Culture).TextInfo
+    $script:TextInfo = (Get-Culture).TextInfo
 
     #region foreach loop
     foreach ($System in $Target) {
@@ -77,6 +77,6 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             Get-AbrVb365BackupJob
         }
 
-	}
-	#endregion foreach loop
+    }
+    #endregion foreach loop
 }

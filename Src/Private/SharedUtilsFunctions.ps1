@@ -12,25 +12,25 @@ function ConvertTo-TextYN {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [AllowEmptyString()]
-            [string]
-            $TEXT
-        )
+        [AllowEmptyString()]
+        [string]
+        $TEXT
+    )
 
     switch ($TEXT) {
-        "" {"-"}
-        $Null {"-"}
-        "True" {"Yes"; break}
-        "False" {"No"; break}
-        default {$TEXT}
+        "" { "-" }
+        $Null { "-" }
+        "True" { "Yes"; break }
+        "False" { "No"; break }
+        default { $TEXT }
     }
 } # end
 function Get-UnixDate ($UnixDate) {
-        <#
+    <#
     .SYNOPSIS
     Used by As Built Report to convert Date to a more nice format.
     .DESCRIPTION
@@ -56,17 +56,17 @@ function ConvertTo-EmptyToFiller {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [AllowEmptyString()]
-            [string]$TEXT
-        )
+        [AllowEmptyString()]
+        [string]$TEXT
+    )
 
     switch ([string]::IsNullOrEmpty($TEXT)) {
-        $true {"--"; break}
-        default {$TEXT}
+        $true { "--"; break }
+        default { $TEXT }
     }
 } # end
 
@@ -84,59 +84,59 @@ function ConvertTo-FileSizeString {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [int64]
-            $Size
-        )
+        [int64]
+        $Size
+    )
 
     switch ($Size) {
-        {$_ -gt 1TB}
-            {[string]::Format("{0:0} TB", $Size / 1TB); break}
-        {$_ -gt 1GB}
-            {[string]::Format("{0:0} GB", $Size / 1GB); break}
-        {$_ -gt 1MB}
-            {[string]::Format("{0:0} MB", $Size / 1MB); break}
-        {$_ -gt 1KB}
-            {[string]::Format("{0:0} KB", $Size / 1KB); break}
-        {$_ -gt 0}
-            {[string]::Format("{0} B", $Size); break}
-        {$_ -eq 0}
-            {"0 KB"; break}
+        { $_ -gt 1TB }
+        { [string]::Format("{0:0} TB", $Size / 1TB); break }
+        { $_ -gt 1GB }
+        { [string]::Format("{0:0} GB", $Size / 1GB); break }
+        { $_ -gt 1MB }
+        { [string]::Format("{0:0} MB", $Size / 1MB); break }
+        { $_ -gt 1KB }
+        { [string]::Format("{0:0} KB", $Size / 1KB); break }
+        { $_ -gt 0 }
+        { [string]::Format("{0} B", $Size); break }
+        { $_ -eq 0 }
+        { "0 KB"; break }
         default
-            {"0 KB"}
+        { "0 KB" }
     }
 } # end
 
 function Convert-Size {
     [cmdletbinding()]
     param(
-        [validateset("Bytes","KB","MB","GB","TB")]
+        [validateset("Bytes", "KB", "MB", "GB", "TB")]
         [string]$From,
-        [validateset("Bytes","KB","MB","GB","TB")]
+        [validateset("Bytes", "KB", "MB", "GB", "TB")]
         [string]$To,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [double]$Value,
         [int]$Precision = 4
     )
-    switch($From) {
-        "Bytes" {$value = $Value }
-        "KB" {$value = $Value * 1024 }
-        "MB" {$value = $Value * 1024 * 1024}
-        "GB" {$value = $Value * 1024 * 1024 * 1024}
-        "TB" {$value = $Value * 1024 * 1024 * 1024 * 1024}
+    switch ($From) {
+        "Bytes" { $value = $Value }
+        "KB" { $value = $Value * 1024 }
+        "MB" { $value = $Value * 1024 * 1024 }
+        "GB" { $value = $Value * 1024 * 1024 * 1024 }
+        "TB" { $value = $Value * 1024 * 1024 * 1024 * 1024 }
     }
 
     switch ($To) {
-        "Bytes" {return $value}
-        "KB" {$Value = $Value/1KB}
-        "MB" {$Value = $Value/1MB}
-        "GB" {$Value = $Value/1GB}
-        "TB" {$Value = $Value/1TB}
+        "Bytes" { return $value }
+        "KB" { $Value = $Value / 1KB }
+        "MB" { $Value = $Value / 1MB }
+        "GB" { $Value = $Value / 1GB }
+        "TB" { $Value = $Value / 1TB }
 
     }
 
-    return [Math]::Round($value,$Precision,[MidPointRounding]::AwayFromZero)
+    return [Math]::Round($value, $Precision, [MidPointRounding]::AwayFromZero)
 }
