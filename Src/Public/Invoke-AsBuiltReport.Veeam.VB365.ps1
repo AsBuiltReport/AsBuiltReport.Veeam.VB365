@@ -75,6 +75,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             Get-AbrVb365BackupRepository
             Get-AbrVb365Organization
             Get-AbrVb365BackupJob
+            Get-AbrVb365RestoreSession
         }
 
     }

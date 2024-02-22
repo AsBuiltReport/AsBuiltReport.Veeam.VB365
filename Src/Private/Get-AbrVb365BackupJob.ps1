@@ -70,7 +70,12 @@ function Get-AbrVb365BackupJob {
                             $Alljobs += (Get-VBOCopyJob -ErrorAction SilentlyContinue).LastStatus
                         }
 
-                        $sampleData = $Alljobs | Group-Object
+                        $sampleData = @{
+                            'Success' = ($Alljobs | Where-Object { $_ -eq "Success" } | Measure-Object).Count
+                            'Warning' = ($Alljobs | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
+                            'Failed' = ($Alljobs | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
+                            'Stopped' = ($Alljobs | Where-Object { $_ -eq "Stopped" } | Measure-Object).Count
+                        }
                         $exampleChart = New-Chart -Name BackupJobs -Width 600 -Height 400
 
                         $addChartAreaParams = @{
@@ -87,12 +92,13 @@ function Get-AbrVb365BackupJob {
                             Chart = $exampleChart
                             ChartArea = $exampleChartArea
                             Name = 'exampleChartSeries'
-                            XField = 'Name'
-                            YField = 'Count'
+                            XField = 'Category'
+                            YField = 'Value'
                             Palette = 'Green'
                             ColorPerDataPoint = $true
                         }
-                        $sampleData | Add-ColumnChartSeries @addChartSeriesParams
+
+                        $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category' | Add-ColumnChartSeries @addChartSeriesParams
 
                         $addChartTitleParams = @{
                             Chart = $exampleChart

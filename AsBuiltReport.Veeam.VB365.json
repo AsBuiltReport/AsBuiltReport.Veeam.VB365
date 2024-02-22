@@ -9,7 +9,8 @@
         "ShowTableCaptions": true
     },
     "Options": {
-        "BackupServerPort": 9191
+        "BackupServerPort": 9191,
+        "EnableDiagrams": true
     },
     "InfoLevel": {
         "_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",
@@ -26,6 +27,10 @@
         "Jobs": {
             "BackupJob": 1,
             "BackupCopyJob": 1
+        },
+        "Restore": {
+            "RestoreSession": 1,
+            "RestorePoint": 1
         }
     },
     "HealthCheck": {
