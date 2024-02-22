@@ -80,7 +80,7 @@ function Get-AbrVb365RestoreSession {
                             Chart = $exampleChart
                             ChartArea = $exampleChartArea
                             Name = 'RestoreSessions'
-                            Text = 'Restore Sessions Result'
+                            Text = 'Restore Session Results'
                             Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
                         }
                         Add-ChartTitle @addChartTitleParams
