@@ -162,6 +162,13 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 | BackupJob     |        1        |        2        |
 | BackupCopyJob |        1        |        2        |
 
+The table below outlines the default and maximum **InfoLevel** settings for each Restore Session section.
+
+| Sub-Schema     | Default Setting | Maximum Setting |
+| -------------- | :-------------: | :-------------: |
+| RestoreSession |        1        |        2        |
+| RestorePoint   |        1        |        1        |
+
 ### Healthcheck
 The **Healthcheck** schema is used to toggle health checks on or off.
 
