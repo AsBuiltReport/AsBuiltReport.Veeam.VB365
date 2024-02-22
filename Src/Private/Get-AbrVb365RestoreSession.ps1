@@ -97,7 +97,7 @@ function Get-AbrVb365RestoreSession {
                     if ($InfoLevel.Restore.RestoreSession -ge 2) {
                         Paragraph "The following sections detail the configuration of the restore sessions within $VeeamBackupServer backup server."
                         if ($chartFileItem) {
-                            Image -Text 'Backup Repository - Diagram' -Align 'Center' -Percent 100 -Path $chartFileItem
+                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Path $chartFileItem
                         }
                         foreach ($RestoreSession in $RestoreSessionInfo) {
                             Section -ExcludeFromTOC -Style NOTOCHeading3 "$($RestoreSession.Name)" {
@@ -130,9 +130,6 @@ function Get-AbrVb365RestoreSession {
                         }
                         $RestoreSessionInfo | Table @TableParams
                     }
-
-                    # Backup Copy Jobs
-                    # Get-AbrVb365BackupCopyJob
                 }
             }
         } catch {
