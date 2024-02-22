@@ -79,6 +79,9 @@ function Get-AbrVB365ServerConfiguration {
 
                     #Backup Server Restore Portal
                     Get-AbrVb365ServerRestorePortal
+
+                    #Backup Server History Retention Setting
+                    Get-AbrVb365ServerHistorySetting
                 }
             }
         } catch {
