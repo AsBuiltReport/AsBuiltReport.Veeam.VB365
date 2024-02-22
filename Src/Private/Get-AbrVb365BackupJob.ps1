@@ -104,7 +104,7 @@ function Get-AbrVb365BackupJob {
                             Chart = $exampleChart
                             ChartArea = $exampleChartArea
                             Name = 'BackupJob'
-                            Text = 'Jobs Latest Result'
+                            Text = 'Jobs Latest Results'
                             Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
                         }
                         Add-ChartTitle @addChartTitleParams
