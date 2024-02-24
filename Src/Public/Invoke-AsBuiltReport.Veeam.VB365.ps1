@@ -77,6 +77,26 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             Get-AbrVb365BackupJob
             Get-AbrVb365RestoreSession
             Get-AbrVb365RestorePoint
+
+            if ($Options.EnableDiagrams) {
+                Try {
+                    Try {
+                        $Graph = Get-AbrVb365Diagram -Target $System -Credential $Credential -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All"
+                    } Catch {
+                        Write-PScriboMessage -IsWarning "VMware Backup Proxy Diagram: $($_.Exception.Message)"
+                    }
+                    if ($Graph) {
+                        If ((Get-DiaImagePercent -GraphObj $Graph).Width -gt 1500) { $ImagePrty = 10 } else { $ImagePrty = 50 }
+                        Section -Style Heading3 "VMware Backup Proxy Diagram." {
+                            Image -Base64 $Graph -Text "VMware Backup Proxy Diagram" -Percent $ImagePrty -Align Center
+                            Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
+                        }
+                        BlankLine
+                    }
+                } Catch {
+                    Write-PScriboMessage -IsWarning "VMware Backup Proxy Diagram Section: $($_.Exception.Message)"
+                }
+            }
         }
 
     }

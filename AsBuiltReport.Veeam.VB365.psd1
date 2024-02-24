@@ -56,14 +56,14 @@
         @{
             ModuleName = 'AsBuiltReport.Core';
             ModuleVersion = '1.3.0'
-        }
+        },
         @{
             ModuleName = 'PScriboCharts';
             ModuleVersion = '0.9.0'
-        }
+        },
         @{
             ModuleName = 'Diagrammer.Core';
-            ModuleVersion = '0.1.3'
+            ModuleVersion = '0.1.6'
         }
     )
 
@@ -128,7 +128,7 @@
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    # HelpInfoURI = ''
+    HelpInfoURI = 'https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365?tab=readme-ov-file#veeam-vb365-as-built-report'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
