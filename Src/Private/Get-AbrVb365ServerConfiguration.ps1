@@ -50,6 +50,9 @@ function Get-AbrVB365ServerConfiguration {
                         }
                         $ServerConfigInfo = [PSCustomObject]$InObj
 
+                        if ($HealthCheck.Infrastructure.ServerConfig) {
+                            $ServerConfigInfo | Where-Object { $_.'Server Product Version' -eq '6 or less, please upgrade' } | Set-Style -Style Warning -Property 'Server Product Version'
+                        }
 
                         $TableParams = @{
                             Name = "Server Configuration - $VeeamBackupServer"
