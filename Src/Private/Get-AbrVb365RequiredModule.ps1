@@ -29,7 +29,7 @@ function Get-AbrVB365RequiredModule {
         $Version
     )
     process {
-        $MyModulePath = "C:\Program Files\Veeam\BackupVBO\Veeam.Archiver.PowerShell\"
+        $MyModulePath = "C:\Program Files\Veeam\Backup365\Veeam.Archiver.PowerShell\"
         $env:PSModulePath = $env:PSModulePath + "$([System.IO.Path]::PathSeparator)$MyModulePath"
         if ($Modules = Get-Module -ListAvailable -Name Veeam.Archiver.PowerShell) {
             try {
