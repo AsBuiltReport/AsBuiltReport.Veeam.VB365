@@ -339,36 +339,46 @@ function Get-AbrVb365Diagram {
                         Node VB365Server @{Label = Get-DiaNodeIcon -Rows $ServerVersion -ImagesObj $Images -Name $VeeamBackupServer -IconType "VB365_Server" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
 
                         # Proxy Graphviz Cluster
-                        SubGraph ProxyServer -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Proxies" -IconType "VB365_Proxy" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
+                        if ($Proxies) {
+                            SubGraph ProxyServer -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Proxies" -IconType "VB365_Proxy" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
-                            Node Proxies @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Proxies.HostName | ForEach-Object { $_.split('.')[0] }) -Align "Center" -iconType "VB365_Proxy_Server" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                                Node Proxies @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Proxies.HostName | ForEach-Object { $_.split('.')[0] }) -Align "Center" -iconType "VB365_Proxy_Server" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                            }
                         }
 
                         # Repositories Graphviz Cluster
-                        SubGraph Repos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Repositories" -IconType "VB365_Repository" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
+                        if ($Repositories) {
+                            SubGraph Repos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Repositories" -IconType "VB365_Repository" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
-                            Node Repositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $Repositories.Name -Align "Center" -iconType "VB365_Windows_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                                Node Repositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $Repositories.Name -Align "Center" -iconType "VB365_Windows_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                            }
                         }
 
                         # Object Repositories Graphviz Cluster
-                        SubGraph ObjectRepos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Object Repositories" -IconType "VB365_Object_Support" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+                        if ($ObjectRepositories) {
+                            SubGraph ObjectRepos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Object Repositories" -IconType "VB365_Object_Support" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
-                            Node ObjectRepositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $ObjectRepositories.Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                                Node ObjectRepositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $ObjectRepositories.Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                            }
                         }
 
                         # Organization Graphviz Cluster
                         SubGraph Organizations -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Organizations" -IconType "VB365_On_Premises" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
                             # On-Premises Organization Graphviz Cluster
-                            SubGraph OnPremise -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "On-premises" -IconType "VB365_On_Premises" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+                            if (($Organizations | Where-Object { $_.Type -eq 'OnPremises' })) {
+                                SubGraph OnPremise -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "On-premises" -IconType "VB365_On_Premises" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
-                                Node OnpremisesOrg @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }).Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                                    Node OnpremisesOrg @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }).Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                                }
                             }
 
                             # Microsoft 365 Organization Graphviz Cluster
-                            SubGraph Microsoft365 -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Microsoft 365" -IconType "VB365_Microsoft_365" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+                            if ($Organizations | Where-Object { $_.Type -eq 'Office365' }) {
+                                SubGraph Microsoft365 -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Microsoft 365" -IconType "VB365_Microsoft_365" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
-                                Node Microsoft365Org @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'Office365' }).Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                                    Node Microsoft365Org @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'Office365' }).Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                                }
                             }
                         }
 
@@ -376,15 +386,15 @@ function Get-AbrVb365Diagram {
                         $Node = @('VB365ServerPointSpace', 'VB365ProxyPoint', 'VB365ProxyPointSpace', 'VB365RepoPoint')
                         Node $Node -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
 
-                        $NodeStartEnd = @('VB365ServerPoint', 'VB365EndPointSpace')
+                        $NodeStartEnd = @('VB365StartPoint', 'VB365EndPointSpace')
                         Node $NodeStartEnd -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
 
                         # Put the dummy node in the same rank to be able to create a horizontal line
-                        Rank VB365ServerPointSpace, VB365ProxyPoint, VB365ProxyPointSpace, VB365RepoPoint, VB365ServerPoint, VB365EndPointSpace
+                        Rank VB365ServerPointSpace, VB365ProxyPoint, VB365ProxyPointSpace, VB365RepoPoint, VB365StartPoint, VB365EndPointSpace
 
                         # Connect the Dummy Node in a straight line
-                        # VB365ServerPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
-                        Edge -From VB365ServerPoint -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
+                        # VB365StartPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
+                        Edge -From VB365StartPoint -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
                         Edge -From VB365ServerPointSpace -To VB365ProxyPoint @{minlen = 4; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
                         Edge -From VB365ProxyPoint -To VB365ProxyPointSpace @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
                         Edge -From VB365ProxyPointSpace -To VB365RepoPoint @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
@@ -399,7 +409,16 @@ function Get-AbrVb365Diagram {
                         # Connect Veeam Repository to the Dummy line
                         Edge -From VB365RepoPoint -To Repositories:Edgedot @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
                         # Connect Veeam Object Repository to the Dummy line
-                        Edge -To VB365RepoPoint -From ObjectRepositories:Edgedot @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
+                        if ($ObjectRepositories) {
+                            Edge -To VB365RepoPoint -From ObjectRepositories:Edgedot @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
+                        }
+                        #
+                        #
+                        #       |
+                        #       |
+                        # VB365StartPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
+                        #
+                        #
 
                         # $VB365BackupInfra = Get-DiagVB365BackupInfra | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch
                         # if ($VB365BackupInfra) {

@@ -82,9 +82,9 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                 Try {
                     Try {
                         if ($Options.EnableDiagramDebug) {
-                            $Graph = Get-AbrVb365Diagram -Target $System -Credential $Credential -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All" -EnableEdgeDebug -EnableSubGraphDebug
+                            $Graph = Get-AbrVb365Diagram -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All" -EnableEdgeDebug -EnableSubGraphDebug
                         } else {
-                            $Graph = Get-AbrVb365Diagram -Target $System -Credential $Credential -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All"
+                            $Graph = Get-AbrVb365Diagram -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All"
                         }
                     } Catch {
                         Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
@@ -102,7 +102,6 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                 }
             }
         }
-
     }
     #endregion foreach loop
 }
