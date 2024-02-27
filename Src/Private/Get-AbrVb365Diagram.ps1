@@ -65,7 +65,7 @@ function Get-AbrVb365Diagram {
         Allow the creation of footer signature.
         AuthorName and CompanyName must be set to use this property.
     .NOTES
-        Version:        0.5.9
+        Version:        0.3.0
         Author(s):      Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -187,7 +187,7 @@ function Get-AbrVb365Diagram {
             HelpMessage = 'Controls how edges lines appear in visualization'
         )]
         [ValidateSet('polyline', 'curved', 'ortho', 'line', 'spline')]
-        [string] $EdgeType = 'spline',
+        [string] $EdgeType = 'line',
 
         [Parameter(
             Mandatory = $false,
@@ -250,36 +250,27 @@ function Get-AbrVb365Diagram {
     begin {
 
         $script:Images = @{
-            "VBR_Server" = "VBR_server.png"
+            "VB365_Server" = "VBR_server.png"
             "VBR_Repository" = "VBR_Repository.png"
             "VBR_Deduplicating_Storage" = "Deduplicating_Storage.png"
             "VBR_Linux_Repository" = "Linux_Repository.png"
             "VBR_Windows_Repository" = "Windows_Repository.png"
             "VBR_Cloud_Repository" = "Cloud_Repository.png"
             "VBR_Server_DB" = "Microsoft_SQL_DB.png"
-            "VBR_Proxy_Server" = "Proxy_Server.png"
+            "VB365_Proxy_Server" = "Proxy_Server.png"
+            "VB365_Proxy" = "Veeam_Proxy.png"
             "VBR_Wan_Accel" = "WAN_accelerator.png"
             "VBR_SOBR" = "Scale-out_Backup_Repository.png"
             "VBR_LOGO" = "Veeam_logo.png"
-            "VBR_No_Icon" = "no_icon.png"
-            'VBR_Storage_NetApp' = "Storage_NetApp.png"
-            'VBR_vCenter_Server' = 'vCenter_server.png'
-            'VBR_ESXi_Server' = 'ESXi_host.png'
-            'VBR_HyperV_Server' = 'Hyper-V_host.png'
-            'VBR_Server_EM' = 'Veeam_Backup_Enterprise_Manager.png'
-            'VBR_Tape_Server' = 'Tape_Server.png'
-            'VBR_Tape_Library' = 'Tape_Library.png'
-            'VBR_Tape_Drive' = 'Tape_Drive.png'
             "VBR_Server_DB_PG" = "PostGre_SQL_DB.png"
             "VB365_LOGO_Footer" = "verified_recoverability.png"
-            "VBR_AGENT_Container" = "Folder.png"
-            "VBR_AGENT_AD" = "Server.png"
-            "VBR_AGENT_MC" = "Task list.png"
-            "VBR_AGENT_IC" = "Workstation.png"
-            "VBR_AGENT_CSV" = "CSV_Computers.png"
-            "VBR_AGENT_AD_Logo" = "Microsoft Active Directory.png"
-            "VBR_AGENT_CSV_Logo" = "File.png"
-            "VBR_AGENT_Server" = "Server_with_Veeam_Agent.png"
+            "VB365_Repository" = "VBO_Repository.png"
+            "VB365_Windows_Repository" = "Windows_Repository.png"
+            "VB365_Object_Repository" = "Object_Storage.png"
+            "VB365_Object_Support" = "Object Storage support.png"
+            "Veeam_Repository" = "Veeam_Repository.png"
+            "VB365_On_Premises" = "SMB.png"
+            "VB365_Microsoft_365" = "Cloud.png"
         }
 
         if (($Format -ne "base64") -and !(Test-Path $OutputFolderPath)) {
@@ -292,20 +283,26 @@ function Get-AbrVb365Diagram {
         }
 
         $MainGraphLabel = Switch ($DiagramType) {
-            'Backup-to-All' { 'Backup for Microsoft 365 Infrastructure' }
+            'Backup-to-All' { 'Backup for Microsoft 365' }
         }
 
         $URLIcon = $false
 
         if ($EnableEdgeDebug) {
-            $script:EdgeDebug = @{style = 'filled'; color = 'red' }
+            $EdgeDebug = @{style = 'filled'; color = 'red' }
             $URLIcon = $true
-        } else { $script:EdgeDebug = @{style = 'invis'; color = 'red' } }
+        } else { $EdgeDebug = @{style = 'invis'; color = 'red' } }
 
         if ($EnableSubGraphDebug) {
-            $script:SubGraphDebug = @{style = 'dashed'; color = 'red' }
+            $SubGraphDebug = @{style = 'dashed'; color = 'red' }
+            $NodeDebug = @{color = 'black'; style = 'red'; shape = 'plain' }
+            $NodeDebugEdge = @{color = 'black'; style = 'red'; shape = 'plain' }
             $URLIcon = $true
-        } else { $script:SubGraphDebug = @{style = 'invis'; color = 'gray' } }
+        } else {
+            $SubGraphDebug = @{style = 'invis'; color = 'gray' }
+            $NodeDebug = @{color = 'transparent'; style = 'transparent'; shape = 'point' }
+            $NodeDebugEdge = @{color = 'transparent'; style = 'transparent'; shape = 'none' }
+        }
 
         $RootPath = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
         $IconPath = Join-Path $RootPath 'icons'
@@ -326,12 +323,12 @@ function Get-AbrVb365Diagram {
         }
 
         $MainGraphAttributes = @{
-            pad = 1.0
+            pad = 1
             rankdir = $Dir
             overlap = 'false'
             splines = $EdgeType
             penwidth = 1.5
-            fontname = "Segoe Ui Black"
+            fontname = "Tahoma Black"
             fontcolor = '#005f4b'
             fontsize = 32
             style = "dashed"
@@ -351,7 +348,7 @@ function Get-AbrVb365Diagram {
                 shape = 'none'
                 labelloc = 't'
                 style = 'filled'
-                fillColor = 'white'
+                fillColor = '#71797E'
                 fontsize = 14;
                 imagescale = $true
             }
@@ -361,7 +358,7 @@ function Get-AbrVb365Diagram {
                 dir = 'both'
                 arrowtail = 'dot'
                 color = '#71797E'
-                penwidth = 1.5
+                penwidth = 2
                 arrowsize = 1
             }
 
@@ -381,14 +378,70 @@ function Get-AbrVb365Diagram {
                     if ($DiagramType -eq 'Backup-to-All') {
 
                         $ServerVersion = @{
-                            'Version' = (Get-VBOVersion).ProductVersion
+                            'Version' = try { (Get-VBOVersion).ProductVersion } catch { 'Unknown' }
                         }
 
-                        Node VB365Server @{Label = Get-DiaNodeIcon -Rows $ServerVersion -ImagesObj $Images -Name $VeeamBackupServer -IconType "VBR_Server" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
+                        Node VB365Server @{Label = Get-DiaNodeIcon -Rows $ServerVersion -ImagesObj $Images -Name $VeeamBackupServer -IconType "VB365_Server" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
 
-                        Node VB365ServerPoint @{shape = "point"; size = 20 }
+                        SubGraph ProxyServer -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Proxies" -IconType "VB365_Proxy" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
-                        Edge -From VB365Server -To VB365ServerPoint @{minlen = 3; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+                            # Node ProxyDummy @{Label = 'ProxyDummy'; shape = 'plain'; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style  }
+
+                            Node Proxies @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Proxies.HostName | ForEach-Object { $_.split('.')[0] }) -Align "Center" -iconType "VB365_Proxy_Server" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                        }
+
+                        SubGraph Repos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Repositories" -IconType "VB365_Repository" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
+
+                            Node Repositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $Repositories.Name -Align "Center" -iconType "VB365_Windows_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                        }
+
+                        SubGraph ObjectRepos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Object Repositories" -IconType "VB365_Object_Support" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+
+                            Node ObjectRepositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $ObjectRepositories.Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                        }
+
+                        SubGraph Organizations -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Organizations" -IconType "VB365_On_Premises" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+
+                            SubGraph OnPremise -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "On-premises" -IconType "VB365_On_Premises" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+
+                                Node OnpremisesOrg @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }).Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                            }
+
+                            SubGraph Microsoft365 -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Microsoft 365" -IconType "VB365_Microsoft_365" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+
+                                Node Microsoft365Org @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'Office365' }).Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                            }
+                        }
+
+                        $Node = @('VB365ServerPointSpace', 'VB365ProxyPoint', 'VB365ProxyPointSpace', 'VB365RepoPoint')
+
+                        $NodeStartEnd = @('VB365ServerPoint', 'VB365EndPointSpace')
+
+                        Node $Node -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
+
+                        Node $NodeStartEnd -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
+
+                        Rank VB365ServerPointSpace, VB365ProxyPoint, VB365ProxyPointSpace, VB365RepoPoint, VB365ServerPoint, VB365EndPointSpace
+
+                        Edge -From VB365ServerPoint -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
+
+                        Edge -From VB365Server -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'filled' }
+
+                        Edge -To VB365Server -From OnpremisesOrg @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42'}
+
+                        Edge -From VB365ServerPointSpace -To VB365ProxyPoint @{minlen = 4; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+
+                        Edge -From VB365ProxyPoint -To VB365ProxyPointSpace @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+
+                        Edge -From VB365ProxyPointSpace -To VB365RepoPoint @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+
+                        Edge -From VB365ProxyPoint -To Proxies:EdgeDot @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
+
+                        Edge -From VB365RepoPoint -To VB365EndPointSpace @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
+
+                        Edge -From VB365RepoPoint -To Repositories:Edgedot @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
+
+                        Edge -To VB365RepoPoint -From ObjectRepositories:Edgedot @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
 
                         # $VB365BackupInfra = Get-DiagVB365BackupInfra | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch
                         # if ($VB365BackupInfra) {

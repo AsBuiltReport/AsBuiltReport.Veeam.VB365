@@ -24,7 +24,7 @@ function Get-AbrVB365BackupRepository {
 
     process {
         try {
-            $Repositories = Get-VBORepository | Sort-Object -Property Name
+            $script:Repositories = Get-VBORepository | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Repository -gt 0) -and ($Repositories)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Backup Repository."
                 Section -Style Heading2 'Backup Repositories' {

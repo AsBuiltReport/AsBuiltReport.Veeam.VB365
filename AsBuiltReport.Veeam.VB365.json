@@ -10,7 +10,8 @@
     },
     "Options": {
         "BackupServerPort": 9191,
-        "EnableDiagrams": true
+        "EnableDiagrams": true,
+        "EnableDiagramDebug": false
     },
     "InfoLevel": {
         "_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",

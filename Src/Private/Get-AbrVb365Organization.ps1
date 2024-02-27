@@ -24,7 +24,7 @@ function Get-AbrVb365Organization {
 
     process {
         try {
-            $Organizations = Get-VBOOrganization | Sort-Object -Property Name
+            $script:Organizations = Get-VBOOrganization | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($Organizations)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Backup Organization."
                 Section -Style Heading2 'Organizations' {

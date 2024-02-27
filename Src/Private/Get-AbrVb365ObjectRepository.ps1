@@ -24,7 +24,7 @@ function Get-AbrVB365ObjectRepository {
 
     process {
         try {
-            $ObjectRepositories = Get-VBOObjectStorageRepository | Sort-Object -Property Name
+            $script:ObjectRepositories = Get-VBOObjectStorageRepository | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Repository -gt 0) -and ($ObjectRepositories)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Object Repository."
                 Section -Style Heading2 'Object Repositories' {
