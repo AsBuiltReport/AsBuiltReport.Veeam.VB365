@@ -8,18 +8,6 @@ function Get-AbrVb365Diagram {
         Specifies the type of veeam vbr diagram that will be generated.
         The supported output diagrams are:
             Backup-to-All'
-    .PARAMETER Target
-        Specifies the IP/FQDN of the system to connect.
-        Multiple targets may be specified, separated by a comma.
-    .PARAMETER Port
-        Specifies a optional port to connect to Veeam VBR Service.
-        By default, port will be set to 9392
-    .PARAMETER Credential
-        Specifies the stored credential of the target system.
-    .PARAMETER Username
-        Specifies the username for the target system.
-    .PARAMETER Password
-        Specifies the password for the target system.
     .PARAMETER Format
         Specifies the output format of the diagram.
         The supported output formats are PDF, PNG, DOT & SVG.
@@ -89,24 +77,6 @@ function Get-AbrVb365Diagram {
     param (
 
         [Parameter(
-            Position = 0,
-            Mandatory = $true,
-            HelpMessage = 'Please provide the IP/FQDN of the system'
-        )]
-        [ValidateNotNullOrEmpty()]
-        [Alias('Server', 'IP')]
-        [String[]] $Target,
-
-        [Parameter(
-            Position = 1,
-            Mandatory = $true,
-            HelpMessage = 'Please provide credentials to connect to the system',
-            ParameterSetName = 'Credential'
-        )]
-        [ValidateNotNullOrEmpty()]
-        [PSCredential] $Credential,
-
-        [Parameter(
             Position = 4,
             Mandatory = $false,
             HelpMessage = 'Please provide the diagram output format'
@@ -114,13 +84,6 @@ function Get-AbrVb365Diagram {
         [ValidateNotNullOrEmpty()]
         [ValidateSet('pdf', 'svg', 'png', 'dot', 'base64', 'jpg')]
         [Array] $Format = 'pdf',
-
-        [Parameter(
-            Position = 5,
-            Mandatory = $false,
-            HelpMessage = 'TCP Port of target Veeam Backup for Microsoft 365'
-        )]
-        [string] $Port = '9191',
 
         [Parameter(
             Mandatory = $false,
@@ -251,18 +214,9 @@ function Get-AbrVb365Diagram {
 
         $script:Images = @{
             "VB365_Server" = "VBR_server.png"
-            "VBR_Repository" = "VBR_Repository.png"
-            "VBR_Deduplicating_Storage" = "Deduplicating_Storage.png"
-            "VBR_Linux_Repository" = "Linux_Repository.png"
-            "VBR_Windows_Repository" = "Windows_Repository.png"
-            "VBR_Cloud_Repository" = "Cloud_Repository.png"
-            "VBR_Server_DB" = "Microsoft_SQL_DB.png"
             "VB365_Proxy_Server" = "Proxy_Server.png"
             "VB365_Proxy" = "Veeam_Proxy.png"
-            "VBR_Wan_Accel" = "WAN_accelerator.png"
-            "VBR_SOBR" = "Scale-out_Backup_Repository.png"
             "VBR_LOGO" = "Veeam_logo.png"
-            "VBR_Server_DB_PG" = "PostGre_SQL_DB.png"
             "VB365_LOGO_Footer" = "verified_recoverability.png"
             "VB365_Repository" = "VBO_Repository.png"
             "VB365_Windows_Repository" = "Windows_Repository.png"
@@ -381,66 +335,70 @@ function Get-AbrVb365Diagram {
                             'Version' = try { (Get-VBOVersion).ProductVersion } catch { 'Unknown' }
                         }
 
+                        # VB365 Server Object
                         Node VB365Server @{Label = Get-DiaNodeIcon -Rows $ServerVersion -ImagesObj $Images -Name $VeeamBackupServer -IconType "VB365_Server" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
 
+                        # Proxy Graphviz Cluster
                         SubGraph ProxyServer -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Proxies" -IconType "VB365_Proxy" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
-
-                            # Node ProxyDummy @{Label = 'ProxyDummy'; shape = 'plain'; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style  }
 
                             Node Proxies @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Proxies.HostName | ForEach-Object { $_.split('.')[0] }) -Align "Center" -iconType "VB365_Proxy_Server" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
                         }
 
+                        # Repositories Graphviz Cluster
                         SubGraph Repos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Repositories" -IconType "VB365_Repository" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
                             Node Repositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $Repositories.Name -Align "Center" -iconType "VB365_Windows_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
                         }
 
+                        # Object Repositories Graphviz Cluster
                         SubGraph ObjectRepos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Object Repositories" -IconType "VB365_Object_Support" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
                             Node ObjectRepositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $ObjectRepositories.Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
                         }
 
+                        # Organization Graphviz Cluster
                         SubGraph Organizations -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Organizations" -IconType "VB365_On_Premises" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
+                            # On-Premises Organization Graphviz Cluster
                             SubGraph OnPremise -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "On-premises" -IconType "VB365_On_Premises" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
                                 Node OnpremisesOrg @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }).Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
                             }
 
+                            # Microsoft 365 Organization Graphviz Cluster
                             SubGraph Microsoft365 -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Microsoft 365" -IconType "VB365_Microsoft_365" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
                                 Node Microsoft365Org @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'Office365' }).Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
                             }
                         }
 
+                        # Veeam VB365 elements point of connection (Dummy Nodes!)
                         $Node = @('VB365ServerPointSpace', 'VB365ProxyPoint', 'VB365ProxyPointSpace', 'VB365RepoPoint')
-
-                        $NodeStartEnd = @('VB365ServerPoint', 'VB365EndPointSpace')
-
                         Node $Node -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
 
+                        $NodeStartEnd = @('VB365ServerPoint', 'VB365EndPointSpace')
                         Node $NodeStartEnd -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
 
+                        # Put the dummy node in the same rank to be able to create a horizontal line
                         Rank VB365ServerPointSpace, VB365ProxyPoint, VB365ProxyPointSpace, VB365RepoPoint, VB365ServerPoint, VB365EndPointSpace
 
+                        # Connect the Dummy Node in a straight line
+                        # VB365ServerPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
                         Edge -From VB365ServerPoint -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
-
-                        Edge -From VB365Server -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'filled' }
-
-                        Edge -To VB365Server -From OnpremisesOrg @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42'}
-
                         Edge -From VB365ServerPointSpace -To VB365ProxyPoint @{minlen = 4; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
-
                         Edge -From VB365ProxyPoint -To VB365ProxyPointSpace @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
-
                         Edge -From VB365ProxyPointSpace -To VB365RepoPoint @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
-
-                        Edge -From VB365ProxyPoint -To Proxies:EdgeDot @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
-
                         Edge -From VB365RepoPoint -To VB365EndPointSpace @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
 
+                        # Connect Veeam Backup server to the Dummy line
+                        Edge -From VB365Server -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'filled' }
+                        # Connect Veeam Backup Server to Organization Graphviz Cluster
+                        Edge -To VB365Server -From OnpremisesOrg @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42' }
+                        # Connect Veeam Proxies Server to the Dummy line
+                        Edge -From VB365ProxyPoint -To Proxies:EdgeDot @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
+                        # Connect Veeam Repository to the Dummy line
                         Edge -From VB365RepoPoint -To Repositories:Edgedot @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
-
+                        # Connect Veeam Object Repository to the Dummy line
                         Edge -To VB365RepoPoint -From ObjectRepositories:Edgedot @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
 
                         # $VB365BackupInfra = Get-DiagVB365BackupInfra | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch
