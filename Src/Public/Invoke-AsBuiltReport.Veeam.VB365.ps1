@@ -79,33 +79,51 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             Get-AbrVb365RestorePoint
 
             if ($Options.EnableDiagrams) {
+
+                $DiagramParams = @{
+                    Direction = 'top-to-bottom'
+                    DiagramType = "Backup-to-All"
+                }
+
+                if ($Options.ExportDiagrams) {
+                    $DiagramParams.Add('Format', "png")
+                    $DiagramParams.Add('FileName','AsBuiltReport.Veeam.VB365.png')
+                    $DiagramParams.Add('OutputFolderPath', (Get-Location).Path)
+                } else {
+                    $DiagramParams.Add('Format', "base64")
+                }
+
+                if ($Options.EnableDiagramDebug) {
+
+                    $DiagramParams.Add('EnableEdgeDebug', $True)
+                    $DiagramParams.Add('EnableSubGraphDebug', $True)
+
+                }
+
+                if ($Options.EnableDiagramSignature) {
+                    $DiagramParams.Add('Signature', $True)
+                    $DiagramParams.Add('AuthorName', $Options.SignatureAuthorName)
+                    $DiagramParams.Add('CompanyName', $Options.SignatureCompanyName)
+                }
+
                 if ($Options.ExportDiagrams) {
                     Try {
-                        if ($Options.EnableDiagramDebug) {
-                            $Graph = Get-AbrVb365Diagram -Format png -Direction top-to-bottom -DiagramType "Backup-to-All" -EnableEdgeDebug -EnableSubGraphDebug -OutputFolderPath (Get-Location).Path -FileName 'AsBuiltReport.Veeam.VB365.png'
-                            if ($Graph) {
-                                Write-Information "Saved 'AsBuiltReport.Veeam.VB365.png' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
-                            }
-                        } else {
-                            $Graph = Get-AbrVb365Diagram -Format png -Direction top-to-bottom -DiagramType "Backup-to-All" -OutputFolderPath (Get-Location).Path -FileName 'AsBuiltReport.Veeam.VB365.png'
-                            if ($Graph) {
-                                Write-Information "Saved 'AsBuiltReport.Veeam.VB365.png' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
-                            }
+                        $Graph = Get-AbrVb365Diagram @DiagramParams
+                        if ($Graph) {
+                            Write-Information "Saved 'AsBuiltReport.Veeam.VB365.png' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
                         }
                     } Catch {
-                        Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
+                        Write-PScriboMessage -IsWarning "Unable to export the Infrastructure Diagram: $($_.Exception.Message)"
                     }
+
                 } else {
-                    Try {
-                        Try {
-                            if ($Options.EnableDiagramDebug) {
-                                $Graph = Get-AbrVb365Diagram -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All" -EnableEdgeDebug -EnableSubGraphDebug
-                            } else {
-                                $Graph = Get-AbrVb365Diagram -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All"
-                            }
-                        } Catch {
-                            Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
+                    try {
+                        try {
+                            $Graph = Get-AbrVb365Diagram @DiagramParams
+                        } catch {
+                            Write-PScriboMessage -IsWarning "Unable to generate the Infrastructure Diagram: $($_.Exception.Message)"
                         }
+
                         if ($Graph) {
                             If ((Get-DiaImagePercent -GraphObj $Graph).Width -gt 1500) { $ImagePrty = 50 } else { $ImagePrty = 50 }
                             Section -Style Heading3 "Infrastructure Diagram." {
@@ -114,8 +132,8 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                             }
                             BlankLine
                         }
-                    } Catch {
-                        Write-PScriboMessage -IsWarning "Infrastructure Diagram Section: $($_.Exception.Message)"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
                     }
                 }
             }
