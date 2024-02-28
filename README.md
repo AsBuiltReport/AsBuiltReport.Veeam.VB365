@@ -63,6 +63,8 @@ PowerShell 5.1, and the following PowerShell modules are required for generating
 
 - [Veeam.Archiver.PowerShell Module](https://helpcenter.veeam.com/docs/vbo365/powershell/getting_started.html?ver=70)
 - [PScriboCharts Module](https://github.com/iainbrighton/PScriboCharts)
+- [PSGraph Module](https://github.com/KevinMarquette/PSGraph)
+- [Diagrammer.Core Module](https://github.com/rebelinux/Diagrammer.Core)
 - [AsBuiltReport.Veeam.VB365 Module](https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/)
 
 ### :closed_lock_with_key: Required Privileges
@@ -126,10 +128,11 @@ The **Report** schema provides configuration of the Veeam VB365 report informati
 
 The **Options** schema allows certain options within the report to be toggled on or off.
 
-| Sub-Schema       | Setting    | Default | Description                                                       |
-| ---------------- | ---------- | ------- | ----------------------------------------------------------------- |
-| BackupServerPort | TCP Port   | 9191    | Used to specify the backup service's custom port.                 |
-| EnableDiagrams   | true/false | false   | Toggle to enable/disable the creation of infrastructure diagram. |
+| Sub-Schema          | Setting    | Default | Description                                                      |
+| ------------------- | ---------- | ------- | ---------------------------------------------------------------- |
+| BackupServerPort    | TCP Port   | 9191    | Used to specify the backup service's custom port.                |
+| EnableDiagrams      | true/false | false   | Toggle to enable/disable the creation of infrastructure diagram. |
+| EnableDiagramsDebug | true/false | false   | Toggle to enable/disable diagram debug option.                   |
 
 
 <!-- ********** Add/Remove the number of InfoLevels as required ********** -->

@@ -339,10 +339,15 @@ function Get-AbrVb365Diagram {
                         Node VB365Server @{Label = Get-DiaNodeIcon -Rows $ServerVersion -ImagesObj $Images -Name $VeeamBackupServer -IconType "VB365_Server" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
 
                         # Proxy Graphviz Cluster
-                        if ($Proxies) {
+                        if ($Proxie) {
                             SubGraph ProxyServer -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Proxies" -IconType "VB365_Proxy" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
                                 Node Proxies @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject ($Proxies.HostName | ForEach-Object { $_.split('.')[0] }) -Align "Center" -iconType "VB365_Proxy_Server" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                            }
+                        } else {
+                            SubGraph ProxyServer -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Proxies" -IconType "VB365_Proxy" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+
+                                Node -Name Proxies -Attributes @{Label = 'No Backup Proxies'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
                             }
                         }
 
@@ -352,6 +357,11 @@ function Get-AbrVb365Diagram {
 
                                 Node Repositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $Repositories.Name -Align "Center" -iconType "VB365_Windows_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
                             }
+                        } else {
+                            SubGraph Repos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Repositories" -IconType "VB365_Repository" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+
+                                Node -Name Repositories -Attributes @{Label = 'No Backup Repositories'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
+                            }
                         }
 
                         # Object Repositories Graphviz Cluster
@@ -359,6 +369,11 @@ function Get-AbrVb365Diagram {
                             SubGraph ObjectRepos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Object Repositories" -IconType "VB365_Object_Support" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
                                 Node ObjectRepositories @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $ObjectRepositories.Name -Align "Center" -iconType "VB365_Object_Repository" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                            }
+                        } else {
+                            SubGraph ObjectRepos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Object Repositories" -IconType "VB365_Object_Support" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+
+                                Node -Name ObjectRepositories -Attributes @{Label = 'No Object Repositories'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
                             }
                         }
 
@@ -402,16 +417,27 @@ function Get-AbrVb365Diagram {
 
                         # Connect Veeam Backup server to the Dummy line
                         Edge -From VB365Server -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'filled' }
+
                         # Connect Veeam Backup Server to Organization Graphviz Cluster
-                        Edge -To VB365Server -From OnpremisesOrg @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42' }
-                        # Connect Veeam Proxies Server to the Dummy line
-                        Edge -From VB365ProxyPoint -To Proxies:EdgeDot @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
-                        # Connect Veeam Repository to the Dummy line
-                        Edge -From VB365RepoPoint -To Repositories:Edgedot @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
-                        # Connect Veeam Object Repository to the Dummy line
-                        if ($ObjectRepositories) {
-                            Edge -To VB365RepoPoint -From ObjectRepositories:Edgedot @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
+                        if ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }) {
+                            Edge -To VB365Server -From OnpremisesOrg @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42' }
+                        } elseif ($Organizations | Where-Object { $_.Type -eq 'Office365' }) {
+                            Edge -To VB365Server -From Microsoft365Org @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42' }
+                        } else {
+                            SubGraph Organizations -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Organizations" -IconType "VB365_On_Premises" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+                                Node -Name DummyNoOrganization -Attributes @{Label = 'No Organization'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
+                            }
+                            Edge -To VB365Server -From DummyNoOrganization @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42' }
                         }
+
+                        # Connect Veeam Proxies Server to the Dummy line
+                        Edge -From VB365ProxyPoint -To Proxies @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
+
+                        # Connect Veeam Repository to the Dummy line
+                        Edge -From VB365RepoPoint -To Repositories @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
+
+                        # Connect Veeam Object Repository to the Dummy line
+                        Edge -To VB365RepoPoint -From ObjectRepositories @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
 
                         # End results
                         #
