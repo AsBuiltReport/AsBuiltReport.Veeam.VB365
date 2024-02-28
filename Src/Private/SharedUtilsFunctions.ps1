@@ -194,7 +194,7 @@ function Get-PieChart {
         Name = 'exampleChartSeries'
         XField = $XField
         YField = $YField
-        Palette = 'Blue'
+        Palette = 'Grren'
         ColorPerDataPoint = $true
     }
     $sampleData | Add-PieChartSeries @addChartSeriesParams
@@ -215,7 +215,9 @@ function Get-PieChart {
     }
     Add-ChartTitle @addChartTitleParams
 
-    $ChartImage = Export-Chart -Chart $exampleChart -Path (Get-Location).Path -Format "PNG" -PassThru
+    $TempPath = Resolve-Path ([System.IO.Path]::GetTempPath())
+
+    $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format "PNG" -PassThru
 
     $Base64Image = [convert]::ToBase64String((Get-Content $ChartImage -Encoding byte))
 
@@ -285,7 +287,7 @@ function Get-ColumnChart {
         Name = 'exampleChartSeries'
         XField = $XField
         YField = $YField
-        Palette = 'Blue'
+        Palette = 'Green'
         ColorPerDataPoint = $true
     }
     $sampleData | Add-ColumnChartSeries @addChartSeriesParams
@@ -299,7 +301,9 @@ function Get-ColumnChart {
     }
     Add-ChartTitle @addChartTitleParams
 
-    $ChartImage = Export-Chart -Chart $exampleChart -Path (Get-Location).Path -Format "PNG" -PassThru
+    $TempPath = Resolve-Path ([System.IO.Path]::GetTempPath())
+
+    $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format "PNG" -PassThru
 
     if ($PassThru) {
         Write-Output -InputObject $chartFileItem

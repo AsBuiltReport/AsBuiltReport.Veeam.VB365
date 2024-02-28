@@ -53,43 +53,11 @@ function Get-AbrVb365RestoreSession {
                             'Warning' = ($RestoreSessions.Result | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
                             'Failed' = ($RestoreSessions.Result | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
                         }
-                        $exampleChart = New-Chart -Name RestoreSession -Width 600 -Height 400
 
-                        $addChartAreaParams = @{
-                            Chart = $exampleChart
-                            Name = 'RestoreSessions'
-                            AxisXTitle = 'Result'
-                            AxisYTitle = 'Count'
-                            NoAxisXMajorGridLines = $true
-                            NoAxisYMajorGridLines = $true
-                        }
-                        $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
+                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category'
 
-                        $addChartSeriesParams = @{
-                            Chart = $exampleChart
-                            ChartArea = $exampleChartArea
-                            Name = 'exampleChartSeries'
-                            XField = 'Category'
-                            YField = 'Value'
-                            Palette = 'Green'
-                            ColorPerDataPoint = $true
-                        }
-                        $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category' | Add-ColumnChartSeries @addChartSeriesParams
+                        $chartFileItem = Get-ColumnChart -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'RestoreSessions' -AxisXTitle 'Result' -AxisYTitle 'Count' -ChartTitleName 'RestoreSessions' -ChartTitleText 'Restore Session Results'
 
-                        $addChartTitleParams = @{
-                            Chart = $exampleChart
-                            ChartArea = $exampleChartArea
-                            Name = 'RestoreSessions'
-                            Text = 'Restore Session Results'
-                            Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
-                        }
-                        Add-ChartTitle @addChartTitleParams
-
-                        $chartFileItem = Export-Chart -Chart $exampleChart -Path (Get-Location).Path -Format "PNG" -PassThru
-
-                        if ($PassThru) {
-                            Write-Output -InputObject $chartFileItem
-                        }
                     } catch {
                         Write-PScriboMessage -IsWarning "Restore Sessions Chart Section: $($_.Exception.Message)"
                     }
@@ -97,7 +65,7 @@ function Get-AbrVb365RestoreSession {
                     if ($InfoLevel.Restore.RestoreSession -ge 2) {
                         Paragraph "The following sections detail the configuration of the restore sessions within $VeeamBackupServer backup server."
                         if ($chartFileItem) {
-                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Path $chartFileItem
+                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
                         }
                         foreach ($RestoreSession in $RestoreSessionInfo) {
                             Section -ExcludeFromTOC -Style NOTOCHeading3 "$($RestoreSession.Name)" {
@@ -116,7 +84,7 @@ function Get-AbrVb365RestoreSession {
                         Paragraph "The following table summarizes the configuration of the restore sessions within the $VeeamBackupServer backup server."
                         BlankLine
                         if ($chartFileItem) {
-                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Path $chartFileItem
+                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
                         }
                         BlankLine
                         $TableParams = @{
