@@ -387,7 +387,7 @@ function Get-AbrVb365Diagram {
                         Node $Node -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
 
                         $NodeStartEnd = @('VB365StartPoint', 'VB365EndPointSpace')
-                        Node $NodeStartEnd -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
+                        Node $NodeStartEnd -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebugEdge.color; fillColor = $NodeDebugEdge.style; shape = $NodeDebugEdge.shape }
 
                         # Put the dummy node in the same rank to be able to create a horizontal line
                         Rank VB365ServerPointSpace, VB365ProxyPoint, VB365ProxyPointSpace, VB365RepoPoint, VB365StartPoint, VB365EndPointSpace
@@ -412,20 +412,49 @@ function Get-AbrVb365Diagram {
                         if ($ObjectRepositories) {
                             Edge -To VB365RepoPoint -From ObjectRepositories:Edgedot @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
                         }
+
+                        # End results
                         #
                         #
+                        #
+                        #
+                        #                               |---------------------------------------------------|
+                        #                               |  |---------------------------------------------|  |
+                        #                               |  |      Subgraph Logo |      Organization      |  |
+                        #                               |  |---------------------------------------------|  |
+                        #        ----------------------o|  |   Onpremise Table  |  Microsoft 365 Table   |  |
+                        #        |                      |  |---------------------------------------------|  |
+                        #        |                      |---------------------------------------------------|
+                        #        |                                 Organization Graphviz Cluster
+                        #        |
+                        #       \-/
+                        #        |
+                        # |--------------|
+                        # |     ICON     |
+                        # |--------------|
+                        # | VB365 Server |
+                        # |--------------|
+                        # |   Version:   |
+                        # |--------------|
+                        #       O
                         #       |
                         #       |
                         # VB365StartPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
+                        #                                                      |
+                        #                                                      |
+                        #                                                      O
+                        #                                   |------------------------------------|
+                        #                                   |  |------------------------------|  |
+                        #                                   |  |      ICON    |     ICON      |  |
+                        #                                   |  |------------------------------|  |
+                        #                                   |  | Proxy Server | Proxy Server  |  |
+                        #                                   |  |------------------------------|  |
+                        #                                   |  | Subgraph Logo | Backup Proxy |  |
+                        #                                   |  |------------------------------|  |
+                        #                                   |------------------------------------|
+                        #                                           Proxy Graphviz Cluster
                         #
                         #
-
-                        # $VB365BackupInfra = Get-DiagVB365BackupInfra | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch
-                        # if ($VB365BackupInfra) {
-                        #     $VB365BackupInfra
-                        # } else {
-                        #     Write-Warning "No Backup Infrastructure available to diagram"
-                        # }
                     }
                 }
             }
