@@ -79,26 +79,44 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             Get-AbrVb365RestorePoint
 
             if ($Options.EnableDiagrams) {
-                Try {
+                if ($Options.ExportDiagrams) {
                     Try {
                         if ($Options.EnableDiagramDebug) {
-                            $Graph = Get-AbrVb365Diagram -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All" -EnableEdgeDebug -EnableSubGraphDebug
+                            $Graph = Get-AbrVb365Diagram -Format png -Direction top-to-bottom -DiagramType "Backup-to-All" -EnableEdgeDebug -EnableSubGraphDebug -OutputFolderPath (Get-Location).Path -FileName 'AsBuiltReport.Veeam.VB365.png'
+                            if ($Graph) {
+                                Write-Information "Saved 'AsBuiltReport.Veeam.VB365.png' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                            }
                         } else {
-                            $Graph = Get-AbrVb365Diagram -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All"
+                            $Graph = Get-AbrVb365Diagram -Format png -Direction top-to-bottom -DiagramType "Backup-to-All" -OutputFolderPath (Get-Location).Path -FileName 'AsBuiltReport.Veeam.VB365.png'
+                            if ($Graph) {
+                                Write-Information "Saved 'AsBuiltReport.Veeam.VB365.png' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                            }
                         }
                     } Catch {
                         Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
                     }
-                    if ($Graph) {
-                        If ((Get-DiaImagePercent -GraphObj $Graph).Width -gt 1500) { $ImagePrty = 50 } else { $ImagePrty = 50 }
-                        Section -Style Heading3 "Infrastructure Diagram." {
-                            Image -Base64 $Graph -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
-                            Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
+                } else {
+                    Try {
+                        Try {
+                            if ($Options.EnableDiagramDebug) {
+                                $Graph = Get-AbrVb365Diagram -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All" -EnableEdgeDebug -EnableSubGraphDebug
+                            } else {
+                                $Graph = Get-AbrVb365Diagram -Format base64 -Direction top-to-bottom -DiagramType "Backup-to-All"
+                            }
+                        } Catch {
+                            Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
                         }
-                        BlankLine
+                        if ($Graph) {
+                            If ((Get-DiaImagePercent -GraphObj $Graph).Width -gt 1500) { $ImagePrty = 50 } else { $ImagePrty = 50 }
+                            Section -Style Heading3 "Infrastructure Diagram." {
+                                Image -Base64 $Graph -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
+                                Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
+                            }
+                            BlankLine
+                        }
+                    } Catch {
+                        Write-PScriboMessage -IsWarning "Infrastructure Diagram Section: $($_.Exception.Message)"
                     }
-                } Catch {
-                    Write-PScriboMessage -IsWarning "Infrastructure Diagram Section: $($_.Exception.Message)"
                 }
             }
         }
