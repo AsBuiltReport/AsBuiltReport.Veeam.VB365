@@ -170,7 +170,7 @@ function Get-AbrVb365Diagram {
             Mandatory = $true,
             HelpMessage = 'Controls type of Veeam VB365 generated diagram'
         )]
-        [ValidateSet('Backup-to-Tape', 'Backup-to-File-Proxy', 'Backup-to-HyperV-Proxy', 'Backup-to-vSphere-Proxy', 'Backup-to-Repository', 'Backup-to-Sobr', 'Backup-to-WanAccelerator', 'Backup-to-ProtectedGroup', 'Backup-to-All')]
+        [ValidateSet('Backup-to-All')]
         [string] $DiagramType,
 
         [Parameter(
