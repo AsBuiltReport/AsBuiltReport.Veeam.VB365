@@ -91,7 +91,7 @@ function Get-AbrVb365Organization {
                                 $TableParams = @{
                                     Name = "Organization - $($Organization.Name)"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -100,6 +100,7 @@ function Get-AbrVb365Organization {
                                 $Organization | Table @TableParams
 
                                 if ($Organization.Type -eq "Office365") {
+                                    Get-AbrVb365OrganizationRestoreOperator -Organization $Organization.Name
                                     Get-AbrVb365OrganizationSyncState -Organization $Organization.Name
                                     Get-AbrVb365OrganizationEXConnSetting -Organization $Organization.Name
                                     Get-AbrVb365OrganizationSPConnSetting -Organization $Organization.Name
