@@ -59,7 +59,7 @@ function Get-AbrVb365CloudCredential {
                                 $TableParams = @{
                                     Name = "Cloud Credential - $($CloudCredential.'Access Key')"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"

@@ -95,7 +95,7 @@ function Get-AbrVb365BackupJob {
                                 $TableParams = @{
                                     Name = "Backup Job - $($BackupJob.Name)"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"

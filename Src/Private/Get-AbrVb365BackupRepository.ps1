@@ -84,7 +84,7 @@ function Get-AbrVB365BackupRepository {
                                 $TableParams = @{
                                     Name = "Repository - $($Repository.Name)"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"

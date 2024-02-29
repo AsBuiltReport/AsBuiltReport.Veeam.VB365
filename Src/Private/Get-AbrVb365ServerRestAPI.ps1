@@ -44,7 +44,7 @@ function Get-AbrVB365ServerRestAPI {
                     $TableParams = @{
                         Name = "RESTful API - $VeeamBackupServer"
                         List = $true
-                        ColumnWidths = 50, 50
+                        ColumnWidths = 40, 60
                     }
                     if ($Report.ShowTableCaptions) {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
