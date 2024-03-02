@@ -5,7 +5,7 @@ function Get-AbrVb365Organization {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -24,7 +24,7 @@ function Get-AbrVb365Organization {
 
     process {
         try {
-            $Organizations = Get-VBOOrganization | Sort-Object -Property Name
+            $script:Organizations = Get-VBOOrganization | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($Organizations)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Backup Organization."
                 Section -Style Heading2 'Organizations' {
@@ -46,8 +46,6 @@ function Get-AbrVb365Organization {
                             'Skip Revocation Check' = ConvertTo-TextYN $Organization.SkipRevocationCheck
                             'Is Exchange Server' = ConvertTo-TextYN $Organization.IsExchange
                             'Is SharePoint' = ConvertTo-TextYN $Organization.IsSharePoint
-                            'Backup Accounts' = $Organization.BackupAccounts
-                            'Backup Applications' = $Organization.BackupApplications
                             'Backup Teams' = ConvertTo-TextYN $Organization.BackupTeams
                             'Backup Teams Chats' = ConvertTo-TextYN $Organization.BackupTeamsChats
                             'Grant Access To Site Collections' = ConvertTo-TextYN $Organization.GrantAccessToSiteCollections
@@ -58,8 +56,6 @@ function Get-AbrVb365Organization {
                         if ($inObj.Type -ne "Office365") {
                             $inObj.remove("Backup Teams")
                             $inObj.remove("Backup Teams Chats")
-                            $inObj.remove("Backup Applications")
-                            $inObj.remove("Backup Accounts")
                             $inObj.remove("Region")
                             $inObj.remove("Office Name")
                             $inObj.remove("Grant Access To Site Collections")
@@ -91,7 +87,7 @@ function Get-AbrVb365Organization {
                                 $TableParams = @{
                                     Name = "Organization - $($Organization.Name)"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -100,6 +96,8 @@ function Get-AbrVb365Organization {
                                 $Organization | Table @TableParams
 
                                 if ($Organization.Type -eq "Office365") {
+                                    Get-AbrVb365OrganizationBackupApplication -Organization $Organization.Name
+                                    Get-AbrVb365OrganizationRestoreOperator -Organization $Organization.Name
                                     Get-AbrVb365OrganizationSyncState -Organization $Organization.Name
                                     Get-AbrVb365OrganizationEXConnSetting -Organization $Organization.Name
                                     Get-AbrVb365OrganizationSPConnSetting -Organization $Organization.Name

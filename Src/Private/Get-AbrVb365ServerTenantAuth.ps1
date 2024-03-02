@@ -45,7 +45,7 @@ function Get-AbrVB365ServerTenantAuth {
                             $TableParams = @{
                                 Name = "Tenant Authentication - $VeeamBackupServer"
                                 List = $true
-                                ColumnWidths = 50, 50
+                                ColumnWidths = 40, 60
                             }
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -69,7 +69,7 @@ function Get-AbrVB365ServerTenantAuth {
                             $TableParams = @{
                                 Name = "Restore Operator Authentication - $VeeamBackupServer"
                                 List = $true
-                                ColumnWidths = 50, 50
+                                ColumnWidths = 40, 60
                             }
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"

@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.0
         Author:         Jonathan Colon
         Twitter:
         Github:
@@ -21,21 +21,21 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
         [PSCredential] $Credential
     )
 
-    Write-PScriboMessage -IsWarning "Please refer to the AsBuiltReport.Veeam.VB365 github website for more detailed information about this project."
-    Write-PScriboMessage -IsWarning "Do not forget to update your report configuration file after each new version release."
-    Write-PScriboMessage -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365"
-    Write-PScriboMessage -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues"
+    Write-PScriboMessage -Plugin "Module" -IsWarning "Please refer to the AsBuiltReport.Veeam.VB365 github website for more detailed information about this project."
+    Write-PScriboMessage -Plugin "Module" -IsWarning "Do not forget to update your report configuration file after each new version release."
+    Write-PScriboMessage -Plugin "Module" -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365"
+    Write-PScriboMessage -Plugin "Module" -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues"
 
     # Check the current AsBuiltReport.Veeam.VB365 module
     Try {
         $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Veeam.VB365 -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
 
         if ($InstalledVersion) {
-            Write-PScriboMessage -IsWarning "AsBuiltReport.Veeam.VB365 $($InstalledVersion.ToString()) is currently installed."
+            Write-PScriboMessage -Plugin "Module" -IsWarning "AsBuiltReport.Veeam.VB365 $($InstalledVersion.ToString()) is currently installed."
             $LatestVersion = Find-Module -Name AsBuiltReport.Veeam.VB365 -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
             if ($LatestVersion -gt $InstalledVersion) {
-                Write-PScriboMessage -IsWarning "AsBuiltReport.Veeam.VB365 $($LatestVersion.ToString()) is available."
-                Write-PScriboMessage -IsWarning "Run 'Update-Module -Name AsBuiltReport.Veeam.VB365 -Force' to install the latest version."
+                Write-PScriboMessage -Plugin "Module" -IsWarning "AsBuiltReport.Veeam.VB365 $($LatestVersion.ToString()) is available."
+                Write-PScriboMessage -Plugin "Module" -IsWarning "Run 'Update-Module -Name AsBuiltReport.Veeam.VB365 -Force' to install the latest version."
             }
         }
     } Catch {
@@ -75,8 +75,69 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             Get-AbrVb365BackupRepository
             Get-AbrVb365Organization
             Get-AbrVb365BackupJob
-        }
+            Get-AbrVb365RestoreSession
+            Get-AbrVb365RestorePoint
 
+            if ($Options.EnableDiagrams) {
+
+                $DiagramParams = @{
+                    Direction = 'top-to-bottom'
+                    DiagramType = "Backup-to-All"
+                }
+
+                if ($Options.ExportDiagrams) {
+                    $DiagramParams.Add('Format', "png")
+                    $DiagramParams.Add('FileName','AsBuiltReport.Veeam.VB365.png')
+                    $DiagramParams.Add('OutputFolderPath', (Get-Location).Path)
+                } else {
+                    $DiagramParams.Add('Format', "base64")
+                }
+
+                if ($Options.EnableDiagramDebug) {
+
+                    $DiagramParams.Add('EnableEdgeDebug', $True)
+                    $DiagramParams.Add('EnableSubGraphDebug', $True)
+
+                }
+
+                if ($Options.EnableDiagramSignature) {
+                    $DiagramParams.Add('Signature', $True)
+                    $DiagramParams.Add('AuthorName', $Options.SignatureAuthorName)
+                    $DiagramParams.Add('CompanyName', $Options.SignatureCompanyName)
+                }
+
+                if ($Options.ExportDiagrams) {
+                    Try {
+                        $Graph = Get-AbrVb365Diagram @DiagramParams
+                        if ($Graph) {
+                            Write-Information "Saved 'AsBuiltReport.Veeam.VB365.png' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                        }
+                    } Catch {
+                        Write-PScriboMessage -IsWarning "Unable to export the Infrastructure Diagram: $($_.Exception.Message)"
+                    }
+
+                } else {
+                    try {
+                        try {
+                            $Graph = Get-AbrVb365Diagram @DiagramParams
+                        } catch {
+                            Write-PScriboMessage -IsWarning "Unable to generate the Infrastructure Diagram: $($_.Exception.Message)"
+                        }
+
+                        if ($Graph) {
+                            If ((Get-DiaImagePercent -GraphObj $Graph).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
+                            Section -Style Heading3 "Infrastructure Diagram." {
+                                Image -Base64 $Graph -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
+                                Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
+                            }
+                            BlankLine
+                        }
+                    } catch {
+                        Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
+                    }
+                }
+            }
+        }
     }
     #endregion foreach loop
 }

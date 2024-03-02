@@ -24,7 +24,7 @@ function Get-AbrVB365Proxy {
 
     process {
         try {
-            $Proxies = Get-VBOProxy -WarningAction SilentlyContinue | Sort-Object -Property Hostname
+            $script:Proxies = Get-VBOProxy -WarningAction SilentlyContinue | Sort-Object -Property Hostname
             if (($InfoLevel.Infrastructure.Proxy -gt 0) -and ($Proxies)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Proxy information."
                 Section -Style Heading2 'Backup Proxies' {
@@ -55,7 +55,7 @@ function Get-AbrVB365Proxy {
                                 $TableParams = @{
                                     Name = "Backup Proxy - $($Proxy.Name)"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"

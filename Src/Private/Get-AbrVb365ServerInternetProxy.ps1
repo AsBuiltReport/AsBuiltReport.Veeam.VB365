@@ -41,7 +41,7 @@ function Get-AbrVB365ServerInternetProxy {
                     $TableParams = @{
                         Name = "Internet Proxy - $VeeamBackupServer"
                         List = $true
-                        ColumnWidths = 50, 50
+                        ColumnWidths = 40, 60
                     }
                     if ($Report.ShowTableCaptions) {
                         $TableParams['Caption'] = "- $($TableParams.Name)"

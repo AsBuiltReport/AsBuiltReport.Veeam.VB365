@@ -5,7 +5,7 @@ function Get-AbrVb365BackupJob {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -70,44 +70,17 @@ function Get-AbrVb365BackupJob {
                             $Alljobs += (Get-VBOCopyJob -ErrorAction SilentlyContinue).LastStatus
                         }
 
-                        $sampleData = $Alljobs | Group-Object
-                        $exampleChart = New-Chart -Name BackupJobs -Width 600 -Height 400
-
-                        $addChartAreaParams = @{
-                            Chart = $exampleChart
-                            Name = 'BackupJobs'
-                            AxisXTitle = 'Status'
-                            AxisYTitle = 'Count'
-                            NoAxisXMajorGridLines = $true
-                            NoAxisYMajorGridLines = $true
+                        $sampleData = @{
+                            'Success' = ($Alljobs | Where-Object { $_ -eq "Success" } | Measure-Object).Count
+                            'Warning' = ($Alljobs | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
+                            'Failed' = ($Alljobs | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
+                            'Stopped' = ($Alljobs | Where-Object { $_ -eq "Stopped" } | Measure-Object).Count
                         }
-                        $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
 
-                        $addChartSeriesParams = @{
-                            Chart = $exampleChart
-                            ChartArea = $exampleChartArea
-                            Name = 'exampleChartSeries'
-                            XField = 'Name'
-                            YField = 'Count'
-                            Palette = 'Green'
-                            ColorPerDataPoint = $true
-                        }
-                        $sampleData | Add-ColumnChartSeries @addChartSeriesParams
+                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category'
 
-                        $addChartTitleParams = @{
-                            Chart = $exampleChart
-                            ChartArea = $exampleChartArea
-                            Name = 'BackupJob'
-                            Text = 'Jobs Latest Result'
-                            Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
-                        }
-                        Add-ChartTitle @addChartTitleParams
+                        $chartFileItem = Get-ColumnChart -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'BackupJobs' -AxisXTitle 'Status' -AxisYTitle 'Count' -ChartTitleName 'BackupJob' -ChartTitleText 'Jobs Latest Results'
 
-                        $chartFileItem = Export-Chart -Chart $exampleChart -Path (Get-Location).Path -Format "PNG" -PassThru
-
-                        if ($PassThru) {
-                            Write-Output -InputObject $chartFileItem
-                        }
                     } catch {
                         Write-PScriboMessage -IsWarning "Backup Copy Chart Section: $($_.Exception.Message)"
                     }
@@ -115,14 +88,14 @@ function Get-AbrVb365BackupJob {
                     if ($InfoLevel.Jobs.BackupJob -ge 2) {
                         Paragraph "The following sections detail the configuration of the backup job within $VeeamBackupServer backup server."
                         if ($chartFileItem) {
-                            Image -Text 'Backup Repository - Diagram' -Align 'Center' -Percent 100 -Path $chartFileItem
+                            Image -Text 'Backup Repository - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
                         }
                         foreach ($BackupJob in $BackupJobInfo) {
                             Section -ExcludeFromTOC -Style NOTOCHeading3 "$($BackupJob.Name)" {
                                 $TableParams = @{
                                     Name = "Backup Job - $($BackupJob.Name)"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -134,7 +107,7 @@ function Get-AbrVb365BackupJob {
                         Paragraph "The following table summarizes the configuration of the backup jobs within the $VeeamBackupServer backup server."
                         BlankLine
                         if ($chartFileItem) {
-                            Image -Text 'Backup Repository - Diagram' -Align 'Center' -Percent 100 -Path $chartFileItem
+                            Image -Text 'Backup Repository - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
                         }
                         BlankLine
                         $TableParams = @{

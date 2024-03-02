@@ -50,11 +50,14 @@ function Get-AbrVB365ServerConfiguration {
                         }
                         $ServerConfigInfo = [PSCustomObject]$InObj
 
+                        if ($HealthCheck.Infrastructure.ServerConfig) {
+                            $ServerConfigInfo | Where-Object { $_.'Server Product Version' -eq '6 or less, please upgrade' } | Set-Style -Style Warning -Property 'Server Product Version'
+                        }
 
                         $TableParams = @{
                             Name = "Server Configuration - $VeeamBackupServer"
                             List = $true
-                            ColumnWidths = 50, 50
+                            ColumnWidths = 40, 60
                         }
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -79,6 +82,9 @@ function Get-AbrVB365ServerConfiguration {
 
                     #Backup Server Restore Portal
                     Get-AbrVb365ServerRestorePortal
+
+                    #Backup Server History Retention Setting
+                    Get-AbrVb365ServerHistorySetting
                 }
             }
         } catch {
