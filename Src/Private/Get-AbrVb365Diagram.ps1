@@ -319,14 +319,14 @@ function Get-AbrVb365Diagram {
             }
 
             if ($Signature) {
-                Write-Verbose "Generating diagram signature"
+                Write-PScriboMessage "Generating diagram signature"
                 if ($CustomSignatureLogo) {
                     $Signature = (Get-DiaHTMLTable -ImagesObj $Images -Rows "Author: $($AuthorName)", "Company: $($CompanyName)" -TableBorder 2 -CellBorder 0 -Align 'left' -Logo $CustomSignatureLogo -URLIcon $URLIcon)
                 } else {
                     $Signature = (Get-DiaHTMLTable -ImagesObj $Images -Rows "Author: $($AuthorName)", "Company: $($CompanyName)" -TableBorder 2 -CellBorder 0 -Align 'left' -Logo "VB365_LOGO_Footer" -URLIcon $URLIcon)
                 }
             } else {
-                Write-Verbose "No diagram signature specified"
+                Write-PScriboMessage "No diagram signature specified"
                 $Signature = " "
             }
 

@@ -9,18 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added Restore Session information
-- Added Restore Point information
-- Added Server Session History Retention
+- Add Restore Session information section
+- Add Restore Point information section
+- Add Server Session History Retention section
+- Add Organization Backup Application section
+- Add Restore Operator Roles section
 - Minor code improvements
-- Added CodeQL security scanning
-- Added Known Issues to the ReadMe file
+- Add CodeQL security scanning
+- Add Known Issues to the ReadMe file
+- Add support for creation of Infrastructure diagrams
+- Add Diagrammer.Core to the module requirements
+
+### Changed
+
+- Increase actions/checkout to v4
 
 ### Fixed
 
 - Fix [#8](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/8)
 - Fix [#9](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/9)
 - Fix [#10](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/10)
+- Fix [#12](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/12)
+- Fix [#13](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/13)
+- Fix [#14](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/14)
+- Fix [#15](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/15)
 
 ## [0.2.0] - 2023-04-22
 
