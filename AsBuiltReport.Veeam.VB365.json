@@ -12,10 +12,11 @@
         "BackupServerPort": 9191,
         "EnableDiagrams": false,
         "EnableDiagramDebug": false,
+        "DiagramWaterMark": "",
         "ExportDiagrams": false,
         "EnableDiagramSignature": false,
-        "SignatureAuthorName": "Consultant Name",
-        "SignatureCompanyName": "Veeam Software"
+        "SignatureAuthorName": "",
+        "SignatureCompanyName": ""
     },
     "InfoLevel": {
         "_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",
