@@ -10,7 +10,7 @@
     },
     "Options": {
         "BackupServerPort": 9191,
-        "EnableDiagrams": false,
+        "EnableDiagrams": true,
         "EnableDiagramDebug": false,
         "DiagramWaterMark": "",
         "ExportDiagrams": false,

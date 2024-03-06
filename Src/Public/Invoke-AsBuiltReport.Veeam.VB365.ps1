@@ -116,6 +116,15 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                         Write-PScriboMessage -IsWarning "Unable to export the Infrastructure Diagram: $($_.Exception.Message)"
                     }
 
+                    if ($Graph) {
+                        If ((Get-DiaImagePercent -ImageInput $Graph.FullName).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
+                        Section -Style Heading3 "Infrastructure Diagram." {
+                            Image -Path $Graph.FullName -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
+                            Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
+                        }
+                        BlankLine
+                    }
+
                 } else {
                     try {
                         try {
