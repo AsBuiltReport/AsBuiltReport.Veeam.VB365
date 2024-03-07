@@ -82,7 +82,7 @@ function Get-AbrVb365Diagram {
             HelpMessage = 'Please provide the diagram output format'
         )]
         [ValidateNotNullOrEmpty()]
-        [ValidateSet('pdf', 'svg', 'png', 'dot', 'base64', 'jpg')]
+        [ValidateSet('pdf', 'svg', 'png', 'dot', 'base64')]
         [Array] $Format = 'pdf',
 
         [Parameter(
@@ -494,6 +494,6 @@ function Get-AbrVb365Diagram {
     }
     end {
         #Export Diagram
-        Export-GraphvizDiagram -GraphObj ($Graph | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch) -ErrorDebug $EnableErrorDebug -Rotate $Rotate -Format $Format -Filename $Filename -OutputFolderPath $OutputFolderPath -WaterMark $Options.DiagramWaterMark -WaterMarkColor "Green" -Verbose:$Verbose
+        Export-GraphvizDiagram -GraphObj ($Graph | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch) -ErrorDebug $EnableErrorDebug -Format $Format -Filename $Filename -OutputFolderPath $OutputFolderPath -WaterMark $Options.DiagramWaterMark -WaterMarkColor "Green"
     }
 }
