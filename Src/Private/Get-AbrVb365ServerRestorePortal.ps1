@@ -24,7 +24,7 @@ function Get-AbrVb365ServerRestorePortal {
 
     process {
         try {
-            $RestorePortal = Get-VBORestorePortalSettings
+            $script:RestorePortal = Get-VBORestorePortalSettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($RestorePortal)) {
                 Write-PScriboMessage "Collecting Veeam VB365 restore portal."
                 Section -Style Heading3 'Restore Portal' {

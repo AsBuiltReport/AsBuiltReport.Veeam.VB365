@@ -227,6 +227,7 @@ function Get-AbrVb365Diagram {
             "VB365_Microsoft_365" = "Cloud.png"
             "Microsoft_365" = "Microsoft_365.png"
             "Datacenter" = "Datacenter.png"
+            "VB365_Restore_Portal" = "Web_console.png"
         }
 
         if (($Format -ne "base64") -and !(Test-Path $OutputFolderPath)) {
@@ -340,9 +341,20 @@ function Get-AbrVb365Diagram {
                         $ServerVersion = @{
                             'Version' = try { (Get-VBOVersion).ProductVersion } catch { 'Unknown' }
                         }
+                        if ($ServerConfigRestAPI.IsServiceEnabled) {
+                            $ServerVersion.Add('RestAPI Port', $ServerConfigRestAPI.HTTPSPort)
+                        }
+
+                        $RestorePortalURL = @{
+                            'Portal URI' = $RestorePortal.PortalUri
+                        }
 
                         # VB365 Server Object
                         Node VB365Server @{Label = Get-DiaNodeIcon -Rows $ServerVersion -ImagesObj $Images -Name $VeeamBackupServer -IconType "VB365_Server" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
+
+                        if ($RestorePortal.IsServiceEnabled) {
+                            Node VB365RestorePortal @{Label = Get-DiaNodeIcon -Rows $RestorePortalURL -ImagesObj $Images -Name 'Self-Service Portal' -IconType "VB365_Restore_Portal" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
+                        }
 
                         # Proxy Graphviz Cluster
                         if ($Proxies) {
@@ -413,6 +425,11 @@ function Get-AbrVb365Diagram {
                         # Put the dummy node in the same rank to be able to create a horizontal line
                         Rank VB365ServerPointSpace, VB365ProxyPoint, VB365ProxyPointSpace, VB365RepoPoint, VB365StartPoint, VB365EndPointSpace
 
+                        if ($RestorePortal.IsServiceEnabled) {
+                            # Put the VB365Server and the VB365RestorePortal in the same level to align it horizontally
+                            Rank VB365RestorePortal,VB365Server
+                        }
+
                         # Connect the Dummy Node in a straight line
                         # VB365StartPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
                         Edge -From VB365StartPoint -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
@@ -424,6 +441,10 @@ function Get-AbrVb365Diagram {
                         # Connect Veeam Backup server to the Dummy line
                         Edge -From VB365Server -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'filled' }
 
+                        # Connect Veeam Backup server to RetorePortal
+                        if ($RestorePortal.IsServiceEnabled) {
+                            Edge -From VB365RestorePortal -To VB365Server @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42' }
+                        }
                         # Connect Veeam Backup Server to Organization Graphviz Cluster
                         if ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }) {
                             Edge -To VB365Server -From OnpremisesOrg @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42' }
