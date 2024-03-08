@@ -212,6 +212,7 @@ function Get-AbrVb365Diagram {
 
     begin {
 
+        # Variable translating Icon to Image Path ($IconPath)
         $script:Images = @{
             "VB365_Server" = "VBR_server.png"
             "VB365_Proxy_Server" = "Proxy_Server.png"
@@ -298,6 +299,7 @@ function Get-AbrVb365Diagram {
 
     process {
 
+        # Graph default atrributes
         $script:Graph = Graph -Name VeeamVB365 -Attributes $MainGraphAttributes {
             # Node default theme
             Node @{
@@ -319,6 +321,7 @@ function Get-AbrVb365Diagram {
                 arrowsize = 1
             }
 
+            # Signature Section
             if ($Signature) {
                 Write-PScriboMessage "Generating diagram signature"
                 if ($CustomSignatureLogo) {
@@ -448,7 +451,7 @@ function Get-AbrVb365Diagram {
 
                         #---------------------------------------------------------------------------------------------#
                         #                             Graphviz Edge Section                                           #
-                        #                   Edges are Graphviz elements used to connect Nodes                         #
+                        #                   Edges are Graphviz elements use to interconnect Nodes                     #
                         #                 Edges can have attribues like Shape, Size, Styles etc..                     #
                         #              PSgraph: https://psgraph.readthedocs.io/en/latest/Command-Edge/                #
                         #                      Graphviz: https://graphviz.org/docs/edges/                             #
@@ -552,7 +555,7 @@ function Get-AbrVb365Diagram {
         }
     }
     end {
-        #Export Diagram
+        #Export  the Diagram
         Export-GraphvizDiagram -GraphObj ($Graph | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch) -ErrorDebug $EnableErrorDebug -Format $Format -Filename $Filename -OutputFolderPath $OutputFolderPath -WaterMark $Options.DiagramWaterMark -WaterMarkColor "Green"
     }
 }
