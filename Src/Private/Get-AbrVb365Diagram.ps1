@@ -331,12 +331,28 @@ function Get-AbrVb365Diagram {
                 $Signature = " "
             }
 
-            # Subgraph used to draw the footer signature (bottom-right corner)
+            #---------------------------------------------------------------------------------------------#
+            #                             Graphviz Clusters (SubGraph) Section                            #
+            #               SubGraph can be use to bungle the Nodes together like a single entity         #
+            #                     SubGraph allow you to have a graph within a graph                       #
+            #                PSgraph: https://psgraph.readthedocs.io/en/latest/Command-SubGraph/          #
+            #                      Graphviz: https://graphviz.org/docs/attrs/cluster/                     #
+            #---------------------------------------------------------------------------------------------#
+
+            # Subgraph OUTERDRAWBOARD1 used to draw the footer signature (bottom-right corner)
             SubGraph OUTERDRAWBOARD1 -Attributes @{Label = $Signature; fontsize = 24; penwidth = 1.5; labelloc = 'b'; labeljust = "r"; style = $SubGraphDebug.style; color = $SubGraphDebug.color } {
-                # Subgraph used to draw the main drawboard.
+                # Subgraph MainGraph used to draw the main drawboard.
                 SubGraph MainGraph -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label $MainGraphLabel -IconType $CustomLogo -URLIcon $URLIcon -IconWidth 250 -IconHeight 80); fontsize = 24; penwidth = 0; labelloc = 't'; labeljust = "c" } {
 
                     if ($DiagramType -eq 'Backup-to-All') {
+
+                        #-----------------------------------------------------------------------------------------------#
+                        #                                Graphviz Node Section                                          #
+                        #                 Nodes are Graphviz elements used to define a object entity                    #
+                        #                Nodes can have attribues like Shape, HTML Labels, Styles etc..                 #
+                        #               PSgraph: https://psgraph.readthedocs.io/en/latest/Command-Node/                 #
+                        #                     Graphviz: https://graphviz.org/doc/info/shapes.html                       #
+                        #-----------------------------------------------------------------------------------------------#
 
                         $ServerVersion = @{
                             'Version' = try { (Get-VBOVersion).ProductVersion } catch { 'Unknown' }
@@ -427,8 +443,16 @@ function Get-AbrVb365Diagram {
 
                         if ($RestorePortal.IsServiceEnabled) {
                             # Put the VB365Server and the VB365RestorePortal in the same level to align it horizontally
-                            Rank VB365RestorePortal,VB365Server
+                            Rank VB365RestorePortal, VB365Server
                         }
+
+                        #---------------------------------------------------------------------------------------------#
+                        #                             Graphviz Edge Section                                           #
+                        #                   Edges are Graphviz elements used to connect Nodes                         #
+                        #                 Edges can have attribues like Shape, Size, Styles etc..                     #
+                        #              PSgraph: https://psgraph.readthedocs.io/en/latest/Command-Edge/                #
+                        #                      Graphviz: https://graphviz.org/docs/edges/                             #
+                        #---------------------------------------------------------------------------------------------#
 
                         # Connect the Dummy Node in a straight line
                         # VB365StartPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
@@ -466,15 +490,15 @@ function Get-AbrVb365Diagram {
                         # Connect Veeam Object Repository to the Dummy line
                         Edge -To VB365RepoPoint -From ObjectRepositories @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
 
-                        # End results
+                        # End results example
                         #
+                        #------------------------------------------------------------------------------------------------------------------------------------
                         #
-                        #
-                        #
-                        #                               |---------------------------------------------------|
-                        #                               |  |---------------------------------------------|  |
-                        #                               |  |      Subgraph Logo |      Organization      |  |
-                        #                               |  |---------------------------------------------|  |
+                        #------------------------------------------------------------------------------------------------------------------------------------
+                        #                               |---------------------------------------------------|                        ^
+                        #                               |  |---------------------------------------------|  |                        |
+                        #                               |  |      Subgraph Logo |      Organization      |  |                        |
+                        #                               |  |---------------------------------------------|  |               MainGraph Cluster Board
                         #        ----------------------o|  |   Onpremise Table  |  Microsoft 365 Table   |  |
                         #        |                      |  |---------------------------------------------|  |
                         #        |                      |---------------------------------------------------|
@@ -485,29 +509,43 @@ function Get-AbrVb365Diagram {
                         # |--------------|
                         # |     ICON     |
                         # |--------------|
-                        # | VB365 Server |
+                        # | VB365 Server | <--- Graphviz Node Example
                         # |--------------|
                         # |   Version:   |
                         # |--------------|
-                        #       O
-                        #       |
-                        #       |
+                        #       O                                                                                                          Dummy Nodes
+                        #       |                                                                                                               |
+                        #       |                                                                                                               |
+                        #       |                                                                                                              \|/
                         # VB365StartPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
                         #                                                      |
+                        #                                                      | <--- Graphviz Edge Example
                         #                                                      |
                         #                                                      O
                         #                                   |------------------------------------|
                         #                                   |  |------------------------------|  |
                         #                                   |  |      ICON    |     ICON      |  |
                         #                                   |  |------------------------------|  |
-                        #                                   |  | Proxy Server | Proxy Server  |  |
+                        #                                   |  | Proxy Server | Proxy Server  |  | <--- Graphviz Cluster Example
                         #                                   |  |------------------------------|  |
                         #                                   |  | Subgraph Logo | Backup Proxy |  |
                         #                                   |  |------------------------------|  |
                         #                                   |------------------------------------|
                         #                                           Proxy Graphviz Cluster
                         #
-                        #
+                        #--------------------------------------------------------------------------------------------------------------------------------------
+                        #                                                                                                       |---------------------------|
+                        #                                                                                                       |---------                  |
+                        #                                                                                                       |        |    Author Name   |
+                        #                                                                                      Signature -----> |  Logo  |                  |
+                        #                                                                                                       |        |    Company Name  |
+                        #                                                                                                       |---------                  |
+                        #                                                                                                       |---------------------------|
+                        #--------------------------------------------------------------------------------------------------------------------------------------
+                        #                                                                                                                    ^
+                        #                                                                                                                    |
+                        #                                                                                                                    |
+                        #                                                                                                      OUTERDRAWBOARD1 Cluster Board
                     }
                 }
             }

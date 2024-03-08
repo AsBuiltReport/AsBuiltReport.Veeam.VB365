@@ -56,6 +56,5 @@ function Get-AbrVB365ServerRestAPI {
             Write-PScriboMessage -IsWarning "RESTful API Section: $($_.Exception.Message)"
         }
     }
-
     end {}
 }

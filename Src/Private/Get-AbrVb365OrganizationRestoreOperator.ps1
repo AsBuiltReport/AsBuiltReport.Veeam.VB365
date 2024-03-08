@@ -31,7 +31,7 @@ function Get-AbrVb365OrganizationRestoreOperator {
     process {
         try {
             $Organizations = Get-VBOOrganization -Name $Organization
-            $RestoreOperators = try { Get-VBORbacRole -Organization $Organizations | Sort-Object -Property Name} catch { Out-Null }
+            $script:RestoreOperators = try { Get-VBORbacRole -Organization $Organizations | Sort-Object -Property Name} catch { Out-Null }
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($RestoreOperators)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Office365 Restore Operators Settings."
                 Section -Style Heading4 'Restore Operators' {
