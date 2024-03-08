@@ -229,6 +229,8 @@ function Get-AbrVb365Diagram {
             "Microsoft_365" = "Microsoft_365.png"
             "Datacenter" = "Datacenter.png"
             "VB365_Restore_Portal" = "Web_console.png"
+            "VB365_User_Group" = "User_Group.png"
+            "VB365_User" = "User.png"
         }
 
         if (($Format -ne "base64") -and !(Test-Path $OutputFolderPath)) {
@@ -286,7 +288,7 @@ function Get-AbrVb365Diagram {
             overlap = 'false'
             splines = $EdgeType
             penwidth = 1.5
-            fontname = "Tahoma Black"
+            fontname = "Segoe UI"
             fontcolor = '#005f4b'
             fontsize = 32
             style = "dashed"
@@ -317,7 +319,7 @@ function Get-AbrVb365Diagram {
                 dir = 'both'
                 arrowtail = 'dot'
                 color = '#71797E'
-                penwidth = 2
+                penwidth = 3
                 arrowsize = 1
             }
 
@@ -388,6 +390,23 @@ function Get-AbrVb365Diagram {
                             }
                         }
 
+                        # Restore Operator Graphviz Cluster
+                        $RestoreOperators = @{
+                            id = '1341113'
+                            Name = "RestoreOperators1", "RestoreOperators2", "RestoreOperators3", "RestoreOperators4", "RestoreOperators5", "RestoreOperators6", "RestoreOperators7"
+                        }
+                        if ($RestoreOperators) {
+                            SubGraph RestoreOp -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Restore Operators" -IconType "VB365_User_Group" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
+
+                                Node RestoreOperators @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $RestoreOperators.Name -Align "Center" -iconType "VB365_User" -columnSize 3 -URLIcon $URLIcon -MultiIcon); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+                            }
+                        } else {
+                            SubGraph RestoreOp -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Restore Operators" -IconType "VB365_User_Group" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
+
+                                Node -Name RestoreOperators -Attributes @{Label = 'No Restore Operators'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
+                            }
+                        }
+
                         # Repositories Graphviz Cluster
                         if ($Repositories) {
                             SubGraph Repos -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Backup Repositories" -IconType "VB365_Repository" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
@@ -439,7 +458,14 @@ function Get-AbrVb365Diagram {
                         Node $Node -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
 
                         $NodeStartEnd = @('VB365StartPoint', 'VB365EndPointSpace')
-                        Node $NodeStartEnd -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebugEdge.color; fillColor = $NodeDebugEdge.style; shape = $NodeDebugEdge.shape }
+                        Node $NodeStartEnd -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; shape = 'point'; fixedsize = 'true'; width = .2 ; height = .2 }
+
+                        #---------------------------------------------------------------------------------------------#
+                        #                             Graphviz Rank Section                                           #
+                        #                     Rank allow to put Nodes on the same group level                         #
+                        #         PSgraph: https://psgraph.readthedocs.io/en/stable/Command-Rank-Advanced/            #
+                        #                     Graphviz: https://graphviz.org/docs/attrs/rank/                         #
+                        #---------------------------------------------------------------------------------------------#
 
                         # Put the dummy node in the same rank to be able to create a horizontal line
                         Rank VB365ServerPointSpace, VB365ProxyPoint, VB365ProxyPointSpace, VB365RepoPoint, VB365StartPoint, VB365EndPointSpace
@@ -459,14 +485,14 @@ function Get-AbrVb365Diagram {
 
                         # Connect the Dummy Node in a straight line
                         # VB365StartPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
-                        Edge -From VB365StartPoint -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
-                        Edge -From VB365ServerPointSpace -To VB365ProxyPoint @{minlen = 4; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
-                        Edge -From VB365ProxyPoint -To VB365ProxyPointSpace @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
-                        Edge -From VB365ProxyPointSpace -To VB365RepoPoint @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
-                        Edge -From VB365RepoPoint -To VB365EndPointSpace @{minlen = 8; arrowtail = 'none'; arrowhead = 'none'; style = $EdgeDebug.style; color = $EdgeDebug.color }
+                        Edge -From VB365StartPoint -To VB365ServerPointSpace @{minlen = 10; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+                        Edge -From VB365ServerPointSpace -To VB365ProxyPoint @{minlen = 10; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+                        Edge -From VB365ProxyPoint -To VB365ProxyPointSpace @{minlen = 10; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+                        Edge -From VB365ProxyPointSpace -To VB365RepoPoint @{minlen = 10; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+                        Edge -From VB365RepoPoint -To VB365EndPointSpace @{minlen = 10; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
 
                         # Connect Veeam Backup server to the Dummy line
-                        Edge -From VB365Server -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'filled' }
+                        Edge -From VB365Server -To VB365ServerPointSpace @{minlen = 2; arrowtail = 'dot'; arrowhead = 'none'; style = 'dashed' }
 
                         # Connect Veeam Backup server to RetorePortal
                         if ($RestorePortal.IsServiceEnabled) {
@@ -482,6 +508,11 @@ function Get-AbrVb365Diagram {
                                 Node -Name DummyNoOrganization -Attributes @{Label = 'No Organization'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
                             }
                             Edge -To VB365Server -From DummyNoOrganization @{minlen = 2; arrowtail = 'dot'; arrowhead = 'normal'; style = 'dashed'; color = '#DF8c42' }
+                        }
+
+                        # Connect Veeam RestorePortal to the Restore Operators
+                        if ($RestoreOperators) {
+                            Edge -From VB365ServerPointSpace -To RestoreOperators @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
                         }
 
                         # Connect Veeam Proxies Server to the Dummy line
