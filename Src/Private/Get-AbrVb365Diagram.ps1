@@ -288,7 +288,7 @@ function Get-AbrVb365Diagram {
             overlap = 'false'
             splines = $EdgeType
             penwidth = 1.5
-            fontname = "Segoe UI"
+            fontname = "Segoe Ui Black"
             fontcolor = '#005f4b'
             fontsize = 32
             style = "dashed"
@@ -351,6 +351,9 @@ function Get-AbrVb365Diagram {
 
                     if ($DiagramType -eq 'Backup-to-All') {
 
+                        # Used for debugging
+                        # Get-VB365DebugObject
+
                         #-----------------------------------------------------------------------------------------------#
                         #                                Graphviz Node Section                                          #
                         #                 Nodes are Graphviz elements used to define a object entity                    #
@@ -362,18 +365,18 @@ function Get-AbrVb365Diagram {
                         $ServerVersion = @{
                             'Version' = try { (Get-VBOVersion).ProductVersion } catch { 'Unknown' }
                         }
+
                         if ($ServerConfigRestAPI.IsServiceEnabled) {
                             $ServerVersion.Add('RestAPI Port', $ServerConfigRestAPI.HTTPSPort)
-                        }
-
-                        $RestorePortalURL = @{
-                            'Portal URI' = $RestorePortal.PortalUri
                         }
 
                         # VB365 Server Object
                         Node VB365Server @{Label = Get-DiaNodeIcon -Rows $ServerVersion -ImagesObj $Images -Name $VeeamBackupServer -IconType "VB365_Server" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
 
                         if ($RestorePortal.IsServiceEnabled) {
+                            $RestorePortalURL = @{
+                                'Portal URI' = $RestorePortal.PortalUri
+                            }
                             Node VB365RestorePortal @{Label = Get-DiaNodeIcon -Rows $RestorePortalURL -ImagesObj $Images -Name 'Self-Service Portal' -IconType "VB365_Restore_Portal" -Align "Center" -URLIcon $URLIcon; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
                         }
 
@@ -391,10 +394,6 @@ function Get-AbrVb365Diagram {
                         }
 
                         # Restore Operator Graphviz Cluster
-                        $RestoreOperators = @{
-                            id = '1341113'
-                            Name = "RestoreOperators1", "RestoreOperators2", "RestoreOperators3", "RestoreOperators4", "RestoreOperators5", "RestoreOperators6", "RestoreOperators7"
-                        }
                         if ($RestoreOperators) {
                             SubGraph RestoreOp -Attributes @{Label = (Get-DiaHTMLLabel -ImagesObj $Images -Label "Restore Operators" -IconType "VB365_User_Group" -SubgraphLabel -URLIcon $URLIcon); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
@@ -511,9 +510,7 @@ function Get-AbrVb365Diagram {
                         }
 
                         # Connect Veeam RestorePortal to the Restore Operators
-                        if ($RestoreOperators) {
-                            Edge -From VB365ServerPointSpace -To RestoreOperators @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
-                        }
+                        Edge -From VB365ServerPointSpace -To RestoreOperators @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
 
                         # Connect Veeam Proxies Server to the Dummy line
                         Edge -From VB365ProxyPoint -To Proxies @{minlen = 2; arrowtail = 'none'; arrowhead = 'dot'; style = 'dashed' }
