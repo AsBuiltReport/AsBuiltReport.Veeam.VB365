@@ -31,26 +31,26 @@ function Get-AbrVb365OrganizationRestoreOperator {
     process {
         try {
             $Organizations = Get-VBOOrganization -Name $Organization
-            $script:RestoreOperators = try { Get-VBORbacRole -Organization $Organizations | Sort-Object -Property Name} catch { Out-Null }
+            $RestoreOperatorOrgs = try { Get-VBORbacRole -Organization $Organizations | Sort-Object -Property Name} catch { Out-Null }
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($RestoreOperators)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Office365 Restore Operators Settings."
                 Section -Style Heading4 'Restore Operators' {
-                    foreach ($RestoreOperator in $RestoreOperators) {
-                        Section -ExcludeFromTOC -Style NOTOCHeading5 "$($RestoreOperator.Name)" {
-                            $RestoreOperatorInfo = @()
+                    foreach ($RestoreOperatorOrg in $RestoreOperatorOrgs) {
+                        Section -ExcludeFromTOC -Style NOTOCHeading5 "$($RestoreOperatorOrg.Name)" {
+                            $RestoreOperatorOrgsInfo = @()
 
                             $inObj = [ordered] @{
-                                'Role Type' = $RestoreOperator.RoleType
-                                'Operators' = $RestoreOperator.Operators.UserName
-                                'Selected Items' = $RestoreOperator.SelectedItems.UserName
-                                'Excluded Items' = $RestoreOperator.ExcludedItems.UserName
-                                'Description' = $RestoreOperator.Description
+                                'Role Type' = $RestoreOperatorOrg.RoleType
+                                'Operators' = $RestoreOperatorOrg.Operators.UserName
+                                'Selected Items' = $RestoreOperatorOrg.SelectedItems.UserName
+                                'Excluded Items' = $RestoreOperatorOrg.ExcludedItems.UserName
+                                'Description' = $RestoreOperatorOrg.Description
                             }
 
-                            $RestoreOperatorInfo += [PSCustomObject]$InObj
+                            $RestoreOperatorOrgInfo += [PSCustomObject]$InObj
 
                             $TableParams = @{
-                                Name = "Restore Operator - $($RestoreOperator.Name)"
+                                Name = "Restore Operator - $($RestoreOperatorOrg.Name)"
                                 List = $true
                                 ColumnWidths = 40, 60
                             }
@@ -58,7 +58,7 @@ function Get-AbrVb365OrganizationRestoreOperator {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
                             }
 
-                            $RestoreOperatorInfo | Table @TableParams
+                            $RestoreOperatorOrgInfo | Table @TableParams
 
                         }
                     }
