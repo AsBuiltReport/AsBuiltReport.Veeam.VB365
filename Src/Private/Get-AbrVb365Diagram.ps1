@@ -583,6 +583,6 @@ function Get-AbrVb365Diagram {
     }
     end {
         #Export  the Diagram
-        Export-GraphvizDiagram -GraphObj ($Graph | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch) -ErrorDebug $EnableErrorDebug -Format $Format -Filename $Filename -OutputFolderPath $OutputFolderPath -WaterMark $Options.DiagramWaterMark -WaterMarkColor "Green"
+        Export-Diagrammer -GraphObj ($Graph | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch) -ErrorDebug $EnableErrorDebug -Format $Format -Filename $Filename -OutputFolderPath $OutputFolderPath -WaterMark $Options.DiagramWaterMark -WaterMarkColor "Green"
     }
 }
