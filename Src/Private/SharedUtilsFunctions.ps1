@@ -316,3 +316,47 @@ function Get-ColumnChart {
     return $Base64Image
 
 } # end
+
+# Used for debugging
+function Get-VB365DebugObject {
+
+    [CmdletBinding()]
+    param (
+    )
+
+    $script:RestoreOperators = @{
+        Name = "RestoreOperators1", "RestoreOperators2", "RestoreOperators3", "RestoreOperators4", "RestoreOperators5", "RestoreOperators6", "RestoreOperators7"
+    }
+
+    $script:Proxies = @{
+        HostName = "Proxy1", "Proxy2", "Proxy3", "Proxy4", "Proxy5", "Proxy6", "Proxy7"
+    }
+
+    $script:RestorePortal = @{
+        IsServiceEnabled = $true
+        PortalUri = "https://publicurl.internet.com:4443"
+    }
+
+    $script:Repositories = @{
+        Name = "Repository1", "Repository2", "Repository3", "Repository4", "Repository5", "Repository6", "Repository7"
+    }
+
+
+    $script:ObjectRepositories = @{
+        Name = "ObjectRepositor1", "ObjectRepositor2", "ObjectRepositor3", "ObjectRepositor4", "ObjectRepositor5", "ObjectRepositor6", "ObjectRepositor7"
+    }
+
+    $script:Organizations = @()
+    $inOrganizationOffice365Obj = [ordered] @{
+        Name = "ObjectRepositor1","ObjectRepositor2","ObjectRepositor3","ObjectRepositor7","ObjectRepositor8","ObjectRepositor9"
+        Type = "Office365"
+    }
+
+    $inOrganizationOnPremisesObj = [ordered] @{
+        Name = "ObjectRepositor4","ObjectRepositor5","ObjectRepositor6","ObjectRepositor10","ObjectRepositor11","ObjectRepositor12"
+        Type = "OnPremises"
+    }
+
+    $Organizations += [PSCustomObject]$inOrganizationOffice365Obj
+    $Organizations += [PSCustomObject]$inOrganizationOnPremisesObj
+}
