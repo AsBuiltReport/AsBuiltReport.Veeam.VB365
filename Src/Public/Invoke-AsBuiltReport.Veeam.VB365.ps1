@@ -119,6 +119,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
                     if ($Graph) {
                         If ((Get-DiaImagePercent -ImageInput $Graph.FullName).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
+                        PageBreak
                         Section -Style Heading3 "Infrastructure Diagram." {
                             Image -Path $Graph.FullName -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
                             Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
