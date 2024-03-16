@@ -256,12 +256,10 @@ function Get-AbrVb365Diagram {
         if ($EnableSubGraphDebug) {
             $SubGraphDebug = @{style = 'dashed'; color = 'red' }
             $NodeDebug = @{color = 'black'; style = 'red'; shape = 'plain' }
-            $NodeDebugEdge = @{color = 'black'; style = 'red'; shape = 'plain' }
             $IconDebug = $true
         } else {
             $SubGraphDebug = @{style = 'invis'; color = 'gray' }
             $NodeDebug = @{color = 'transparent'; style = 'transparent'; shape = 'point' }
-            $NodeDebugEdge = @{color = 'transparent'; style = 'transparent'; shape = 'none' }
         }
 
         $RootPath = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
