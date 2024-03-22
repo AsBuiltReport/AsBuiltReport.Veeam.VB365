@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationSyncState {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -31,9 +31,9 @@ function Get-AbrVb365OrganizationSyncState {
     process {
         try {
             $Organizations = Get-VBOOrganization -Name $Organization
-            $SyncState = Get-VBOOrganizationSynchronizationState -Organization $Organizations
+            $SyncState = try { Get-VBOOrganizationSynchronizationState -Organization $Organizations } catch { Out-Null }
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($SyncState)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Office365 Synchronization State Settings."
+                Write-PScriboMessage "Collecting Veeam VB365 Office365 Synchronization State Settings."
                 Section -Style Heading4 'Synchronization State' {
                     $StateInfo = @()
                     foreach ($State in $SyncState) {
@@ -49,7 +49,7 @@ function Get-AbrVb365OrganizationSyncState {
                     }
 
                     if ($HealthCheck.Infrastructure.Organization) {
-                        $OrganizationInfo | Where-Object { $_.'Sync Status' -ne 'Success'} | Set-Style -Style Warning -Property 'Sync Status'
+                        $OrganizationInfo | Where-Object { $_.'Sync Status' -ne 'Success' } | Set-Style -Style Warning -Property 'Sync Status'
                     }
 
                     foreach ($State in $StateInfo) {
@@ -57,19 +57,19 @@ function Get-AbrVb365OrganizationSyncState {
                             $TableParams = @{
                                 Name = "Organization - $($State.Organization)"
                                 List = $true
-                                ColumnWidths = 50, 50
+                                ColumnWidths = 40, 60
                             }
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
                             }
 
-                            $State| Table @TableParams
+                            $State | Table @TableParams
                         }
                     }
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Office365 SharePoint Connection Settings Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Office365 SharePoint Connection Settings Section: $($_.Exception.Message)"
         }
     }
 

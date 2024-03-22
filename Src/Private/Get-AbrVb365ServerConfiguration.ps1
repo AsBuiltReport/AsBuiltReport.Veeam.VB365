@@ -5,7 +5,7 @@ function Get-AbrVB365ServerConfiguration {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -25,11 +25,11 @@ function Get-AbrVB365ServerConfiguration {
     process {
         try {
             $ServerConfig = @()
-            $ServerConfig += try {Get-VBOVersion} catch {}
+            $ServerConfig += try { Get-VBOVersion } catch { Out-Null }
             $ServerConfig += Get-VBOSecuritySettings
 
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Server Configuration."
+                Write-PScriboMessage "Collecting Veeam VB365 Server Configuration."
                 Section -Style Heading2 'Server Configuration' {
                     Paragraph "The following sections detail the server configuration of $VeeamBackupServer backup server."
                     BlankLine
@@ -37,9 +37,9 @@ function Get-AbrVB365ServerConfiguration {
                         $ServerConfigInfo = @()
                         $inObj = [ordered] @{
                             'Server Product Version' = Switch ([string]::IsNullOrEmpty($ServerConfig.ProductVersion)) {
-                                $true {'6 or less, please upgrade'}
-                                $false {$ServerConfig.ProductVersion}
-                                default {'Unknown'}
+                                $true { '6 or less, please upgrade' }
+                                $false { $ServerConfig.ProductVersion }
+                                default { 'Unknown' }
 
                             }
                             'Certificate Friendly Name' = $ServerConfig.CertificateFriendlyName
@@ -50,11 +50,14 @@ function Get-AbrVB365ServerConfiguration {
                         }
                         $ServerConfigInfo = [PSCustomObject]$InObj
 
+                        if ($HealthCheck.Infrastructure.ServerConfig) {
+                            $ServerConfigInfo | Where-Object { $_.'Server Product Version' -eq '6 or less, please upgrade' } | Set-Style -Style Warning -Property 'Server Product Version'
+                        }
 
                         $TableParams = @{
                             Name = "Server Configuration - $VeeamBackupServer"
                             List = $true
-                            ColumnWidths = 50, 50
+                            ColumnWidths = 40, 60
                         }
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -79,10 +82,13 @@ function Get-AbrVB365ServerConfiguration {
 
                     #Backup Server Restore Portal
                     Get-AbrVb365ServerRestorePortal
+
+                    #Backup Server History Retention Setting
+                    Get-AbrVb365ServerHistorySetting
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Server Configuration Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Server Configuration Section: $($_.Exception.Message)"
         }
     }
 

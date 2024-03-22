@@ -26,7 +26,7 @@ function Get-AbrVb365BackupCopyJob {
         try {
             $BackupCopyJobs = Get-VBOCopyJob | Sort-Object -Property Name
             if (($InfoLevel.Jobs.BackupCopyJob -gt 0) -and ($BackupCopyJobs)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Backup Copy Jobs."
+                Write-PScriboMessage "Collecting Veeam VB365 Backup Copy Jobs."
                 Section -Style Heading3 'Backup Copy Jobs' {
                     $BackupCopyJobInfo = @()
                     foreach ($BackupCopyJob in $BackupCopyJobs) {
@@ -46,7 +46,7 @@ function Get-AbrVb365BackupCopyJob {
                     }
 
                     if ($HealthCheck.Jobs.BackupCopyJob) {
-                        $BackupCopyJobInfo | Where-Object { $_.'Is Enabled' -eq 'No'} | Set-Style -Style Warning -Property 'Is Enabled'
+                        $BackupCopyJobInfo | Where-Object { $_.'Is Enabled' -eq 'No' } | Set-Style -Style Warning -Property 'Is Enabled'
                         $BackupCopyJobInfo | Where-Object { $_.'Last Status' -ne 'Success' } | Set-Style -Style Warning -Property 'Last Status'
                     }
 
@@ -57,7 +57,7 @@ function Get-AbrVb365BackupCopyJob {
                                 $TableParams = @{
                                     Name = "Backup Copy Job - $($BackupCopyJob.Name)"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -82,7 +82,7 @@ function Get-AbrVb365BackupCopyJob {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Backup Copy Jobs Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Backup Copy Jobs Section: $($_.Exception.Message)"
         }
     }
 

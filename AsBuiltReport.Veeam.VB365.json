@@ -9,11 +9,17 @@
         "ShowTableCaptions": true
     },
     "Options": {
-        "BackupServerPort": 9191
-
+        "BackupServerPort": 9191,
+        "EnableDiagrams": true,
+        "EnableDiagramDebug": false,
+        "DiagramWaterMark": "",
+        "ExportDiagrams": false,
+        "EnableDiagramSignature": false,
+        "SignatureAuthorName": "",
+        "SignatureCompanyName": ""
     },
     "InfoLevel": {
-		"_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",
+        "_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",
         "_comment_": "0 = Disabled, 1 = Enabled / Summary, 2 = Adv Summary, 3 = Detailed, 4 = Adv Detailed, 5 = Comprehensive",
         "Infrastructure": {
             "ServerConfig": 1,
@@ -27,7 +33,10 @@
         "Jobs": {
             "BackupJob": 1,
             "BackupCopyJob": 1
-
+        },
+        "Restore": {
+            "RestoreSession": 1,
+            "RestorePoint": 1
         }
     },
     "HealthCheck": {
@@ -38,13 +47,10 @@
             "ServerConfig": true,
             "Repository": true,
             "Organization": true
-
         },
         "Jobs": {
             "BackupJob": true,
             "BackupCopyJob": true
         }
-
-
     }
 }

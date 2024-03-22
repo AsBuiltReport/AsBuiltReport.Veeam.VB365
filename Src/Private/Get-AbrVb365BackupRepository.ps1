@@ -24,9 +24,9 @@ function Get-AbrVB365BackupRepository {
 
     process {
         try {
-            $Repositories = Get-VBORepository | Sort-Object -Property Name
+            $script:Repositories = Get-VBORepository | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Repository -gt 0) -and ($Repositories)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Backup Repository."
+                Write-PScriboMessage "Collecting Veeam VB365 Backup Repository."
                 Section -Style Heading2 'Backup Repositories' {
                     $RepositoryInfo = @()
                     foreach ($Repository in $Repositories) {
@@ -34,14 +34,14 @@ function Get-AbrVB365BackupRepository {
                             'Name' = $Repository.Name
                             'Path' = $Repository.Path
                             'Object Storage Repository' = Switch ([string]::IsNullOrEmpty($Repository.ObjectStorageRepository)) {
-                                $true {"Disabled"}
-                                $false {$Repository.ObjectStorageRepository}
-                                default {'Unknown'}
+                                $true { "Disabled" }
+                                $false { $Repository.ObjectStorageRepository }
+                                default { 'Unknown' }
                             }
                             'Object Storage Encryption Key' = Switch ($Repository.EnableObjectStorageEncryption) {
-                                $true {(Get-VBOEncryptionKey -id $Repository.ObjectStorageEncryptionKey.id).Description}
-                                $false {"Disabled"}
-                                default {"Unknown"}
+                                $true { (Get-VBOEncryptionKey -Id $Repository.ObjectStorageEncryptionKey.id).Description }
+                                $false { "Disabled" }
+                                default { "Unknown" }
                             }
                             'Is Outdated' = ConvertTo-TextYN $Repository.IsOutdated
                             'Is Out Of Sync' = ConvertTo-TextYN $Repository.IsOutOfSync
@@ -50,20 +50,20 @@ function Get-AbrVB365BackupRepository {
                             'Used Space' = ConvertTo-FileSizeString ($Repository.Capacity - $Repository.FreeSpace)
                             'Is Long Term' = ConvertTo-TextYN $Repository.IsLongTerm
                             'Retention Type' = Switch ($Repository.RetentionType) {
-                                'SnapshotBased' {'Snapshot Based'}
-                                'ItemLevel' {'Item Level'}
-                                default {$Repository.RetentionType}
+                                'SnapshotBased' { 'Snapshot Based' }
+                                'ItemLevel' { 'Item Level' }
+                                default { $Repository.RetentionType }
                             }
                             'Retention Period' = Switch ($Repository.RetentionPeriod) {
-                                "Years1" {'1 Year'}
-                                "Years2" {'2 Years'}
-                                "Years3" {'3 Years'}
-                                "Years5" {'5 Years'}
-                                "Years7" {'7 Years'}
-                                "Years10" {'10 Years'}
-                                "Years25" {'25 Years'}
-                                "KeepForever" {'Keep Forever'}
-                                default {$Repository.RetentionPeriod}
+                                "Years1" { '1 Year' }
+                                "Years2" { '2 Years' }
+                                "Years3" { '3 Years' }
+                                "Years5" { '5 Years' }
+                                "Years7" { '7 Years' }
+                                "Years10" { '10 Years' }
+                                "Years25" { '25 Years' }
+                                "KeepForever" { 'Keep Forever' }
+                                default { $Repository.RetentionPeriod }
                             }
                             'Retention Frequency Type' = $Repository.RetentionFrequencyType
                             'Description' = $Repository.Description
@@ -73,8 +73,8 @@ function Get-AbrVB365BackupRepository {
                     }
 
                     if ($HealthCheck.Infrastructure.Repository) {
-                        $RepositoryInfo | Where-Object { $_.'Is Outdated' -eq 'Yes'} | Set-Style -Style Warning -Property 'Is Outdated'
-                        $RepositoryInfo | Where-Object { $_.'Object Storage Repository' -ne 'Disabled' -and $_.'Object Storage Encryption Key' -eq 'Disabled'} | Set-Style -Style Warning -Property 'Object Storage Encryption Key'
+                        $RepositoryInfo | Where-Object { $_.'Is Outdated' -eq 'Yes' } | Set-Style -Style Warning -Property 'Is Outdated'
+                        $RepositoryInfo | Where-Object { $_.'Object Storage Repository' -ne 'Disabled' -and $_.'Object Storage Encryption Key' -eq 'Disabled' } | Set-Style -Style Warning -Property 'Object Storage Encryption Key'
                     }
 
                     if ($InfoLevel.Infrastructure.Repository -ge 2) {
@@ -84,7 +84,7 @@ function Get-AbrVB365BackupRepository {
                                 $TableParams = @{
                                     Name = "Repository - $($Repository.Name)"
                                     List = $true
-                                    ColumnWidths = 50, 50
+                                    ColumnWidths = 40, 60
                                 }
                                 if ($Report.ShowTableCaptions) {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -109,7 +109,7 @@ function Get-AbrVB365BackupRepository {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Repository Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Repository Section: $($_.Exception.Message)"
         }
     }
 

@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicense {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrVB365InstalledLicense {
     )
 
     begin {
-        Write-PscriboMessage "Discovering Veeam VB365 License information from $System."
+        Write-PScriboMessage "Discovering Veeam VB365 License information from $System."
     }
 
     process {
@@ -35,33 +35,32 @@ function Get-AbrVB365InstalledLicense {
                     try {
                         $Licenses = Get-VBOLicense
                         foreach ($License in $Licenses) {
-                            Write-PscriboMessage "Discovered $($License.LicensedTo) license."
+                            Write-PScriboMessage "Discovered $($License.LicensedTo) license."
                             $inObj = [ordered] @{
                                 'Licensed To' = ConvertTo-EmptyToFiller $License.LicensedTo
                                 'Edition' = ConvertTo-EmptyToFiller $License.Package
                                 'Type' = ConvertTo-EmptyToFiller $License.Type
                                 'Status' = ConvertTo-EmptyToFiller $License.Status
                                 'Expiration Date' = Switch ([string]::IsNullOrEmpty($License.ExpirationDate)) {
-                                    $true {"-"; break}
-                                    default {$License.ExpirationDate.ToShortDateString()}
+                                    $true { "-"; break }
+                                    default { $License.ExpirationDate.ToShortDateString() }
                                 }
                                 'Support Expiration Date' = Switch ([string]::IsNullOrEmpty($License.SupportExpirationDate)) {
-                                    $true {"--"; break}
-                                    default {$License.SupportExpirationDate.ToShortDateString()}
+                                    $true { "--"; break }
+                                    default { $License.SupportExpirationDate.ToShortDateString() }
                                 }
                                 'Contact Person' = ConvertTo-EmptyToFiller $License.ContactPerson
                                 'Total Number' = ConvertTo-EmptyToFiller $License.TotalNumber
                             }
                             $OutObj += [pscustomobject]$inobj
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning "Installed License Information $($License.LicensedTo) Section: $($_.Exception.Message)"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "Installed License Information $($License.LicensedTo) Section: $($_.Exception.Message)"
                     }
 
                     if ($HealthCheck.Infrastructure.License) {
-                        $OutObj | Where-Object { $_.'Status' -eq 'Expired'} | Set-Style -Style Critical -Property 'Status'
-                        $OutObj | Where-Object { $_.'Type' -eq 'Evaluation'} | Set-Style -Style Warning -Property 'Type'
+                        $OutObj | Where-Object { $_.'Status' -eq 'Expired' } | Set-Style -Style Critical -Property 'Status'
+                        $OutObj | Where-Object { $_.'Type' -eq 'Evaluation' } | Set-Style -Style Warning -Property 'Type'
                     }
 
                     $TableParams = @{
@@ -79,7 +78,7 @@ function Get-AbrVB365InstalledLicense {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "License Information Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "License Information Section: $($_.Exception.Message)"
         }
     }
 

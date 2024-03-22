@@ -5,7 +5,7 @@ function Get-AbrVB365ServerFolderExclution {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -27,7 +27,7 @@ function Get-AbrVB365ServerFolderExclution {
             $FolderExclusion = Get-VBOFolderExclusions
             $RetentionExclusion = Get-VBOGlobalRetentionExclusion
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($FolderExclusion -or $RetentionExclusion)) {
-                Write-PscriboMessage "Collecting Veeam VB365 folder exclusions."
+                Write-PScriboMessage "Collecting Veeam VB365 folder exclusions."
                 Section -Style Heading3 'Folders' {
                     if ($FolderExclusion) {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Mailbox Folder Exclusion from Backup' {
@@ -46,7 +46,7 @@ function Get-AbrVB365ServerFolderExclution {
                             $TableParams = @{
                                 Name = "Mailbox Folder Exclusion from Backup - $VeeamBackupServer"
                                 List = $true
-                                ColumnWidths = 50, 50
+                                ColumnWidths = 40, 60
                             }
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -66,7 +66,7 @@ function Get-AbrVB365ServerFolderExclution {
                             $TableParams = @{
                                 Name = "Restore Operator Authentication - $VeeamBackupServer"
                                 List = $true
-                                ColumnWidths = 50, 50
+                                ColumnWidths = 40, 60
                             }
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -77,7 +77,7 @@ function Get-AbrVB365ServerFolderExclution {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Folders Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Folders Section: $($_.Exception.Message)"
         }
     }
 

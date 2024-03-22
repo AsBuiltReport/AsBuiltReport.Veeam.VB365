@@ -5,7 +5,7 @@ function Get-AbrVB365ServerTenantAuth {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.2.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -27,7 +27,7 @@ function Get-AbrVB365ServerTenantAuth {
             $TenantAuth = Get-VBOTenantAuthenticationSettings
             $OperatorAuth = Get-VBOOperatorAuthenticationSettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($TenantAuth -or $OperatorAuth)) {
-                Write-PscriboMessage "Collecting Veeam VB365 Tenant Authentication."
+                Write-PScriboMessage "Collecting Veeam VB365 Tenant Authentication."
                 Section -Style Heading4 'Authentication' {
                     if ($TenantAuth) {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Tenant Authentication' {
@@ -45,7 +45,7 @@ function Get-AbrVB365ServerTenantAuth {
                             $TableParams = @{
                                 Name = "Tenant Authentication - $VeeamBackupServer"
                                 List = $true
-                                ColumnWidths = 50, 50
+                                ColumnWidths = 40, 60
                             }
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -69,7 +69,7 @@ function Get-AbrVB365ServerTenantAuth {
                             $TableParams = @{
                                 Name = "Restore Operator Authentication - $VeeamBackupServer"
                                 List = $true
-                                ColumnWidths = 50, 50
+                                ColumnWidths = 40, 60
                             }
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -80,7 +80,7 @@ function Get-AbrVB365ServerTenantAuth {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "Authentication Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "Authentication Section: $($_.Exception.Message)"
         }
     }
 
