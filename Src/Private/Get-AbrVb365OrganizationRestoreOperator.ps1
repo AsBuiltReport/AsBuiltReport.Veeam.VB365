@@ -37,7 +37,7 @@ function Get-AbrVb365OrganizationRestoreOperator {
                 Section -Style Heading4 'Restore Operators' {
                     foreach ($RestoreOperatorOrg in $RestoreOperatorOrgs) {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 "$($RestoreOperatorOrg.Name)" {
-                            $RestoreOperatorOrgsInfo = @()
+                            $RestoreOperatorOrgInfo = @()
 
                             $inObj = [ordered] @{
                                 'Role Type' = $RestoreOperatorOrg.RoleType
