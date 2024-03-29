@@ -5,7 +5,7 @@ function Get-AbrVB365Proxy {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -51,7 +51,7 @@ function Get-AbrVB365Proxy {
                     if ($InfoLevel.Infrastructure.Proxy -ge 2) {
                         Paragraph "The following sections detail the configuration of the proxy servers within $VeeamBackupServer backup server."
                         foreach ($Proxy in $ProxyInfo) {
-                            Section -ExcludeFromTOC -Style NOTOCHeading3 "$($Proxy.Name)" {
+                            Section -ExcludeFromTOC -Style NOTOCHeading4 "$($Proxy.Name)" {
                                 $TableParams = @{
                                     Name = "Backup Proxy - $($Proxy.Name)"
                                     List = $true

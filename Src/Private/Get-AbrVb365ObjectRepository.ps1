@@ -5,7 +5,7 @@ function Get-AbrVB365ObjectRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -55,7 +55,7 @@ function Get-AbrVB365ObjectRepository {
                     if ($InfoLevel.Infrastructure.Repository -ge 2) {
                         Paragraph "The following sections detail the configuration of the object repository within $VeeamBackupServer backup server."
                         foreach ($ObjectRepository in $ObjectRepositoryInfo) {
-                            Section -ExcludeFromTOC -Style NOTOCHeading3 "$($ObjectRepository.Name)" {
+                            Section -ExcludeFromTOC -Style NOTOCHeading4 "$($ObjectRepository.Name)" {
                                 $TableParams = @{
                                     Name = "Object Repository - $($ObjectRepository.Name)"
                                     List = $true

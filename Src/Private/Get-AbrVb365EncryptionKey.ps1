@@ -5,7 +5,7 @@ function Get-AbrVB365EncryptionKey {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -43,7 +43,7 @@ function Get-AbrVB365EncryptionKey {
                     if ($InfoLevel.Infrastructure.EncryptionKey -ge 2) {
                         Paragraph "The following sections detail the configuration of the encryption key within $VeeamBackupServer backup server."
                         foreach ($EncryptionKey in $EncryptionKeyInfo) {
-                            Section -ExcludeFromTOC -Style NOTOCHeading3 "$($EncryptionKey.Id)" {
+                            Section -ExcludeFromTOC -Style NOTOCHeading4 "$($EncryptionKey.Id)" {
                                 $TableParams = @{
                                     Name = "Encryption Key - $($EncryptionKey.Id)"
                                     List = $true

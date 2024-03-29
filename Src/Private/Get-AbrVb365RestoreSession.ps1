@@ -5,7 +5,7 @@ function Get-AbrVb365RestoreSession {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -63,12 +63,12 @@ function Get-AbrVb365RestoreSession {
                     }
 
                     if ($InfoLevel.Restore.RestoreSession -ge 2) {
-                        Paragraph "The following sections detail the configuration of the restore sessions within $VeeamBackupServer backup server."
+                        Paragraph "The following sections details the configuration of the restore sessions within $VeeamBackupServer backup server."
                         if ($chartFileItem) {
                             Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
                         }
                         foreach ($RestoreSession in $RestoreSessionInfo) {
-                            Section -ExcludeFromTOC -Style NOTOCHeading3 "$($RestoreSession.Name)" {
+                            Section -ExcludeFromTOC -Style NOTOCHeading4 "$($RestoreSession.Name)" {
                                 $TableParams = @{
                                     Name = "Restore Session - $($RestoreSession.Name)"
                                     List = $true
