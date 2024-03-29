@@ -180,6 +180,18 @@ function Get-PieChart {
         $Height = 400
     )
 
+    $CustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#d5e2ff')
+        [System.Drawing.ColorTranslator]::FromHtml('#bbc9e9')
+        [System.Drawing.ColorTranslator]::FromHtml('#a2b1d3')
+        [System.Drawing.ColorTranslator]::FromHtml('#8999bd')
+        [System.Drawing.ColorTranslator]::FromHtml('#7082a8')
+        [System.Drawing.ColorTranslator]::FromHtml('#586c93')
+        [System.Drawing.ColorTranslator]::FromHtml('#40567f')
+        [System.Drawing.ColorTranslator]::FromHtml('#27416b')
+        [System.Drawing.ColorTranslator]::FromHtml('#072e58')
+    )
+
     $exampleChart = New-Chart -Name $ChartName -Width $Width -Height $Height
 
     $addChartAreaParams = @{
@@ -194,7 +206,7 @@ function Get-PieChart {
         Name = 'exampleChartSeries'
         XField = $XField
         YField = $YField
-        Palette = 'Grren'
+        CustomPalette = $CustomPalette
         ColorPerDataPoint = $true
     }
     $sampleData | Add-PieChartSeries @addChartSeriesParams
@@ -269,6 +281,18 @@ function Get-ColumnChart {
         $Height = 400
     )
 
+    $CustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#d5e2ff')
+        [System.Drawing.ColorTranslator]::FromHtml('#bbc9e9')
+        [System.Drawing.ColorTranslator]::FromHtml('#a2b1d3')
+        [System.Drawing.ColorTranslator]::FromHtml('#8999bd')
+        [System.Drawing.ColorTranslator]::FromHtml('#7082a8')
+        [System.Drawing.ColorTranslator]::FromHtml('#586c93')
+        [System.Drawing.ColorTranslator]::FromHtml('#40567f')
+        [System.Drawing.ColorTranslator]::FromHtml('#27416b')
+        [System.Drawing.ColorTranslator]::FromHtml('#072e58')
+    )
+
     $exampleChart = New-Chart -Name $ChartName -Width $Width -Height $Height
 
     $addChartAreaParams = @{
@@ -287,7 +311,7 @@ function Get-ColumnChart {
         Name = 'exampleChartSeries'
         XField = $XField
         YField = $YField
-        Palette = 'Green'
+        CustomPalette = $CustomPalette
         ColorPerDataPoint = $true
     }
     $sampleData | Add-ColumnChartSeries @addChartSeriesParams
@@ -348,12 +372,12 @@ function Get-VB365DebugObject {
 
     $script:Organizations = @()
     $inOrganizationOffice365Obj = [ordered] @{
-        Name = "ObjectRepositor1","ObjectRepositor2","ObjectRepositor3","ObjectRepositor7","ObjectRepositor8","ObjectRepositor9"
+        Name = "ObjectRepositor1", "ObjectRepositor2", "ObjectRepositor3", "ObjectRepositor7", "ObjectRepositor8", "ObjectRepositor9"
         Type = "Office365"
     }
 
     $inOrganizationOnPremisesObj = [ordered] @{
-        Name = "ObjectRepositor4","ObjectRepositor5","ObjectRepositor6","ObjectRepositor10","ObjectRepositor11","ObjectRepositor12"
+        Name = "ObjectRepositor4", "ObjectRepositor5", "ObjectRepositor6", "ObjectRepositor10", "ObjectRepositor11", "ObjectRepositor12"
         Type = "OnPremises"
     }
 

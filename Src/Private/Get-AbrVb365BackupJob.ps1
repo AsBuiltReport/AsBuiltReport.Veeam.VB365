@@ -5,7 +5,7 @@ function Get-AbrVb365BackupJob {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -91,7 +91,7 @@ function Get-AbrVb365BackupJob {
                             Image -Text 'Backup Repository - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
                         }
                         foreach ($BackupJob in $BackupJobInfo) {
-                            Section -ExcludeFromTOC -Style NOTOCHeading3 "$($BackupJob.Name)" {
+                            Section -ExcludeFromTOC -Style NOTOCHeading4 "$($BackupJob.Name)" {
                                 $TableParams = @{
                                     Name = "Backup Job - $($BackupJob.Name)"
                                     List = $true
