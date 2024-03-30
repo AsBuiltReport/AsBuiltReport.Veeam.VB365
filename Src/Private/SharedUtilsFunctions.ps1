@@ -200,15 +200,28 @@ function Get-PieChart {
     }
     $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
 
-    $addChartSeriesParams = @{
-        Chart = $exampleChart
-        ChartArea = $exampleChartArea
-        Name = 'exampleChartSeries'
-        XField = $XField
-        YField = $YField
-        CustomPalette = $CustomPalette
-        ColorPerDataPoint = $true
+    if ($Options.ReportStyle -eq 'Veeam') {
+        $addChartSeriesParams = @{
+            Chart = $exampleChart
+            ChartArea = $exampleChartArea
+            Name = 'exampleChartSeries'
+            XField = $XField
+            YField = $YField
+            Palette = 'Green'
+            ColorPerDataPoint = $true
+        }
+    } else {
+        $addChartSeriesParams = @{
+            Chart = $exampleChart
+            ChartArea = $exampleChartArea
+            Name = 'exampleChartSeries'
+            XField = $XField
+            YField = $YField
+            CustomPalette = $CustomPalette
+            ColorPerDataPoint = $true
+        }
     }
+
     $sampleData | Add-PieChartSeries @addChartSeriesParams
 
     $addChartLegendParams = @{
@@ -305,15 +318,28 @@ function Get-ColumnChart {
     }
     $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
 
-    $addChartSeriesParams = @{
-        Chart = $exampleChart
-        ChartArea = $exampleChartArea
-        Name = 'exampleChartSeries'
-        XField = $XField
-        YField = $YField
-        CustomPalette = $CustomPalette
-        ColorPerDataPoint = $true
+    if ($Options.ReportStyle -eq 'Veeam') {
+        $addChartSeriesParams = @{
+            Chart = $exampleChart
+            ChartArea = $exampleChartArea
+            Name = 'exampleChartSeries'
+            XField = $XField
+            YField = $YField
+            Palette = 'Green'
+            ColorPerDataPoint = $true
+        }
+    } else {
+        $addChartSeriesParams = @{
+            Chart = $exampleChart
+            ChartArea = $exampleChartArea
+            Name = 'exampleChartSeries'
+            XField = $XField
+            YField = $YField
+            CustomPalette = $CustomPalette
+            ColorPerDataPoint = $true
+        }
     }
+
     $sampleData | Add-ColumnChartSeries @addChartSeriesParams
 
     $addChartTitleParams = @{

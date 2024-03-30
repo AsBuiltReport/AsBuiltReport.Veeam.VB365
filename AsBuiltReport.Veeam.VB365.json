@@ -9,6 +9,7 @@
         "ShowTableCaptions": true
     },
     "Options": {
+        "ReportStyle": "Veeam",
         "BackupServerPort": 9191,
         "EnableDiagrams": true,
         "EnableDiagramDebug": false,
