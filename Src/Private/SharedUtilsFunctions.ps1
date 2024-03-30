@@ -180,7 +180,7 @@ function Get-PieChart {
         $Height = 400
     )
 
-    $CustomPalette = @(
+    $AbrCustomPalette = @(
         [System.Drawing.ColorTranslator]::FromHtml('#d5e2ff')
         [System.Drawing.ColorTranslator]::FromHtml('#bbc9e9')
         [System.Drawing.ColorTranslator]::FromHtml('#a2b1d3')
@@ -190,6 +190,18 @@ function Get-PieChart {
         [System.Drawing.ColorTranslator]::FromHtml('#40567f')
         [System.Drawing.ColorTranslator]::FromHtml('#27416b')
         [System.Drawing.ColorTranslator]::FromHtml('#072e58')
+    )
+
+    $VeeamCustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#ddf6ed')
+        [System.Drawing.ColorTranslator]::FromHtml('#c3e2d7')
+        [System.Drawing.ColorTranslator]::FromHtml('#aacec2')
+        [System.Drawing.ColorTranslator]::FromHtml('#90bbad')
+        [System.Drawing.ColorTranslator]::FromHtml('#77a898')
+        [System.Drawing.ColorTranslator]::FromHtml('#5e9584')
+        [System.Drawing.ColorTranslator]::FromHtml('#458370')
+        [System.Drawing.ColorTranslator]::FromHtml('#2a715d')
+        [System.Drawing.ColorTranslator]::FromHtml('#005f4b')
     )
 
     $exampleChart = New-Chart -Name $ChartName -Width $Width -Height $Height
@@ -207,7 +219,7 @@ function Get-PieChart {
             Name = 'exampleChartSeries'
             XField = $XField
             YField = $YField
-            Palette = 'Green'
+            CustomPalette = $VeeamCustomPalette
             ColorPerDataPoint = $true
         }
     } else {
@@ -217,7 +229,7 @@ function Get-PieChart {
             Name = 'exampleChartSeries'
             XField = $XField
             YField = $YField
-            CustomPalette = $CustomPalette
+            CustomPalette = $AbrCustomPalette
             ColorPerDataPoint = $true
         }
     }
@@ -291,10 +303,19 @@ function Get-ColumnChart {
         [int]
         $Width = 600,
         [int]
-        $Height = 400
+        $Height = 400,
+        [Switch]
+        $Status
     )
 
-    $CustomPalette = @(
+    $StatusCustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#DFF0D0')
+        [System.Drawing.ColorTranslator]::FromHtml('#FFF4C7')
+        [System.Drawing.ColorTranslator]::FromHtml('#FEDDD7')
+        [System.Drawing.ColorTranslator]::FromHtml('#878787')
+    )
+
+    $AbrCustomPalette = @(
         [System.Drawing.ColorTranslator]::FromHtml('#d5e2ff')
         [System.Drawing.ColorTranslator]::FromHtml('#bbc9e9')
         [System.Drawing.ColorTranslator]::FromHtml('#a2b1d3')
@@ -304,6 +325,18 @@ function Get-ColumnChart {
         [System.Drawing.ColorTranslator]::FromHtml('#40567f')
         [System.Drawing.ColorTranslator]::FromHtml('#27416b')
         [System.Drawing.ColorTranslator]::FromHtml('#072e58')
+    )
+
+    $VeeamCustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#ddf6ed')
+        [System.Drawing.ColorTranslator]::FromHtml('#c3e2d7')
+        [System.Drawing.ColorTranslator]::FromHtml('#aacec2')
+        [System.Drawing.ColorTranslator]::FromHtml('#90bbad')
+        [System.Drawing.ColorTranslator]::FromHtml('#77a898')
+        [System.Drawing.ColorTranslator]::FromHtml('#5e9584')
+        [System.Drawing.ColorTranslator]::FromHtml('#458370')
+        [System.Drawing.ColorTranslator]::FromHtml('#2a715d')
+        [System.Drawing.ColorTranslator]::FromHtml('#005f4b')
     )
 
     $exampleChart = New-Chart -Name $ChartName -Width $Width -Height $Height
@@ -318,26 +351,23 @@ function Get-ColumnChart {
     }
     $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
 
-    if ($Options.ReportStyle -eq 'Veeam') {
-        $addChartSeriesParams = @{
-            Chart = $exampleChart
-            ChartArea = $exampleChartArea
-            Name = 'exampleChartSeries'
-            XField = $XField
-            YField = $YField
-            Palette = 'Green'
-            ColorPerDataPoint = $true
-        }
+    if ($Status) {
+        $CustomPalette = $StatusCustomPalette
+    } elseif ($Options.ReportStyle -eq 'Veeam') {
+        $CustomPalette = $VeeamCustomPalette
+
     } else {
-        $addChartSeriesParams = @{
-            Chart = $exampleChart
-            ChartArea = $exampleChartArea
-            Name = 'exampleChartSeries'
-            XField = $XField
-            YField = $YField
-            CustomPalette = $CustomPalette
-            ColorPerDataPoint = $true
-        }
+        $CustomPalette = $AbrCustomPalette
+    }
+
+    $addChartSeriesParams = @{
+        Chart = $exampleChart
+        ChartArea = $exampleChartArea
+        Name = 'exampleChartSeries'
+        XField = $XField
+        YField = $YField
+        CustomPalette = $CustomPalette
+        ColorPerDataPoint = $true
     }
 
     $sampleData | Add-ColumnChartSeries @addChartSeriesParams
