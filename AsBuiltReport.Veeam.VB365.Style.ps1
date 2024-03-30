@@ -30,7 +30,7 @@ Style -Name 'Warning' -Size 10 -Color '565656' -BackgroundColor 'FFF4C7'
 Style -Name 'Info' -Size 10 -Color '565656' -BackgroundColor 'E3F5FC'
 Style -Name 'OK' -Size 10 -Color '565656' -BackgroundColor 'DFF0D0'
 # Table Caption Style
-Style -Name 'Caption' -Size 10 -Color '565656' -Italic -Align Left
+Style -Name 'Caption' -Size 10 -Color '005f4b' -Italic -Align Left
 # Veeam Backup Windows Time Period Table
 Style -Name 'ON' -Size 8 -BackgroundColor 'C4DD90' -Color C4DD90
 Style -Name 'OFF' -Size 8 -BackgroundColor 'ECEDA7' -Color ECEDA7
