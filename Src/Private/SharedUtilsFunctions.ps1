@@ -177,7 +177,18 @@ function Get-PieChart {
         [int]
         $Width = 600,
         [int]
-        $Height = 400
+        $Height = 400,
+        [Switch]
+        $Status,
+        [bool]
+        $ReversePalette = $false
+    )
+
+    $StatusCustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#DFF0D0')
+        [System.Drawing.ColorTranslator]::FromHtml('#FFF4C7')
+        [System.Drawing.ColorTranslator]::FromHtml('#FEDDD7')
+        [System.Drawing.ColorTranslator]::FromHtml('#878787')
     )
 
     $AbrCustomPalette = @(
@@ -212,26 +223,24 @@ function Get-PieChart {
     }
     $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
 
-    if ($Options.ReportStyle -eq 'Veeam') {
-        $addChartSeriesParams = @{
-            Chart = $exampleChart
-            ChartArea = $exampleChartArea
-            Name = 'exampleChartSeries'
-            XField = $XField
-            YField = $YField
-            CustomPalette = $VeeamCustomPalette
-            ColorPerDataPoint = $true
-        }
+    if ($Status) {
+        $CustomPalette = $StatusCustomPalette
+    } elseif ($Options.ReportStyle -eq 'Veeam') {
+        $CustomPalette = $VeeamCustomPalette
+
     } else {
-        $addChartSeriesParams = @{
-            Chart = $exampleChart
-            ChartArea = $exampleChartArea
-            Name = 'exampleChartSeries'
-            XField = $XField
-            YField = $YField
-            CustomPalette = $AbrCustomPalette
-            ColorPerDataPoint = $true
-        }
+        $CustomPalette = $AbrCustomPalette
+    }
+
+    $addChartSeriesParams = @{
+        Chart = $exampleChart
+        ChartArea = $exampleChartArea
+        Name = 'exampleChartSeries'
+        XField = $XField
+        YField = $YField
+        CustomPalette = $CustomPalette
+        ColorPerDataPoint = $true
+        ReversePalette = $ReversePalette
     }
 
     $sampleData | Add-PieChartSeries @addChartSeriesParams
@@ -248,7 +257,7 @@ function Get-PieChart {
         ChartArea = $exampleChartArea
         Name = $ChartTitleName
         Text = $ChartTitleText
-        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
+        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Segoe Ui', '12', [System.Drawing.FontStyle]::Bold)
     }
     Add-ChartTitle @addChartTitleParams
 
@@ -305,7 +314,9 @@ function Get-ColumnChart {
         [int]
         $Height = 400,
         [Switch]
-        $Status
+        $Status,
+        [bool]
+        $ReversePalette = $false
     )
 
     $StatusCustomPalette = @(
@@ -368,6 +379,7 @@ function Get-ColumnChart {
         YField = $YField
         CustomPalette = $CustomPalette
         ColorPerDataPoint = $true
+        ReversePalette = $ReversePalette
     }
 
     $sampleData | Add-ColumnChartSeries @addChartSeriesParams
@@ -377,7 +389,7 @@ function Get-ColumnChart {
         ChartArea = $exampleChartArea
         Name = $ChartTitleName
         Text = $ChartTitleText
-        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
+        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Segoe Ui', '12', [System.Drawing.FontStyle]::Bold)
     }
     Add-ChartTitle @addChartTitleParams
 
