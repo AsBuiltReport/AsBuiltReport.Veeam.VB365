@@ -41,7 +41,15 @@ function Get-AbrVb365BackupJob {
                             }
                             'Excluded Items' = Switch ([string]::IsNullOrEmpty($BackupJob.ExcludedItems)) {
                                 $true { '--' }
-                                $false { $BackupJob.ExcludedItems }
+                                $false {
+                                    & {
+                                        if (($BackupJob.ExcludedItems | Measure-Object).Count -gt 30) {
+                                            return 'Multiple'
+                                        } else {
+                                            return $BackupJob.ExcludedItems
+                                        }
+                                    }
+                                }
                                 default { 'Unknown' }
                             }
                             'Repository' = $BackupJob.Repository
@@ -58,7 +66,9 @@ function Get-AbrVb365BackupJob {
 
                     if ($HealthCheck.Jobs.BackupJob) {
                         $BackupJobInfo | Where-Object { $_.'Is Enabled' -eq 'No' } | Set-Style -Style Warning -Property 'Is Enabled'
-                        $BackupJobInfo | Where-Object { $_.'Last Status' -ne 'Success' } | Set-Style -Style Warning -Property 'Last Status'
+                        $BackupJobInfo | Where-Object { $_.'Last Status' -eq 'Success' } | Set-Style -Style Ok -Property 'Last Status'
+                        $BackupJobInfo | Where-Object { $_.'Last Status' -eq 'Warning' } | Set-Style -Style Warning -Property 'Last Status'
+                        $BackupJobInfo | Where-Object { $_.'Last Status' -eq 'Failed' } | Set-Style -Style Critical -Property 'Last Status'
                     }
 
                     try {
@@ -66,20 +76,17 @@ function Get-AbrVb365BackupJob {
                         if ($BackupJobs.LastStatus) {
                             $Alljobs += $BackupJobs.LastStatus
                         }
-                        if ((Get-VBOCopyJob -ErrorAction SilentlyContinue).LastStatus) {
-                            $Alljobs += (Get-VBOCopyJob -ErrorAction SilentlyContinue).LastStatus
-                        }
 
-                        $sampleData = @{
+                        $sampleData = [ordered]@{
                             'Success' = ($Alljobs | Where-Object { $_ -eq "Success" } | Measure-Object).Count
                             'Warning' = ($Alljobs | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
                             'Failed' = ($Alljobs | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
                             'Stopped' = ($Alljobs | Where-Object { $_ -eq "Stopped" } | Measure-Object).Count
                         }
 
-                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category'
+                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
 
-                        $chartFileItem = Get-ColumnChart -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'BackupJobs' -AxisXTitle 'Status' -AxisYTitle 'Count' -ChartTitleName 'BackupJob' -ChartTitleText 'Jobs Latest Results'
+                        $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'BackupJobs' -AxisXTitle 'Status' -AxisYTitle 'Count' -ChartTitleName 'BackupJob' -ChartTitleText 'Backup Jobs Latest Results'
 
                     } catch {
                         Write-PScriboMessage -IsWarning "Backup Copy Chart Section: $($_.Exception.Message)"
@@ -88,7 +95,7 @@ function Get-AbrVb365BackupJob {
                     if ($InfoLevel.Jobs.BackupJob -ge 2) {
                         Paragraph "The following sections detail the configuration of the backup job within $VeeamBackupServer backup server."
                         if ($chartFileItem) {
-                            Image -Text 'Backup Repository - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                            Image -Text 'Backup Job - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
                         }
                         foreach ($BackupJob in $BackupJobInfo) {
                             Section -ExcludeFromTOC -Style NOTOCHeading4 "$($BackupJob.Name)" {

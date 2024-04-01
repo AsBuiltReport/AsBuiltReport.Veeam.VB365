@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.1] - 2024-03-30
 
+### Added
+
+- Added License Usage Chart
+- Improved Authentication Types in Notification section
+
 ### Changed
 
 - Increase AsBuiltReport.Core modules to v1.4.0
@@ -15,7 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix charts palette to follow new AsBuiltReport.Core theme
-- Fix labelalloc when no Infrastructure is detected in Cluster Node
+- Fix Diagram labelalloc when no Infrastructure is detected in Cluster Node
+- Fix Encryption Keys Used At not displaying correct information
+- Removed Used At column from Cloud Credentials table
 
 ## [0.3.0] - 2024-03-22
 

@@ -177,10 +177,21 @@ function Get-PieChart {
         [int]
         $Width = 600,
         [int]
-        $Height = 400
+        $Height = 400,
+        [Switch]
+        $Status,
+        [bool]
+        $ReversePalette = $false
     )
 
-    $CustomPalette = @(
+    $StatusCustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#DFF0D0')
+        [System.Drawing.ColorTranslator]::FromHtml('#FFF4C7')
+        [System.Drawing.ColorTranslator]::FromHtml('#FEDDD7')
+        [System.Drawing.ColorTranslator]::FromHtml('#878787')
+    )
+
+    $AbrCustomPalette = @(
         [System.Drawing.ColorTranslator]::FromHtml('#d5e2ff')
         [System.Drawing.ColorTranslator]::FromHtml('#bbc9e9')
         [System.Drawing.ColorTranslator]::FromHtml('#a2b1d3')
@@ -192,6 +203,18 @@ function Get-PieChart {
         [System.Drawing.ColorTranslator]::FromHtml('#072e58')
     )
 
+    $VeeamCustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#ddf6ed')
+        [System.Drawing.ColorTranslator]::FromHtml('#c3e2d7')
+        [System.Drawing.ColorTranslator]::FromHtml('#aacec2')
+        [System.Drawing.ColorTranslator]::FromHtml('#90bbad')
+        [System.Drawing.ColorTranslator]::FromHtml('#77a898')
+        [System.Drawing.ColorTranslator]::FromHtml('#5e9584')
+        [System.Drawing.ColorTranslator]::FromHtml('#458370')
+        [System.Drawing.ColorTranslator]::FromHtml('#2a715d')
+        [System.Drawing.ColorTranslator]::FromHtml('#005f4b')
+    )
+
     $exampleChart = New-Chart -Name $ChartName -Width $Width -Height $Height
 
     $addChartAreaParams = @{
@@ -199,6 +222,15 @@ function Get-PieChart {
         Name = 'exampleChartArea'
     }
     $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
+
+    if ($Status) {
+        $CustomPalette = $StatusCustomPalette
+    } elseif ($Options.ReportStyle -eq 'Veeam') {
+        $CustomPalette = $VeeamCustomPalette
+
+    } else {
+        $CustomPalette = $AbrCustomPalette
+    }
 
     $addChartSeriesParams = @{
         Chart = $exampleChart
@@ -208,7 +240,9 @@ function Get-PieChart {
         YField = $YField
         CustomPalette = $CustomPalette
         ColorPerDataPoint = $true
+        ReversePalette = $ReversePalette
     }
+
     $sampleData | Add-PieChartSeries @addChartSeriesParams
 
     $addChartLegendParams = @{
@@ -223,7 +257,7 @@ function Get-PieChart {
         ChartArea = $exampleChartArea
         Name = $ChartTitleName
         Text = $ChartTitleText
-        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
+        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Segoe Ui', '12', [System.Drawing.FontStyle]::Bold)
     }
     Add-ChartTitle @addChartTitleParams
 
@@ -278,10 +312,21 @@ function Get-ColumnChart {
         [int]
         $Width = 600,
         [int]
-        $Height = 400
+        $Height = 400,
+        [Switch]
+        $Status,
+        [bool]
+        $ReversePalette = $false
     )
 
-    $CustomPalette = @(
+    $StatusCustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#DFF0D0')
+        [System.Drawing.ColorTranslator]::FromHtml('#FFF4C7')
+        [System.Drawing.ColorTranslator]::FromHtml('#FEDDD7')
+        [System.Drawing.ColorTranslator]::FromHtml('#878787')
+    )
+
+    $AbrCustomPalette = @(
         [System.Drawing.ColorTranslator]::FromHtml('#d5e2ff')
         [System.Drawing.ColorTranslator]::FromHtml('#bbc9e9')
         [System.Drawing.ColorTranslator]::FromHtml('#a2b1d3')
@@ -291,6 +336,18 @@ function Get-ColumnChart {
         [System.Drawing.ColorTranslator]::FromHtml('#40567f')
         [System.Drawing.ColorTranslator]::FromHtml('#27416b')
         [System.Drawing.ColorTranslator]::FromHtml('#072e58')
+    )
+
+    $VeeamCustomPalette = @(
+        [System.Drawing.ColorTranslator]::FromHtml('#ddf6ed')
+        [System.Drawing.ColorTranslator]::FromHtml('#c3e2d7')
+        [System.Drawing.ColorTranslator]::FromHtml('#aacec2')
+        [System.Drawing.ColorTranslator]::FromHtml('#90bbad')
+        [System.Drawing.ColorTranslator]::FromHtml('#77a898')
+        [System.Drawing.ColorTranslator]::FromHtml('#5e9584')
+        [System.Drawing.ColorTranslator]::FromHtml('#458370')
+        [System.Drawing.ColorTranslator]::FromHtml('#2a715d')
+        [System.Drawing.ColorTranslator]::FromHtml('#005f4b')
     )
 
     $exampleChart = New-Chart -Name $ChartName -Width $Width -Height $Height
@@ -305,6 +362,15 @@ function Get-ColumnChart {
     }
     $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
 
+    if ($Status) {
+        $CustomPalette = $StatusCustomPalette
+    } elseif ($Options.ReportStyle -eq 'Veeam') {
+        $CustomPalette = $VeeamCustomPalette
+
+    } else {
+        $CustomPalette = $AbrCustomPalette
+    }
+
     $addChartSeriesParams = @{
         Chart = $exampleChart
         ChartArea = $exampleChartArea
@@ -313,7 +379,9 @@ function Get-ColumnChart {
         YField = $YField
         CustomPalette = $CustomPalette
         ColorPerDataPoint = $true
+        ReversePalette = $ReversePalette
     }
+
     $sampleData | Add-ColumnChartSeries @addChartSeriesParams
 
     $addChartTitleParams = @{
@@ -321,7 +389,7 @@ function Get-ColumnChart {
         ChartArea = $exampleChartArea
         Name = $ChartTitleName
         Text = $ChartTitleText
-        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Arial', '12', [System.Drawing.FontStyle]::Bold)
+        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Segoe Ui', '12', [System.Drawing.FontStyle]::Bold)
     }
     Add-ChartTitle @addChartTitleParams
 
