@@ -47,7 +47,6 @@ function Get-AbrVb365CloudCredential {
                             }
                             'Last Modified' = $CloudCredential.LastModified
                             'Description' = $CloudCredential.Description
-                            'Used At' = $UsedAT -join ", "
                         }
                         $CloudCredentialInfo += [PSCustomObject]$InObj
                     }

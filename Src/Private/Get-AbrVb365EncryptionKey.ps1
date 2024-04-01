@@ -29,8 +29,8 @@ function Get-AbrVB365EncryptionKey {
                 Write-PScriboMessage "Collecting Veeam VB365 Encryption Key."
                 Section -Style Heading2 'Encryption Keys' {
                     $EncryptionKeyInfo = @()
-                    $UsedAT = Get-VBORepository | Where-Object { $_.ObjectStorageEncryptionKey.Id -eq $EncryptionKey.Id }
                     foreach ($EncryptionKey in $EncryptionKeys) {
+                        $UsedAT = Get-VBORepository | Where-Object { $_.ObjectStorageEncryptionKey.Id -eq $EncryptionKey.Id }
                         $inObj = [ordered] @{
                             'Id' = $EncryptionKey.Id
                             'Description' = $EncryptionKey.Description

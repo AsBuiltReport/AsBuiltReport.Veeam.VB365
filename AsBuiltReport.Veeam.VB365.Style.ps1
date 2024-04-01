@@ -1,7 +1,7 @@
 # Veeam Default Heading and Font Styles
 Style -Name 'Title' -Size 24 -Color '005f4b' -Align Center
-Style -Name 'Title 2' -Size 18 -Color '54B948' -Align Center
-Style -Name 'Title 3' -Size 12 -Color '54B948' -Align Left
+Style -Name 'Title 2' -Size 18 -Color '565656' -Align Center
+Style -Name 'Title 3' -Size 12 -Color '565656' -Align Left
 Style -Name 'Heading 1' -Size 16 -Color '005f4b'
 Style -Name 'NO TOC Heading 1' -Size 16 -Color '005f4b'
 Style -Name 'Heading 2' -Size 14 -Color '005f4b'

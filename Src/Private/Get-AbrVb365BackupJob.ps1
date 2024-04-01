@@ -41,7 +41,15 @@ function Get-AbrVb365BackupJob {
                             }
                             'Excluded Items' = Switch ([string]::IsNullOrEmpty($BackupJob.ExcludedItems)) {
                                 $true { '--' }
-                                $false { $BackupJob.ExcludedItems }
+                                $false {
+                                    & {
+                                        if (($BackupJob.ExcludedItems | Measure-Object).Count -gt 30) {
+                                            return 'Multiple'
+                                        } else {
+                                            return $BackupJob.ExcludedItems
+                                        }
+                                    }
+                                }
                                 default { 'Unknown' }
                             }
                             'Repository' = $BackupJob.Repository
