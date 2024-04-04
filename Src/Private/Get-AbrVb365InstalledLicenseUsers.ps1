@@ -37,7 +37,7 @@ function Get-AbrVB365InstalledLicenseUser {
                                 $inObj = [ordered] @{
                                     'User Name' = $License.UserName
                                     'Organization' = $License.OrganizationName
-                                    'Is Backed Up' = ConvertTo-TextYN $License.IsBackedUp
+                                    'Is Backed Up?' = ConvertTo-TextYN $License.IsBackedUp
                                     'Last Backup Date' = $License.LastBackupDate.ToShortDateString()
                                     'License Status' = $License.LicenseStatus
                                 }

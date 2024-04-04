@@ -39,7 +39,7 @@ function Get-AbrVb365Organization {
                             'Office Name' = $Organization.OfficeName
                             'Use SSL' = ConvertTo-TextYN $Organization.UseSSL
                             'BackedUp' = ConvertTo-TextYN $Organization.IsBackedUp
-                            'Licensing Options' = "Licensed Users:$($Organization.LicensingOptions.LicensedUsersCount)\Trial Users:$($Organization.LicensingOptions.TrialUsersCount)"
+                            'Licensing Options' = "Licensed Users:$($Organization.LicensingOptions.LicensedUsersCount) Trial Users:$($Organization.LicensingOptions.TrialUsersCount)"
                             'Backup Parts' = $Organization.BackupParts
                             'Skip CA Verification' = ConvertTo-TextYN $Organization.SkipCAVerification
                             'Skip Common Name Verification' = ConvertTo-TextYN $Organization.SkipCommonNameVerification

@@ -5,7 +5,7 @@ function Get-AbrVb365BackupCopyJob {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -47,11 +47,38 @@ function Get-AbrVb365BackupCopyJob {
 
                     if ($HealthCheck.Jobs.BackupCopyJob) {
                         $BackupCopyJobInfo | Where-Object { $_.'Is Enabled' -eq 'No' } | Set-Style -Style Warning -Property 'Is Enabled'
-                        $BackupCopyJobInfo | Where-Object { $_.'Last Status' -ne 'Success' } | Set-Style -Style Warning -Property 'Last Status'
+                        $BackupCopyJobInfo | Where-Object { $_.'Last Status' -eq 'Success' } | Set-Style -Style Ok -Property 'Last Status'
+                        $BackupCopyJobInfo | Where-Object { $_.'Last Status' -eq 'Warning' } | Set-Style -Style Warning -Property 'Last Status'
+                        $BackupCopyJobInfo | Where-Object { $_.'Last Status' -eq 'Failed' } | Set-Style -Style Critical -Property 'Last Status'
+                    }
+
+                    try {
+                        $Alljobs = @()
+
+                        if ((Get-VBOCopyJob -ErrorAction SilentlyContinue).LastStatus) {
+                            $Alljobs += (Get-VBOCopyJob -ErrorAction SilentlyContinue).LastStatus
+                        }
+
+                        $sampleData = [ordered]@{
+                            'Success' = ($Alljobs | Where-Object { $_ -eq "Success" } | Measure-Object).Count
+                            'Warning' = ($Alljobs | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
+                            'Failed' = ($Alljobs | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
+                            'Stopped' = ($Alljobs | Where-Object { $_ -eq "Stopped" } | Measure-Object).Count
+                        }
+
+                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
+
+                        $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'BackupJobs' -AxisXTitle 'Status' -AxisYTitle 'Count' -ChartTitleName 'BackupJob' -ChartTitleText 'Backup Copy Jobs Latest Results'
+
+                    } catch {
+                        Write-PScriboMessage -IsWarning "Backup Copy Chart Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Jobs.BackupCopyJob -ge 2) {
                         Paragraph "The following sections detail the configuration of the backup copy job within $VeeamBackupServer backup server."
+                        if ($chartFileItem) {
+                            Image -Text 'Backup Copy Job - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         foreach ($BackupCopyJob in $BackupCopyJobInfo) {
                             Section -ExcludeFromTOC -Style NOTOCHeading4 "$($BackupCopyJob.Name)" {
                                 $TableParams = @{
@@ -68,6 +95,9 @@ function Get-AbrVb365BackupCopyJob {
                     } else {
                         Paragraph "The following table summarizes the configuration of the backup copy jobs within the $VeeamBackupServer backup server."
                         BlankLine
+                        if ($chartFileItem) {
+                            Image -Text 'Backup Copy Job - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         $TableParams = @{
                             Name = "Backup Copy Job - $VeeamBackupServer"
                             List = $false

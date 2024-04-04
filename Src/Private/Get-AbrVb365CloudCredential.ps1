@@ -5,7 +5,7 @@ function Get-AbrVb365CloudCredential {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.1.1
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -47,7 +47,6 @@ function Get-AbrVb365CloudCredential {
                             }
                             'Last Modified' = $CloudCredential.LastModified
                             'Description' = $CloudCredential.Description
-                            'Used At' = $UsedAT -join ", "
                         }
                         $CloudCredentialInfo += [PSCustomObject]$InObj
                     }
@@ -55,7 +54,7 @@ function Get-AbrVb365CloudCredential {
                     if ($InfoLevel.Infrastructure.CloudCredential -ge 2) {
                         Paragraph "The following sections detail the configuration of the cloud credential within $VeeamBackupServer backup server."
                         foreach ($CloudCredential in $CloudCredentialInfo) {
-                            Section -ExcludeFromTOC -Style NOTOCHeading3 "$($CloudCredential.'Access Key')" {
+                            Section -ExcludeFromTOC -Style NOTOCHeading4 "$($CloudCredential.'Access Key')" {
                                 $TableParams = @{
                                     Name = "Cloud Credential - $($CloudCredential.'Access Key')"
                                     List = $true

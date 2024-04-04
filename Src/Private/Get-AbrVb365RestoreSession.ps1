@@ -5,7 +5,7 @@ function Get-AbrVb365RestoreSession {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -44,31 +44,33 @@ function Get-AbrVb365RestoreSession {
                     }
 
                     if ($InfoLevel.Restore.RestoreSession) {
-                        $RestoreSessionInfo | Where-Object { $_.'Result' -ne 'Success' } | Set-Style -Style Warning -Property 'Result'
+                        $RestoreSessionInfo | Where-Object { $_.'Result' -eq 'Success' } | Set-Style -Style Ok -Property 'Result'
+                        $RestoreSessionInfo | Where-Object { $_.'Result' -eq 'Warning' } | Set-Style -Style Warning -Property 'Result'
+                        $RestoreSessionInfo | Where-Object { $_.'Result' -eq 'Failed' } | Set-Style -Style Critical -Property 'Result'
                     }
 
                     try {
-                        $sampleData = @{
+                        $sampleData = [ordered]@{
                             'Success' = ($RestoreSessions.Result | Where-Object { $_ -eq "Success" } | Measure-Object).Count
                             'Warning' = ($RestoreSessions.Result | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
                             'Failed' = ($RestoreSessions.Result | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
                         }
 
-                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category'
+                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
 
-                        $chartFileItem = Get-ColumnChart -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'RestoreSessions' -AxisXTitle 'Result' -AxisYTitle 'Count' -ChartTitleName 'RestoreSessions' -ChartTitleText 'Restore Session Results'
+                        $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'RestoreSessions' -AxisXTitle 'Result' -AxisYTitle 'Count' -ChartTitleName 'RestoreSessions' -ChartTitleText 'Restore Session Results'
 
                     } catch {
                         Write-PScriboMessage -IsWarning "Restore Sessions Chart Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Restore.RestoreSession -ge 2) {
-                        Paragraph "The following sections detail the configuration of the restore sessions within $VeeamBackupServer backup server."
+                        Paragraph "The following sections details the configuration of the restore sessions within $VeeamBackupServer backup server."
                         if ($chartFileItem) {
                             Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
                         }
                         foreach ($RestoreSession in $RestoreSessionInfo) {
-                            Section -ExcludeFromTOC -Style NOTOCHeading3 "$($RestoreSession.Name)" {
+                            Section -ExcludeFromTOC -Style NOTOCHeading4 "$($RestoreSession.Name)" {
                                 $TableParams = @{
                                     Name = "Restore Session - $($RestoreSession.Name)"
                                     List = $true

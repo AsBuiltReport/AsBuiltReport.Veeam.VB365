@@ -47,6 +47,15 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     $script:InfoLevel = $ReportConfig.InfoLevel
     $script:Options = $ReportConfig.Options
 
+    # Set Custom styles for Veeam theme template
+    if ($Options.ReportStyle -eq "Veeam") {
+        & "$PSScriptRoot\..\..\AsBuiltReport.Veeam.VB365.Style.ps1"
+    } else {
+        # Set Custom styles for Default AsBuiltReport template
+        Style -Name 'ON' -Size 8 -BackgroundColor '4c7995' -Color 4c7995
+        Style -Name 'OFF' -Size 8 -BackgroundColor 'ADDBDB' -Color ADDBDB
+    }
+
     # Used to set values to TitleCase where required
     $script:TextInfo = (Get-Culture).TextInfo
 
@@ -88,7 +97,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
                 if ($Options.ExportDiagrams) {
                     $DiagramParams.Add('Format', "png")
-                    $DiagramParams.Add('FileName','AsBuiltReport.Veeam.VB365.png')
+                    $DiagramParams.Add('FileName', 'AsBuiltReport.Veeam.VB365.png')
                     $DiagramParams.Add('OutputFolderPath', (Get-Location).Path)
                 } else {
                     $DiagramParams.Add('Format', "base64")

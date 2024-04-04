@@ -5,7 +5,7 @@ function Get-AbrVB365ServerEmailSetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.1
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -31,8 +31,6 @@ function Get-AbrVB365ServerEmailSetting {
                     $ServerConfigInfo = @()
                     $inObj = [ordered] @{
                         'Enable Email Notification' = ConvertTo-TextYN $ServerConfig.EnableNotification
-                        'SMTP Server' = ConvertTo-EmptyToFiller $ServerConfig.SMTPServer
-                        'Port' = ConvertTo-EmptyToFiller $ServerConfig.Port
                         'Use Authentication' = ConvertTo-TextYN $ServerConfig.UseAuthentication
                         'From' = ConvertTo-EmptyToFiller $ServerConfig.From
                         'To' = ConvertTo-EmptyToFiller $ServerConfig.To
@@ -42,6 +40,18 @@ function Get-AbrVB365ServerEmailSetting {
                         'Notify On Failure' = ConvertTo-TextYN $ServerConfig.NotifyOnFailure
                         'Supress Until Last Retry' = ConvertTo-TextYN $ServerConfig.SupressUntilLastRetry
                         'Include Detailed Report as an attachment' = ConvertTo-TextYN $ServerConfig.AttachDetailedReport
+                        'Authentication Type' = $ServerConfig.AuthenticationType
+                    }
+
+                    if ($ServerConfig.AuthenticationType -ne 'CustomSmtp') {
+                        $inObj.Add('User Id', $ServerConfig.UserId)
+                        $inObj.Add('Mail Api Url', $ServerConfig.MailApiUrl)
+                    }
+                    if ($ServerConfig.AuthenticationType -eq 'CustomSmtp') {
+                        $inObj.Add('SMTP Server', $ServerConfig.SMTPServer)
+                        $inObj.Add('SMTP Port', $ServerConfig.Port)
+                        $inObj.Add('SMTP Username', $ServerConfig.Username)
+                        $inObj.Add('Use SMTP SSL', (ConvertTo-TextYN $ServerConfig.UseSSL))
                     }
                     $ServerConfigInfo = [PSCustomObject]$InObj
 
