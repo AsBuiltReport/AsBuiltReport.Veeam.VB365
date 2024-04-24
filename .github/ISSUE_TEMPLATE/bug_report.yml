@@ -7,7 +7,7 @@ body:
   - type: dropdown
     id: vbrversion
     attributes:
-      label: Veeam Backup & Replication version
+      label: Veeam Backup for Microsoft 365 version
       options:
         - 7
         - 6
