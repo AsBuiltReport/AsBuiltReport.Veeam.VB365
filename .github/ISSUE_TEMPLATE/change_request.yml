@@ -4,6 +4,16 @@ labels: ["change request"]
 assignees:
   - rebelinux
 body:
+  - type: dropdown
+    id: vbrversion
+    attributes:
+      label: Veeam Backup for Microsoft 365 version
+      options:
+        - 7
+        - 6
+        - vNext
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:
