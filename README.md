@@ -39,7 +39,9 @@ Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for m
 
 Sample Veeam VB365 As Built report HTML file: [Sample Veeam VB365 As Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/dev/Samples/Sample%20Veeam%20VB365%20As%20Built%20Report.html)
 
-Sample Veeam VB365 As Built report PDF file: [Sample Veeam VB365 As Built Report.pdf](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/raw/dev/Samples/Sample%20Veeam%20VB365%20As%20Built%20Report.pdf)
+Sample Veeam VB365 As Built report diagram file: [Sample Veeam VB365 As Built Report Diagram](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/raw/dev/Samples/AsBuiltReport.Veeam.VB365.png)
+
+![Sample Diagram](Samples/AsBuiltReport.Veeam.VB365.png)
 
 # :beginner: Getting Started
 Below are the instructions on how to install, configure and generate a Veeam VB365 As Built report.
