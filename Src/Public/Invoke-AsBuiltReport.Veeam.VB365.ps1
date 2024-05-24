@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:
         Github:
@@ -66,6 +66,12 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
         Get-AbrVB365ServerConnection
 
         $VeeamBackupServer = ((Get-VBOServerComponents -Name Server).ServerName).ToString().ToUpper().Split(".")[0]
+        Try {
+            Write-PScriboMessage "Connecting to VB365 server '$System' through CIM session."
+            $script:TempCIMSession = New-CimSession $System -Credential $Credential -Authentication 'Negotiate' -ErrorAction Continue -Name "Global:TempCIMSession"
+        } Catch {
+            Write-PScriboMessage -IsWarning "Unable to connect to VB365 server '$System' through CIM session. Continuing"
+        }
 
         Section -Style Heading1 $($VeeamBackupServer) {
             Paragraph "The following section provides an overview of the implemented components of Veeam Backup for Microsoft 365."
@@ -156,6 +162,11 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                         Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
                     }
                 }
+            }
+            if ($TempCIMSession) {
+                # Remove used CIMSession
+                Write-PScriboMessage "Clearing CIM Session $($TempCIMSession.Id)"
+                Remove-CimSession -CimSession $TempCIMSession
             }
         }
     }
