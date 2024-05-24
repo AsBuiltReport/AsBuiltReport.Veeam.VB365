@@ -24,13 +24,23 @@ function Get-AbrVB365Proxy {
 
     process {
         try {
-            $domainJoined = (Get-CimInstance -Class Win32_ComputerSystem -CimSession $TempCIMSession).partofdomain
             $script:Proxies = Get-VBOProxy -WarningAction SilentlyContinue | Sort-Object -Property Hostname
             if (($InfoLevel.Infrastructure.Proxy -gt 0) -and ($Proxies)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Proxy information."
                 Section -Style Heading2 'Backup Proxies' {
                     $ProxyInfo = @()
                     foreach ($Proxy in $Proxies) {
+                        Try {
+                            Write-PScriboMessage "Connecting to VB365 server '$Proxy.Hostname' through CIM session."
+                            $TempCIMSession = New-CimSession $Proxy.Hostname -Credential $Credential -Authentication 'Negotiate' -ErrorAction Continue -Name "Global:TempCIMSession"
+                        } Catch {
+                            Write-PScriboMessage -IsWarning "Unable to connect to VB365 server '$System' through CIM session. Continuing"
+                        }
+                        if ($TempCIMSession) {
+                            $domainJoined = (Get-CimInstance -Class Win32_ComputerSystem -CimSession $TempCIMSession).partofdomain
+                        } else {
+                            $domainJoined = 'Unknown'
+                        }
                         $inObj = [ordered] @{
                             'Name' = $Proxy.Hostname
                             'Port' = $Proxy.Port
@@ -41,9 +51,14 @@ function Get-AbrVB365Proxy {
                             'Is Teams Graph API Backup Enabled' = ConvertTo-TextYN $Proxy.IsTeamsGraphAPIBackupEnabled
                             'Is Domain Joined' = ConvertTo-TextYN $domainJoined
                             'Description' = $Proxy.Description
-
                         }
                         $ProxyInfo += [PSCustomObject]$InObj
+
+                        if ($TempCIMSession) {
+                            # Remove used CIMSession
+                            Write-PScriboMessage "Clearing CIM Session $($TempCIMSession.Id)"
+                            Remove-CimSession -CimSession $TempCIMSession
+                        }
                     }
 
                     if ($HealthCheck.Infrastructure.Proxy) {
