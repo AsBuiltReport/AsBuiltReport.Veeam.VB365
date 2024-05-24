@@ -5,7 +5,7 @@ function Get-AbrVB365ServerConfiguration {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -45,13 +45,15 @@ function Get-AbrVB365ServerConfiguration {
                             'Certificate Friendly Name' = $ServerConfig.CertificateFriendlyName
                             'Issued To' = $ServerConfig.CertificateIssuedTo
                             'Issued By' = $ServerConfig.CertificateIssuedBy
-                            'Expiration Date' = $ServerConfig.CertificateExpirationDate
+                            'Expiration Date' = $ServerConfig.CertificateExpirationDate.DateTime
                             'Thumbprint' = $ServerConfig.CertificateThumbprint
                         }
                         $ServerConfigInfo = [PSCustomObject]$InObj
 
                         if ($HealthCheck.Infrastructure.ServerConfig) {
                             $ServerConfigInfo | Where-Object { $_.'Server Product Version' -eq '6 or less, please upgrade' } | Set-Style -Style Warning -Property 'Server Product Version'
+                            $ServerConfigInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
+                            $ServerConfigInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
                         }
 
                         $TableParams = @{
@@ -63,6 +65,15 @@ function Get-AbrVB365ServerConfiguration {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
                         $ServerConfigInfo | Table @TableParams
+                        if ($HealthCheck.Infrastructure.ServerConfig -and ($ServerConfigInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
+                            Paragraph "Health Check:" -Bold -Underline
+                            BlankLine
+                            Paragraph {
+                                Text "Best Practice:" -Bold
+                                Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates."
+                            }
+                            BlankLine
+                        }
                     }
 
                     # Backup Server Internet Proxy Configuration

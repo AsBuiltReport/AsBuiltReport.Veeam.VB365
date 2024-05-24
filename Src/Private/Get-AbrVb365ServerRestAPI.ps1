@@ -37,9 +37,14 @@ function Get-AbrVB365ServerRestAPI {
                         'Issued To' = ConvertTo-EmptyToFiller $ServerConfigRestAPI.CertificateIssuedTo
                         'Issued By' = ConvertTo-EmptyToFiller $ServerConfigRestAPI.CertificateIssuedBy
                         'Thumbprint' = $ServerConfigRestAPI.CertificateThumbprint
-                        'Expiration Date' = ConvertTo-EmptyToFiller $ServerConfigRestAPI.CertificateExpirationDate
+                        'Expiration Date' = $ServerConfigRestAPI.CertificateExpirationDate.DateTime
                     }
                     $ServerConfigRestAPIInfo = [PSCustomObject]$InObj
+
+                    if ($HealthCheck.Infrastructure.ServerConfig) {
+                        $ServerConfigRestAPIInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
+                        $ServerConfigRestAPIInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                    }
 
                     $TableParams = @{
                         Name = "RESTful API - $VeeamBackupServer"
@@ -50,6 +55,15 @@ function Get-AbrVB365ServerRestAPI {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
                     }
                     $ServerConfigRestAPIInfo | Table @TableParams
+                    if ($HealthCheck.Infrastructure.ServerConfig -and ($ServerConfigRestAPIInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
+                        Paragraph "Health Check:" -Bold -Underline
+                        BlankLine
+                        Paragraph {
+                            Text "Best Practice:" -Bold
+                            Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. For the Restore Portal and API Server, consider using trusted certificates as these are services accessed by end users."
+                        }
+                        BlankLine
+                    }
                 }
             }
         } catch {

@@ -38,9 +38,14 @@ function Get-AbrVB365ServerTenantAuth {
                                 'Issued To' = ConvertTo-EmptyToFiller $TenantAuth.CertificateIssuedTo
                                 'Issued By' = ConvertTo-EmptyToFiller $TenantAuth.CertificateIssuedBy
                                 'Thumbprint' = $TenantAuth.CertificateThumbprint
-                                'Expiration Date' = ConvertTo-EmptyToFiller $TenantAuth.CertificateExpirationDate
+                                'Expiration Date' = ConvertTo-EmptyToFiller $TenantAuth.CertificateExpirationDate.DateTime
                             }
                             $TenantAuthInfo = [PSCustomObject]$InObj
+
+                            if ($HealthCheck.Infrastructure.ServerConfig) {
+                                $TenantAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
+                                $TenantAuthInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                            }
 
                             $TableParams = @{
                                 Name = "Tenant Authentication - $VeeamBackupServer"
@@ -51,6 +56,15 @@ function Get-AbrVB365ServerTenantAuth {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
                             }
                             $TenantAuthInfo | Table @TableParams
+                            if ($HealthCheck.Infrastructure.ServerConfig -and ($TenantAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
+                                Paragraph "Health Check:" -Bold -Underline
+                                BlankLine
+                                Paragraph {
+                                    Text "Best Practice:" -Bold
+                                    Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates."
+                                }
+                                BlankLine
+                            }
                         }
                     }
                     if ($OperatorAuth) {
@@ -62,9 +76,14 @@ function Get-AbrVB365ServerTenantAuth {
                                 'Issued To' = ConvertTo-EmptyToFiller $OperatorAuth.CertificateIssuedTo
                                 'Issued By' = ConvertTo-EmptyToFiller $OperatorAuth.CertificateIssuedBy
                                 'Thumbprint' = $OperatorAuth.CertificateThumbprint
-                                'Expiration Date' = ConvertTo-EmptyToFiller $OperatorAuth.CertificateExpirationDate
+                                'Expiration Date' = ConvertTo-EmptyToFiller $OperatorAuth.CertificateExpirationDate.DateTime
                             }
                             $OperatorAuthInfo = [PSCustomObject]$InObj
+
+                            if ($HealthCheck.Infrastructure.ServerConfig) {
+                                $OperatorAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
+                                $OperatorAuthInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                            }
 
                             $TableParams = @{
                                 Name = "Restore Operator Authentication - $VeeamBackupServer"
@@ -75,6 +94,15 @@ function Get-AbrVB365ServerTenantAuth {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
                             }
                             $OperatorAuthInfo | Table @TableParams
+                            if ($HealthCheck.Infrastructure.ServerConfig -and ($OperatorAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
+                                Paragraph "Health Check:" -Bold -Underline
+                                BlankLine
+                                Paragraph {
+                                    Text "Best Practice:" -Bold
+                                    Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates."
+                                }
+                                BlankLine
+                            }
                         }
                     }
                 }

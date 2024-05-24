@@ -38,9 +38,14 @@ function Get-AbrVb365ServerRestorePortal {
                         'Issued To' = ConvertTo-EmptyToFiller $RestorePortal.CertificateIssuedTo
                         'Issued By' = ConvertTo-EmptyToFiller $RestorePortal.CertificateIssuedBy
                         'Thumbprint' = ConvertTo-EmptyToFiller $RestorePortal.CertificateThumbprint
-                        'Expiration Date' = ConvertTo-EmptyToFiller $RestorePortal.CertificateExpirationDate
+                        'Expiration Date' = ConvertTo-EmptyToFiller $RestorePortal.CertificateExpirationDate.DateTime
                     }
                     $RestorePortalInfo = [PSCustomObject]$InObj
+
+                    if ($HealthCheck.Infrastructure.ServerConfig) {
+                        $RestorePortalInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
+                        $RestorePortalInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                    }
 
                     $TableParams = @{
                         Name = "Restore Portal - $VeeamBackupServer"
@@ -51,6 +56,15 @@ function Get-AbrVb365ServerRestorePortal {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
                     }
                     $RestorePortalInfo | Table @TableParams
+                    if ($HealthCheck.Infrastructure.ServerConfig -and ($RestorePortalInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
+                        Paragraph "Health Check:" -Bold -Underline
+                        BlankLine
+                        Paragraph {
+                            Text "Best Practice:" -Bold
+                            Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. For the Restore Portal and API Server, consider using trusted certificates as these are services accessed by end users."
+                        }
+                        BlankLine
+                    }
                 }
             }
         } catch {
