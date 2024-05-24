@@ -159,7 +159,7 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 | Sub-Schema      | Default Setting | Maximum Setting |
 | --------------- | :-------------: | :-------------: |
 | ServerConfig    |        1        |        1        |
-| License         |        1        |        1        |
+| License         |        1        |        2        |
 | Proxy           |        1        |        2        |
 | Repository      |        1        |        2        |
 | Organization    |        1        |        2        |

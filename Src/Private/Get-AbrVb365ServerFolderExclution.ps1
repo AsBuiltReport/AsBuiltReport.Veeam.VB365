@@ -1,11 +1,11 @@
 function Get-AbrVB365ServerFolderExclution {
     <#
     .SYNOPSIS
-    Used by As Built Report to retrieve Veeam VB365 backup tenant authentication configuration
+    Used by As Built Report to retrieve Veeam VB365 backup folder exclusions configuration
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux

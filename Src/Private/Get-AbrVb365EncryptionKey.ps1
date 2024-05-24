@@ -62,7 +62,7 @@ function Get-AbrVB365EncryptionKey {
                             Name = "Encryption Keys - $VeeamBackupServer"
                             List = $false
                             Columns = 'Description', 'Last Modified'
-                            ColumnWidths = 40, 60
+                            ColumnWidths = 60, 40
                         }
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
