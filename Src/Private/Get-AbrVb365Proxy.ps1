@@ -103,6 +103,15 @@ function Get-AbrVB365Proxy {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
                         $ProxyInfo | Table @TableParams
+                        if ($HealthCheck.Infrastructure.Proxy -and ($ProxyInfo | Where-Object { $_.'Is Domain Joined' -eq 'Yes' })) {
+                            Paragraph "Health Check:" -Bold -Underline
+                            BlankLine
+                            Paragraph {
+                                Text "Best Practice:" -Bold
+                                Text "When setting up the Veeam infrastructure keep in mind the principle that a data protection system should not rely on the environment it is meant to protect in any way! This is because when your production environment goes down along with its domain controllers, it will impact your ability to perform actual restores due to the backup server's dependency on those domain controllers for backup console authentication, DNS for name resolution, etc."
+                            }
+                            BlankLine
+                        }
                     }
                 }
             }
