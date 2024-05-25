@@ -5,7 +5,7 @@ function Get-AbrVB365ServerEmailSetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -55,6 +55,10 @@ function Get-AbrVB365ServerEmailSetting {
                     }
                     $ServerConfigInfo = [PSCustomObject]$InObj
 
+                    if ($HealthCheck) {
+                        $ServerConfigInfo | Where-Object { $_.'Enable Email Notification' -eq 'No' } | Set-Style -Style Critical -Property 'Enable Email Notification'
+                    }
+
                     $TableParams = @{
                         Name = "Notification Settings - $VeeamBackupServer"
                         List = $true
@@ -64,6 +68,15 @@ function Get-AbrVB365ServerEmailSetting {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
                     }
                     $ServerConfigInfo | Table @TableParams
+                    if ($HealthCheck -and ($ServerConfigInfo | Where-Object { $_.'Enable Email Notification' -eq 'No' })) {
+                        Paragraph "Health Check:" -Bold -Underline
+                        BlankLine
+                        Paragraph {
+                            Text "Best Practice:" -Bold
+                            Text "Veeam recommends configuring email notifications to be able to receive jobs alerts also without setting up an email and server in the email notifications users will not get notified when there are issues."
+                        }
+                        BlankLine
+                    }
                 }
             }
         } catch {
