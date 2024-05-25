@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix [#23](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/23)
 - Fix [#24](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/24)
+- Fix [#25](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/25)
 - Fix [#27](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/27)
 - Fix [#28](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/28)
 - Fix [#29](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/29)
