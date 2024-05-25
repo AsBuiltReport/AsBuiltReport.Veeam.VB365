@@ -30,7 +30,7 @@ function Get-AbrVb365ServerRestorePortal {
                 Section -Style Heading3 'Restore Portal' {
                     $RestorePortalInfo = @()
                     $inObj = [ordered] @{
-                        'Is Restore Portal Enable' = ConvertTo-TextYN $RestorePortal.IsServiceEnabled
+                        'Is Restore Portal Enabled' = ConvertTo-TextYN $RestorePortal.IsServiceEnabled
                         'Region' = ConvertTo-EmptyToFiller $RestorePortal.Region
                         'Application Id' = ConvertTo-EmptyToFiller $RestorePortal.ApplicationId
                         'Portal URI' = ConvertTo-EmptyToFiller $RestorePortal.PortalUri
@@ -45,6 +45,8 @@ function Get-AbrVb365ServerRestorePortal {
                     if ($HealthCheck.Infrastructure.ServerConfig) {
                         $RestorePortalInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
                         $RestorePortalInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                        $RestorePortalInfo | Where-Object { $_.'Is Restore Portal Enabled' -eq 'No' } | Set-Style -Style Warning -Property 'Is Restore Portal Enabled'
+
                     }
 
                     $TableParams = @{
