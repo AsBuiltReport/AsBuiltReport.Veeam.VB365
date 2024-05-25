@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.2] - Unreleased
 
+### Changed
+
+- Move 'Licensed Users' section to InfoLevel 2
+
 ### Fixed
 
 - Fix [#23](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/23)
+- Fix [#24](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/24)
+- Fix [#27](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/27)
+- Fix [#28](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/28)
+- Fix [#29](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/29)
+- Fix [#30](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/30)
+- Fix [#31](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues/31)
 
 ## [0.3.1] - 2024-03-30
 
