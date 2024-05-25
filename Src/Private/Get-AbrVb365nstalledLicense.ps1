@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicense {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,42 +26,41 @@ function Get-AbrVB365InstalledLicense {
 
     process {
         try {
-            $Licenses = Get-VBOLicense
-            if ($Licenses) {
+            if ($Licenses = Get-VBOLicense) {
                 $OutObj = @()
                 try {
-                    $Licenses = Get-VBOLicense
-                    foreach ($License in $Licenses) {
-                        Write-PScriboMessage "Discovered $($License.LicensedTo) license."
-                        $inObj = [ordered] @{
-                            'Licensed To' = ConvertTo-EmptyToFiller $License.LicensedTo
-                            'Edition' = ConvertTo-EmptyToFiller $License.Package
-                            'Type' = ConvertTo-EmptyToFiller $License.Type
-                            'Status' = ConvertTo-EmptyToFiller $License.Status
-                            'Expiration Date' = Switch ([string]::IsNullOrEmpty($License.ExpirationDate)) {
-                                $true { "-"; break }
-                                default { $License.ExpirationDate.ToShortDateString() }
-                            }
-                            'Support Expiration Date' = Switch ([string]::IsNullOrEmpty($License.SupportExpirationDate)) {
-                                $true { "--"; break }
-                                default { $License.SupportExpirationDate.ToShortDateString() }
-                            }
-                            'Contact Person' = ConvertTo-EmptyToFiller $License.ContactPerson
-                            'License Usage' = Switch ([string]::IsNullOrEmpty($License.TotalNumber)) {
-                                $true {'--'}
-                                $false {"Total: $($License.TotalNumber) - Used: $($License.UsedNumber)"}
-                                default {'Unknown'}
-                            }
+                    Write-PScriboMessage "Discovered $($Licenses.LicensedTo) license."
+                    $inObj = [ordered] @{
+                        'Licensed To' = ConvertTo-EmptyToFiller $Licenses.LicensedTo
+                        'Edition' = ConvertTo-EmptyToFiller $Licenses.Package
+                        'Type' = ConvertTo-EmptyToFiller $Licenses.Type
+                        'Status' = ConvertTo-EmptyToFiller $Licenses.Status
+                        'Expiration Date' = Switch ([string]::IsNullOrEmpty($Licenses.ExpirationDate)) {
+                            $true { "-"; break }
+                            default { $Licenses.ExpirationDate.ToShortDateString() }
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        'Support Expiration Date' = Switch ([string]::IsNullOrEmpty($Licenses.SupportExpirationDate)) {
+                            $true { "--"; break }
+                            default { $Licenses.SupportExpirationDate.ToShortDateString() }
+                        }
+                        'Contact Person' = ConvertTo-EmptyToFiller $Licenses.ContactPerson
+                        'License Usage' = Switch ([string]::IsNullOrEmpty($Licenses.TotalNumber)) {
+                            $true {'--'}
+                            $false {"Total: $($Licenses.TotalNumber) - Used: $($Licenses.UsedNumber)"}
+                            default {'Unknown'}
+                        }
                     }
+                    $OutObj += [pscustomobject]$inobj
                 } catch {
-                    Write-PScriboMessage -IsWarning "Installed License Information $($License.LicensedTo) Section: $($_.Exception.Message)"
+                    Write-PScriboMessage -IsWarning "Installed License Information $($Licenses.LicensedTo) Section: $($_.Exception.Message)"
                 }
 
                 if ($HealthCheck.Infrastructure.License) {
                     $OutObj | Where-Object { $_.'Status' -eq 'Expired' } | Set-Style -Style Critical -Property 'Status'
                     $OutObj | Where-Object { $_.'Type' -eq 'Evaluation' } | Set-Style -Style Warning -Property 'Type'
+                    if ($A) {
+                        $OutObj | Where-Object { $_.'Type' -eq 'Evaluation' } | Set-Style -Style Warning -Property 'License Usage'
+                    }
                 }
 
                 $TableParams = @{
@@ -102,9 +101,20 @@ function Get-AbrVB365InstalledLicense {
                         }
                         BlankLine
                         $OutObj | Table @TableParams
+                        if ($HealthCheck.Infrastructure.License -and ($Licenses.UsedNumber -ge $Licenses.TotalNumber)) {
+                            Paragraph "Health Check:" -Bold -Underline
+                            BlankLine
+                            Paragraph {
+                                Text "Best Practice:" -Bold
+                                Text "Warning: Your license has exceeded its user limit."
+                            }
+                            BlankLine
+                        }
 
                         # Per user license information
-                        Get-AbrVB365InstalledLicenseUser
+                        if ($InfoLevel.Infrastructure.License -ge 2) {
+                            Get-AbrVB365InstalledLicenseUser
+                        }
                     }
                 }
             }

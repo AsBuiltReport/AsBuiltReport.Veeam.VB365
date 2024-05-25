@@ -5,7 +5,7 @@ function Get-AbrVB365ObjectRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -41,20 +41,20 @@ function Get-AbrVB365ObjectRepository {
                             'Is Long Term' = ConvertTo-TextYN $ObjectRepository.IsLongTerm
                             'Is Secondary' = ConvertTo-TextYN $ObjectRepository.IsSecondary
                             'Use Archiver Appliance' = ConvertTo-TextYN $ObjectRepository.UseArchiverAppliance
-                            'Enable Immutability' = ConvertTo-TextYN $ObjectRepository.EnableImmutability
+                            'Immutability Enabled' = ConvertTo-TextYN $ObjectRepository.EnableImmutability
                             'Description' = $ObjectRepository.Description
 
                         }
                         $ObjectRepositoryInfo += [PSCustomObject]$InObj
                     }
 
-                    if ($HealthCheck.Infrastructure.Repository) {
-                        $ObjectRepositoryInfo | Where-Object { $_.'Is Outdated' -eq 'Yes' } | Set-Style -Style Warning -Property 'Is Outdated'
-                    }
-
                     if ($InfoLevel.Infrastructure.Repository -ge 2) {
                         Paragraph "The following sections detail the configuration of the object repository within $VeeamBackupServer backup server."
                         foreach ($ObjectRepository in $ObjectRepositoryInfo) {
+                            if ($HealthCheck.Infrastructure.Repository) {
+                                $ObjectRepository | Where-Object { $_.'Is Outdated' -eq 'Yes' } | Set-Style -Style Warning -Property 'Is Outdated'
+                                $ObjectRepository | Where-Object { $_.'Immutability Enabled' -eq 'No' } | Set-Style -Style Warning -Property 'Immutability Enabled'
+                            }
                             Section -ExcludeFromTOC -Style NOTOCHeading4 "$($ObjectRepository.Name)" {
                                 $TableParams = @{
                                     Name = "Object Repository - $($ObjectRepository.Name)"
@@ -65,21 +65,42 @@ function Get-AbrVB365ObjectRepository {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"
                                 }
                                 $ObjectRepository | Table @TableParams
+                                if (($HealthCheck.Infrastructure.Repository) -and ($ObjectRepository | Where-Object { $_.'Immutability Enabled' -eq 'No' })) {
+                                    Paragraph "Health Check:" -Bold -Underline
+                                    BlankLine
+                                    Paragraph {
+                                        Text "Best Practice:" -Bold
+                                        Text "Veeam recommend to implement Immutability where it is supported. It,s done for increased security: immutability protects your data from loss as a result of attacks, malware activity or any other injurious actions."
+                                    }
+                                    BlankLine
+                                }
                             }
                         }
                     } else {
+                        if ($HealthCheck.Infrastructure.Repository) {
+                            $ObjectRepositoryInfo | Where-Object { $_.'Immutability Enabled' -eq 'No' } | Set-Style -Style Warning -Property 'Immutability Enabled'
+                        }
                         Paragraph "The following table summarizes the configuration of the object repository within within the $VeeamBackupServer backup server."
                         BlankLine
                         $TableParams = @{
                             Name = "Object Repositories - $VeeamBackupServer"
                             List = $false
-                            Columns = 'Name', 'Type', 'Size Limit', 'Used Space', 'Free Space'
+                            Columns = 'Name', 'Type', 'Used Space', 'Free Space', 'Immutability Enabled'
                             ColumnWidths = 28, 27, 15, 15, 15
                         }
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
                         $ObjectRepositoryInfo | Table @TableParams
+                        if (($HealthCheck.Infrastructure.Repository) -and ($ObjectRepositoryInfo | Where-Object { $_.'Immutability Enabled' -eq 'No' })) {
+                            Paragraph "Health Check:" -Bold -Underline
+                            BlankLine
+                            Paragraph {
+                                Text "Best Practice:" -Bold
+                                Text "Veeam recommend to implement Immutability where it is supported. It,s done for increased security: immutability protects your data from loss as a result of attacks, malware activity or any other injurious actions."
+                            }
+                            BlankLine
+                        }
                     }
                 }
             }

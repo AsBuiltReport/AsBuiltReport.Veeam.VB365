@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationEXConnSetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -47,6 +47,10 @@ function Get-AbrVb365OrganizationEXConnSetting {
                         }
 
                         $OrganizationInfo += [PSCustomObject]$InObj
+                    }
+
+                    if ($HealthCheck.Infrastructure.Organization) {
+                        $OrganizationInfo | Where-Object { $_.'Authentication Type' -ne 'ApplicationOnly' } | Set-Style -Style Warning -Property 'Authentication Type'
                     }
 
                     foreach ($Org in $OrganizationInfo) {
