@@ -50,7 +50,7 @@ function Get-AbrVb365OrganizationEXConnSetting {
                     }
 
                     if ($HealthCheck.Infrastructure.Organization) {
-                        $OrganizationInfo | Where-Object { $_.'Authentication Type' -eq 'ApplicationOnly' } | Set-Style -Style Warning -Property 'Authentication Type'
+                        $OrganizationInfo | Where-Object { $_.'Authentication Type' -ne 'ApplicationOnly' } | Set-Style -Style Warning -Property 'Authentication Type'
                     }
 
                     foreach ($Org in $OrganizationInfo) {
