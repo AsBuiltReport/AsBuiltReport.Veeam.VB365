@@ -44,7 +44,7 @@ function Get-AbrVb365ServerRestorePortal {
 
                     if ($HealthCheck.Infrastructure.ServerConfig) {
                         $RestorePortalInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
-                        $RestorePortalInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                        $RestorePortalInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
                     }
 
                     $TableParams = @{

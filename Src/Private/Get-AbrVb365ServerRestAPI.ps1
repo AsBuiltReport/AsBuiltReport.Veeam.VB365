@@ -43,7 +43,10 @@ function Get-AbrVB365ServerRestAPI {
 
                     if ($HealthCheck.Infrastructure.ServerConfig) {
                         $ServerConfigRestAPIInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
-                        $ServerConfigRestAPIInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                        $ServerConfigRestAPIInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                        foreach ( $OBJ in ($ServerConfigRestAPIInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' })) {
+                            $OBJ.'Expiration Date' = $OBJ.'Expiration Date' + " (Expires <=90 days)"
+                        }
                     }
 
                     $TableParams = @{

@@ -44,7 +44,7 @@ function Get-AbrVB365ServerTenantAuth {
 
                             if ($HealthCheck.Infrastructure.ServerConfig) {
                                 $TenantAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
-                                $TenantAuthInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                                $TenantAuthInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
                             }
 
                             $TableParams = @{
@@ -82,7 +82,7 @@ function Get-AbrVB365ServerTenantAuth {
 
                             if ($HealthCheck.Infrastructure.ServerConfig) {
                                 $OperatorAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
-                                $OperatorAuthInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -lt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                                $OperatorAuthInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
                             }
 
                             $TableParams = @{
