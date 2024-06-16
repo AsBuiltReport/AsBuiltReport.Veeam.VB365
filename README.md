@@ -35,9 +35,11 @@ Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for m
 
 # :books: Sample Reports
 
-## Sample Report - Custom Style
+## Sample Report - Veeam Style with EnableHealthCheck
 
 Sample Veeam VB365 As Built report HTML file: [Sample Veeam VB365 As Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/dev/Samples/Sample%20Veeam%20VB365%20As%20Built%20Report.html)
+
+## Sample Diagram
 
 Sample Veeam VB365 As Built report diagram file: [Sample Veeam VB365 As Built Report Diagram](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/raw/dev/Samples/AsBuiltReport.Veeam.VB365.png)
 
