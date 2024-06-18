@@ -25,7 +25,7 @@
 </p>
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 
-# This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
+#### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
 # Veeam VB365 As Built Report
 
