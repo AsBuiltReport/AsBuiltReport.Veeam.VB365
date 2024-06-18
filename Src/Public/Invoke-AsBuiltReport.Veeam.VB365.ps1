@@ -25,6 +25,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     Write-PScriboMessage -Plugin "Module" -IsWarning "Do not forget to update your report configuration file after each new version release."
     Write-PScriboMessage -Plugin "Module" -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365"
     Write-PScriboMessage -Plugin "Module" -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues"
+    Write-PScriboMessage -Plugin "Module" -IsWarning "This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates."
 
     # Check the current AsBuiltReport.Veeam.VB365 module
     Try {
