@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.3] - 2024-07-06
+
+### Changed
+
+- Update Diagrammer.Core to v0.2.2
+
+### Fixed
+
+- Fix Diagram VBO Server not displaying version object
+
 ## [0.3.2] - 2024-05-25
 
 ### Changed
