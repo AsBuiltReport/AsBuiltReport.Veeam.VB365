@@ -62,6 +62,7 @@ function Get-AbrVB365ServerTenantAuth {
                                 Paragraph {
                                     Text "Best Practice:" -Bold
                                     Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates."
+                                    Text "https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage" -Color Blue
                                 }
                                 BlankLine
                             }
@@ -100,6 +101,7 @@ function Get-AbrVB365ServerTenantAuth {
                                 Paragraph {
                                     Text "Best Practice:" -Bold
                                     Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates."
+                                    Text "https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage" -Color Blue
                                 }
                                 BlankLine
                             }
