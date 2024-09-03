@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.3
+        Version:        0.3.4
         Author:         Jonathan Colon
         Twitter:
         Github:
@@ -92,14 +92,19 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             if ($Options.EnableDiagrams) {
 
                 $DiagramParams = @{
-                    Direction = 'top-to-bottom'
-                    DiagramType = "Backup-to-All"
+                    'FileName' = "AsBuiltReport.Veeam.VBR"
+                    'OutputFolderPath' = (Get-Location).Path
+                    'Direction' = 'top-to-bottom'
+                    'DiagramType' = "Backup-to-All"
                 }
 
                 if ($Options.ExportDiagrams) {
-                    $DiagramParams.Add('Format', "png")
-                    $DiagramParams.Add('FileName', 'AsBuiltReport.Veeam.VB365.png')
-                    $DiagramParams.Add('OutputFolderPath', (Get-Location).Path)
+                    if (-Not $Options.ExportDiagramsFormat) {
+                        $DiagramFormat = 'png'
+                    } else {
+                        $DiagramFormat = $Options.ExportDiagramsFormat
+                    }
+                    $DiagramParams.Add('Format', $DiagramFormat)
                 } else {
                     $DiagramParams.Add('Format', "base64")
                 }
@@ -121,22 +126,13 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                     Try {
                         $Graph = Get-AbrVb365Diagram @DiagramParams
                         if ($Graph) {
-                            Write-Information "Saved 'AsBuiltReport.Veeam.VB365.png' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                            foreach ($OutputFormat in ($DiagramFormat)) {
+                                Write-Information "Saved 'AsBuiltReport.Veeam.VBR.$($OutputFormat)' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                            }
                         }
                     } Catch {
                         Write-PScriboMessage -IsWarning "Unable to export the Infrastructure Diagram: $($_.Exception.Message)"
                     }
-
-                    if ($Graph) {
-                        If ((Get-DiaImagePercent -ImageInput $Graph.FullName).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
-                        PageBreak
-                        Section -Style Heading3 "Infrastructure Diagram." {
-                            Image -Path $Graph.FullName -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
-                            Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
-                        }
-                        BlankLine
-                    }
-
                 } else {
                     try {
                         try {

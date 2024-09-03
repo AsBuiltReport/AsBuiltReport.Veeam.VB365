@@ -53,7 +53,7 @@ function Get-AbrVb365Diagram {
         Allow the creation of footer signature.
         AuthorName and CompanyName must be set to use this property.
     .NOTES
-        Version:        0.3.3
+        Version:        0.3.4
         Author(s):      Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -136,13 +136,6 @@ function Get-AbrVb365Diagram {
             HelpMessage = 'Specify the Diagram filename'
         )]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript({
-                if (($Format | Measure-Object).count -lt 2) {
-                    $true
-                } else {
-                    throw "Format value must be unique if Filename is especified."
-                }
-            })]
         [String] $Filename,
 
         [Parameter(
@@ -657,11 +650,13 @@ function Get-AbrVb365Diagram {
         }
     }
     end {
-        #Export  the Diagram
-        if ($Graph) {
-            Export-Diagrammer -GraphObj ($Graph | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch) -ErrorDebug $EnableErrorDebug -Format $Format -Filename $Filename -OutputFolderPath $OutputFolderPath -WaterMarkText $Options.DiagramWaterMark -WaterMarkColor "Green"
-        } else {
-            Write-PScriboMessage -IsWarning "No Graph object found. Disabling diagram section"
+        foreach ($OutputFormat in $Format) {
+            #Export the Diagram
+            if ($Graph) {
+                Export-Diagrammer -GraphObj ($Graph | Select-String -Pattern '"([A-Z])\w+"\s\[label="";style="invis";shape="point";]' -NotMatch) -ErrorDebug $EnableErrorDebug -Format $OutputFormat -Filename "$Filename.$OutputFormat" -OutputFolderPath $OutputFolderPath -WaterMarkText $Options.DiagramWaterMark -WaterMarkColor "Green" -IconPath $IconPath
+            } else {
+                Write-PScriboMessage -IsWarning "No Graph object found. Disabling diagram section"
+            }
         }
     }
 }
