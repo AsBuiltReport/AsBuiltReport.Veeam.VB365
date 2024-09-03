@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.4] - 2024-09-03
+
+### Added
+
+- Add ExportDiagramsFormat option that allows specifying the format of the exported diagrams
+  - Supported formats are dot, pdf, png, svg
+- Initial compatibility tests with v8 were performed
+
+### Changed
+
+- Update Diagrammer.Core to v0.2.3
+
+### Fixed
+
+- Suppress Get-VBOObjectStorageRepository deprecation warning message
+
 ## [0.3.3] - 2024-07-06
 
 ### Changed

@@ -64,6 +64,7 @@ function Get-AbrVb365ServerRestorePortal {
                         Paragraph {
                             Text "Best Practice:" -Bold
                             Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. For the Restore Portal and API Server, consider using trusted certificates as these are services accessed by end users."
+                            Text "https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage" -Color Blue
                         }
                         BlankLine
                     }
