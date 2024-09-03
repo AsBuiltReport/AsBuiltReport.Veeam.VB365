@@ -25,8 +25,6 @@
 </p>
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 
-#### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
-
 # Veeam VB365 As Built Report
 
 Veeam VB365 As Built Report is a PowerShell module which works in conjunction with [AsBuiltReport.Core](https://github.com/AsBuiltReport/AsBuiltReport.Core).
