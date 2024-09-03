@@ -96,6 +96,7 @@ function Get-AbrVB365BackupRepository {
                                         Paragraph {
                                             Text "Best Practice:" -Bold
                                             Text "Backups data is a high potential source of vulnerability. To secure data stored in object repositories, use Veeam's inbuilt encryption to protect data in backups."
+                                            Text "https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html" -Color Blue
                                         }
                                         BlankLine
                                     }
@@ -125,6 +126,7 @@ function Get-AbrVB365BackupRepository {
                                 Paragraph {
                                     Text "Best Practice:" -Bold
                                     Text "Found a Object Storage repository without encryption enabled. Backups data is a high potential source of vulnerability. To secure data stored in object repositories, use Veeam's inbuilt encryption to protect data in backups."
+                                    Text "https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html" -Color Blue
                                 }
                                 BlankLine
                             }

@@ -35,9 +35,11 @@ Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for m
 
 # :books: Sample Reports
 
-## Sample Report - Custom Style
+## Sample Report - Veeam Style with EnableHealthCheck
 
 Sample Veeam VB365 As Built report HTML file: [Sample Veeam VB365 As Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/dev/Samples/Sample%20Veeam%20VB365%20As%20Built%20Report.html)
+
+## Sample Diagram
 
 Sample Veeam VB365 As Built report diagram file: [Sample Veeam VB365 As Built Report Diagram](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/raw/dev/Samples/AsBuiltReport.Veeam.VB365.png)
 
@@ -130,17 +132,18 @@ The **Report** schema provides configuration of the Veeam VB365 report informati
 
 The **Options** schema allows certain options within the report to be toggled on or off.
 
-| Sub-Schema             | Setting             | Default | Description                                                      |
-| ---------------------- | ------------------- | ------- | ---------------------------------------------------------------- |
-| BackupServerPort       | TCP Port            | 9191    | Used to specify the backup service's custom port.                |
-| ReportStyle            | Veeam/AsBuiltReport | Veeam   | Allow to set report style template.                              |
-| EnableDiagrams         | true/false          | true    | Toggle to enable/disable the creation of infrastructure diagram. |
-| EnableDiagramsDebug    | true/false          | false   | Toggle to enable/disable diagram debug option.                   |
-| DiagramWaterMark       | string              | empty   | Used to set the diagram waterMark.                               |
-| ExportDiagrams         | true/false          | false   | Toggle to enable/disable diagram export option.                  |
-| EnableDiagramSignature | true/false          | false   | Toggle to enable/disable diagram signature (button right corner) |
-| SignatureAuthorName    | string              | empty   | Toggle to set signature author name.                             |
-| SignatureCompanyName   | string              | empty   | Toggle to set signature company name.                            |
+| Sub-Schema             | Setting             | Default | Description                                                                    |
+| ---------------------- | ------------------- | ------- | ------------------------------------------------------------------------------ |
+| BackupServerPort       | TCP Port            | 9191    | Used to specify the backup service's custom port.                              |
+| ReportStyle            | Veeam/AsBuiltReport | Veeam   | Allow to set report style template.                                            |
+| EnableDiagrams         | true/false          | true    | Toggle to enable/disable the creation of infrastructure diagram.               |
+| EnableDiagramsDebug    | true/false          | false   | Toggle to enable/disable diagram debug option.                                 |
+| DiagramWaterMark       | string              | empty   | Used to set the diagram waterMark.                                             |
+| ExportDiagrams         | true/false          | false   | Toggle to enable/disable diagram export option.                                |
+| ExportDiagramsFormat   | string array        | png     | Set the format used to export the infrastructure diagram. (dot, png, pdf, svg) |
+| EnableDiagramSignature | true/false          | false   | Toggle to enable/disable diagram signature (button right corner)               |
+| SignatureAuthorName    | string              | empty   | Toggle to set signature author name.                                           |
+| SignatureCompanyName   | string              | empty   | Toggle to set signature company name.                                          |
 
 <!-- ********** Add/Remove the number of InfoLevels as required ********** -->
 ### InfoLevel

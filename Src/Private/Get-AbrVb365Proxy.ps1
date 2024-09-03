@@ -85,6 +85,8 @@ function Get-AbrVB365Proxy {
                                     Paragraph {
                                         Text "Best Practice:" -Bold
                                         Text "When setting up the Veeam infrastructure keep in mind the principle that a data protection system should not rely on the environment it is meant to protect in any way! This is because when your production environment goes down along with its domain controllers, it will impact your ability to perform actual restores due to the backup server's dependency on those domain controllers for backup console authentication, DNS for name resolution, etc."
+                                        Text "https://bp.veeam.com/vb365/guide/design/hardening/Workgroup_or_Domain.html" -Color Blue
+
                                     }
                                     BlankLine
                                 }
@@ -109,6 +111,7 @@ function Get-AbrVB365Proxy {
                             Paragraph {
                                 Text "Best Practice:" -Bold
                                 Text "When setting up the Veeam infrastructure keep in mind the principle that a data protection system should not rely on the environment it is meant to protect in any way! This is because when your production environment goes down along with its domain controllers, it will impact your ability to perform actual restores due to the backup server's dependency on those domain controllers for backup console authentication, DNS for name resolution, etc."
+                                Text "https://bp.veeam.com/vb365/guide/design/hardening/Workgroup_or_Domain.html" -Color Blue
                             }
                             BlankLine
                         }
