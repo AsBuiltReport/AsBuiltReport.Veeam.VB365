@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.5] - Unreleased
+
+### Fixed
+
+- Fix export diagram option using wrong filename
+
 ## [0.3.4] - 2024-09-03
 
 ### Added

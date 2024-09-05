@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.4
+        Version:        0.3.5
         Author:         Jonathan Colon
         Twitter:
         Github:
@@ -92,7 +92,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             if ($Options.EnableDiagrams) {
 
                 $DiagramParams = @{
-                    'FileName' = "AsBuiltReport.Veeam.VBR"
+                    'FileName' = "AsBuiltReport.Veeam.VB365"
                     'OutputFolderPath' = (Get-Location).Path
                     'Direction' = 'top-to-bottom'
                     'DiagramType' = "Backup-to-All"
@@ -127,7 +127,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                         $Graph = Get-AbrVb365Diagram @DiagramParams
                         if ($Graph) {
                             foreach ($OutputFormat in ($DiagramFormat)) {
-                                Write-Information "Saved 'AsBuiltReport.Veeam.VBR.$($OutputFormat)' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                                Write-Information "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
                             }
                         }
                     } Catch {
