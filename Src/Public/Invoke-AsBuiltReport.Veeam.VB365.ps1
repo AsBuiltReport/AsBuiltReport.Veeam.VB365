@@ -91,11 +91,42 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
             if ($Options.EnableDiagrams) {
 
+                # Variable translating Icon to Image Path ($IconPath)
+                $script:Images = @{
+                    "VB365_Server" = "VBR_server.png"
+                    "VB365_Proxy_Server" = "Proxy_Server.png"
+                    "VB365_Proxy" = "Veeam_Proxy.png"
+                    "VBR_LOGO" = "Veeam_logo.png"
+                    "VB365_LOGO_Footer" = "verified_recoverability.png"
+                    "VB365_Repository" = "VBO_Repository.png"
+                    "VB365_Windows_Repository" = "Windows_Repository.png"
+                    "VB365_Object_Repository" = "Object_Storage.png"
+                    "VB365_Object_Support" = "Object Storage support.png"
+                    "Veeam_Repository" = "Veeam_Repository.png"
+                    "VB365_On_Premises" = "SMB.png"
+                    "VB365_Microsoft_365" = "Cloud.png"
+                    "Microsoft_365" = "Microsoft_365.png"
+                    "Datacenter" = "Datacenter.png"
+                    "VB365_Restore_Portal" = "Web_console.png"
+                    "VB365_User_Group" = "User_Group.png"
+                    "VB365_User" = "User.png"
+                    "VBR365_Amazon_S3_Compatible" = "S3-compatible.png"
+                    "VBR365_Amazon_S3" = "AWS S3.png"
+                    "VBR365_Azure_Blob" = "Azure Blob.png"
+                }
+
+                $RootPath = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+                [System.IO.FileInfo]$IconPath = Join-Path $RootPath 'icons'
+
                 $DiagramParams = @{
                     'FileName' = "AsBuiltReport.Veeam.VB365"
                     'OutputFolderPath' = (Get-Location).Path
                     'Direction' = 'top-to-bottom'
-                    'DiagramType' = "Backup-to-All"
+                    'MainDiagramLabel' = 'Backup for Microsoft 365'
+                    'IconPath' = $IconPath
+                    'ImagesObj' = $Images
+                    'LogoName' = 'VBR_LOGO'
+                    'SignatureLogoName' = 'VB365_LOGO_Footer'
                 }
 
                 if ($Options.ExportDiagrams) {
@@ -124,10 +155,13 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
                 if ($Options.ExportDiagrams) {
                     Try {
-                        $Graph = Get-AbrVb365Diagram @DiagramParams
+                        $Graph = Get-AbrVb365Diagram
                         if ($Graph) {
-                            foreach ($OutputFormat in ($DiagramFormat)) {
-                                Write-Information "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                            $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
+                            if ($Diagram) {
+                                foreach ($OutputFormat in $DiagramFormat) {
+                                    Write-Information "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                                }
                             }
                         }
                     } Catch {
@@ -136,15 +170,16 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                 } else {
                     try {
                         try {
-                            $Graph = Get-AbrVb365Diagram @DiagramParams
+                            $Graph = Get-AbrVb365Diagram
+                            $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
                         } catch {
                             Write-PScriboMessage -IsWarning "Unable to generate the Infrastructure Diagram: $($_.Exception.Message)"
                         }
 
-                        if ($Graph) {
-                            If ((Get-DiaImagePercent -GraphObj $Graph).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
+                        if ($Diagram) {
+                            If ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
                             Section -Style Heading3 "Infrastructure Diagram." {
-                                Image -Base64 $Graph -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
+                                Image -Base64 $Diagram -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
                                 Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
                             }
                             BlankLine
