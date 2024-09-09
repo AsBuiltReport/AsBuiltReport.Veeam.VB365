@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
-## [0.3.5] - Unreleased
+## [0.3.5] - 2024-09-09
 
 ### Added
 
