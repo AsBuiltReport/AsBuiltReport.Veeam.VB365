@@ -5,7 +5,7 @@ function Get-AbrVB365BackupRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.3.5
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -66,6 +66,7 @@ function Get-AbrVB365BackupRepository {
                                 default { $Repository.RetentionPeriod }
                             }
                             'Retention Frequency Type' = $Repository.RetentionFrequencyType
+                            'Proxy Pool' = ConvertTo-EmptyToFiller $Repository.ProxyPool
                             'Description' = $Repository.Description
 
                         }

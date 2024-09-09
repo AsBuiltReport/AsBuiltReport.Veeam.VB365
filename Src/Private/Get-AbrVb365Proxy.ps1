@@ -5,7 +5,7 @@ function Get-AbrVB365Proxy {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.3.5
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -50,6 +50,14 @@ function Get-AbrVB365Proxy {
                             'Is Outdated' = ConvertTo-TextYN $Proxy.IsOutdated
                             'Is Teams Graph API Backup Enabled' = ConvertTo-TextYN $Proxy.IsTeamsGraphAPIBackupEnabled
                             'Is Domain Joined' = ConvertTo-TextYN $domainJoined
+                            'Version' = $Proxy.Version
+                            'Operating System' = $Proxy.OperatingSystemKind
+                            'Service Account' = $Proxy.ServiceAccount
+                            'Proxy Pool' = Switch ($Proxy.PoolId.Guid) {
+                                '00000000-0000-0000-0000-000000000000' {'-'}
+                                $null {'-'}
+                                Default {(Get-VBOProxyPool -Id $Proxy.PoolId).Name}
+                            }
                             'Description' = $Proxy.Description
                         }
                         $ProxyInfo += [PSCustomObject]$InObj
@@ -115,6 +123,9 @@ function Get-AbrVB365Proxy {
                             }
                             BlankLine
                         }
+                    }
+                    if (Get-VBOProxyPool -WarningAction SilentlyContinue) {
+                        Get-AbrVB365ProxyPool
                     }
                 }
             }
