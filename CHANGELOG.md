@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.5] - Unreleased
 
+### Added
+
+- Add Proxy Pool support
+
+### Changed
+
+- Migrate infrastructure diagram to use Diagrammer.Core's New-Diagrammer module
+
 ### Fixed
 
 - Fix export diagram option using wrong filename
