@@ -308,6 +308,8 @@ function Get-AbrVb365Diagram {
             $NodeFillColor = 'White'
         } elseif ($Options.DiagramTheme -eq 'Neon') {
             $NodeFillColor = 'Gold2'
+        } else {
+            $NodeFillColor = '#71797E'
         }
 
         # Veeam VB365 elements point of connection (Dummy Nodes!)
