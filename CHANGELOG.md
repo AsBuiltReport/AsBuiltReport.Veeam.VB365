@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.6] - 2024-09-16
+
+### Added
+
+- Add diagram theming (Black/White/Neon)
+
+### Changed
+
+- Improve infrastructure diagram error handling
+- Update Veeam default logo
+
 ## [0.3.5] - 2024-09-09
 
 ### Added
