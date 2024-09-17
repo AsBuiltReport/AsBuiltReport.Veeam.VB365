@@ -144,7 +144,7 @@ function Get-AbrVb365Diagram {
                 $RestoreOperatorsInfo += $inobj
             }
 
-            Node RestoreOperators @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $RestoreOperators.Name -Align "Center" -iconType "VB365_User" -columnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $RestoreOperatorsInfo); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
+            Node RestoreOperators @{Label = (Get-DiaHTMLNodeTable -ImagesObj $Images -inputObject $RestoreOperators.Name -Align "Center" -iconType "VB365_User" -columnSize 2 -IconDebug $IconDebug -MultiIcon -AditionalInfo $RestoreOperatorsInfo); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Tahoma" }
 
         } catch {
             Write-PScriboMessage "Error: Unable to create RestoreOperators Objects. Disabling the section"
