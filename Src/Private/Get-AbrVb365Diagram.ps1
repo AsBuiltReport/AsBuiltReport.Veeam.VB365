@@ -178,7 +178,7 @@ function Get-AbrVb365Diagram {
                 $inobj = [ordered] @{
                     # 'Path' = $Repository.Path
                     'Capacity' = ConvertTo-FileSizeString $Repository.Capacity
-                    'Fre$MainGraphBGColore Space' = ConvertTo-FileSizeString $Repository.FreeSpace
+                    'Free Space' = ConvertTo-FileSizeString $Repository.FreeSpace
                     'ObjectStorage' = $ObjStorage
                 }
                 $RepositoriesInfo += $inobj
