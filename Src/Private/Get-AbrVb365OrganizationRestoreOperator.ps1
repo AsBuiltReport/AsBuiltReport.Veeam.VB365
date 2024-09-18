@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationRestoreOperator {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.6
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -31,7 +31,7 @@ function Get-AbrVb365OrganizationRestoreOperator {
     process {
         try {
             $Organizations = Get-VBOOrganization -Name $Organization
-            $RestoreOperatorOrgs = try { Get-VBORbacRole -Organization $Organizations | Sort-Object -Property Name} catch { Out-Null }
+            $RestoreOperatorOrgs = try { Get-VBORbacRole -Organization $Organizations | Sort-Object -Property Name } catch { Out-Null }
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($RestoreOperators)) {
                 Write-PScriboMessage "Collecting Veeam VB365 Office365 Restore Operators Settings."
                 Section -Style Heading4 'Restore Operators' {
@@ -39,11 +39,19 @@ function Get-AbrVb365OrganizationRestoreOperator {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 "$($RestoreOperatorOrg.Name)" {
                             $RestoreOperatorOrgInfo = @()
 
+                            if ($RestoreOperatorOrg.Operators.UserName) {
+                                $Operator = $RestoreOperatorOrg.Operators.UserName
+                            } elseif ($RestoreOperatorOrg.Operators.DisplayName) {
+                                $Operator = $RestoreOperatorOrg.Operators.DisplayName
+                            } else {
+                                $Operator = 'Unknown'
+                            }
+
                             $inObj = [ordered] @{
                                 'Role Type' = $RestoreOperatorOrg.RoleType
-                                'Operators' = $RestoreOperatorOrg.Operators.UserName
-                                'Selected Items' = $RestoreOperatorOrg.SelectedItems.UserName
-                                'Excluded Items' = $RestoreOperatorOrg.ExcludedItems.UserName
+                                'Operators' = $Operator
+                                'Selected Items' = $RestoreOperatorOrg.SelectedItems.Title -join ','
+                                'Excluded Items' = $RestoreOperatorOrg.ExcludedItems.Title -join ','
                                 'Description' = $RestoreOperatorOrg.Description
                             }
 

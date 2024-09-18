@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.5
+        Version:        0.3.6
         Author:         Jonathan Colon
         Twitter:
         Github:
@@ -90,13 +90,14 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
             Get-AbrVb365RestorePoint
 
             if ($Options.EnableDiagrams) {
+                Write-PScriboMessage "Collecting Veeam Infrastructure diagram"
 
                 # Variable translating Icon to Image Path ($IconPath)
                 $script:Images = @{
                     "VB365_Server" = "VBR_server.png"
                     "VB365_Proxy_Server" = "Proxy_Server.png"
                     "VB365_Proxy" = "Veeam_Proxy.png"
-                    "VBR_LOGO" = "Veeam_logo.png"
+                    "VBR_LOGO" = "Veeam_logo_new.png"
                     "VB365_LOGO_Footer" = "verified_recoverability.png"
                     "VB365_Repository" = "VBO_Repository.png"
                     "VB365_Windows_Repository" = "Windows_Repository.png"
@@ -129,6 +130,18 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                     'SignatureLogoName' = 'VB365_LOGO_Footer'
                 }
 
+                if ($Options.DiagramTheme -eq 'Black') {
+                    $DiagramParams.add('MainGraphBGColor', 'Black')
+                    $DiagramParams.add('Edgecolor', 'White')
+                    $DiagramParams.add('Fontcolor', 'White')
+                    $DiagramParams.add('NodeFontcolor', 'White')
+                } elseif ($Options.DiagramTheme -eq 'Neon') {
+                    $DiagramParams.add('MainGraphBGColor', 'grey14')
+                    $DiagramParams.add('Edgecolor', 'gold2')
+                    $DiagramParams.add('Fontcolor', 'gold2')
+                    $DiagramParams.add('NodeFontcolor', 'gold2')
+                }
+
                 if ($Options.ExportDiagrams) {
                     if (-Not $Options.ExportDiagramsFormat) {
                         $DiagramFormat = 'png'
@@ -155,8 +168,10 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
                 if ($Options.ExportDiagrams) {
                     Try {
+                        Write-PScriboMessage "Generating Veeam Infrastructure diagram"
                         $Graph = Get-AbrVb365Diagram
                         if ($Graph) {
+                            Write-PScriboMessage "Saving Veeam Infrastructure diagram"
                             $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
                             if ($Diagram) {
                                 foreach ($OutputFormat in $DiagramFormat) {
