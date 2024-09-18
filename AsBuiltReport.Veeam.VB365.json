@@ -13,6 +13,7 @@
         "BackupServerPort": 9191,
         "EnableDiagrams": true,
         "EnableDiagramDebug": false,
+        "DiagramTheme": "White",
         "DiagramWaterMark": "",
         "ExportDiagrams": false,
         "ExportDiagramsFormat": ["png"],
