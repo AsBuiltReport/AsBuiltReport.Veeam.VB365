@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improve infrastructure diagram
+- Increase Diagrammer.Core to v0.2.9
+- Update Sample Diagram
+
 
 ## [0.3.6] - 2024-09-16
 
