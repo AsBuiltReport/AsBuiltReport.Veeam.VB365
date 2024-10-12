@@ -5,7 +5,7 @@ function Get-AbrVB365Proxy {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.5
+        Version:        0.3.7
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -31,15 +31,36 @@ function Get-AbrVB365Proxy {
                     $ProxyInfo = @()
                     foreach ($Proxy in $Proxies) {
                         Try {
-                            Write-PScriboMessage "Connecting to VB365 server '$Proxy.Hostname' through CIM session."
-                            $TempCIMSession = New-CimSession $Proxy.Hostname -Credential $Credential -Authentication 'Negotiate' -ErrorAction Continue -Name "Global:TempCIMSession"
+                            # Parameters used to authenticate remote connections
+                            $remoteParams = @{
+                                Credential = $Credential
+                                ComputerName = $Proxy.Hostname
+                            }
+                            # Parameters which are specific to Test-WSMan
+                            $testWSMan = @{
+                                Authentication = 'Negotiate'
+                                ErrorAction = 'SilentlyContinue'
+                            }
+                            # By default, do not pass any extra parameters to New-CimSession
+                            $newCimSession = @{}
+                            if (-not (Test-WSMan @testWSMan @remoteParams)) {
+                                # If WSMan fails, use DCOM (RPC over TCP) to connect
+                                $newCimSession['SessionOption'] = New-CimSessionOption -Protocol Dcom
+                            }
+                            # Parameters to pass to Get-CimInstance
+                            $getCimInstance = @{
+                                ClassName = 'Win32_ComputerSystem'
+                                CimSession = New-CimSession @newCimSession @remoteParams -Name "Global:TempCIMSession" -ErrorAction SilentlyContinue
+                            }
+
                         } Catch {
-                            Write-PScriboMessage -IsWarning "Unable to connect to VB365 server '$System' through CIM session. Continuing"
+                            Write-PScriboMessage -IsWarning "Unable to connect to VB365 server $($Proxy.Hostname) through CIM session. Continuing"
                         }
-                        if ($TempCIMSession) {
-                            $domainJoined = (Get-CimInstance -Class Win32_ComputerSystem -CimSession $TempCIMSession).partofdomain
+                        if ($getCimInstance.CimSession) {
+                            $domainJoined = (Get-CimInstance @getCimInstance).partofdomain
                         } else {
                             $domainJoined = 'Unknown'
+                            Write-PScriboMessage -IsWarning "Unable to connect to proxy server $($Proxy.Hostname) through CIM session. Continuing"
                         }
                         $inObj = [ordered] @{
                             'Name' = $Proxy.Hostname
@@ -54,9 +75,9 @@ function Get-AbrVB365Proxy {
                             'Operating System' = $Proxy.OperatingSystemKind
                             'Service Account' = $Proxy.ServiceAccount
                             'Proxy Pool' = Switch ($Proxy.PoolId.Guid) {
-                                '00000000-0000-0000-0000-000000000000' {'-'}
-                                $null {'-'}
-                                Default {(Get-VBOProxyPool -Id $Proxy.PoolId).Name}
+                                '00000000-0000-0000-0000-000000000000' { '-' }
+                                $null { '-' }
+                                Default { (Get-VBOProxyPool -Id $Proxy.PoolId).Name }
                             }
                             'Description' = $Proxy.Description
                         }
