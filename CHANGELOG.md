@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
-## [0.3.7] - Unreleased
+## [0.3.7] - 2024-10-12
 
 ### Changed
 
@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase Diagrammer.Core to v0.2.9
 - Update Sample Diagram
 
+### Fixed
+
+- Improved Proxy section CIMInstance code
 
 ## [0.3.6] - 2024-09-16
 
