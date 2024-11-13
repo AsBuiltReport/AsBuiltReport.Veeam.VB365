@@ -5,7 +5,7 @@ function Get-AbrVB365ServerInternetProxy {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -30,13 +30,13 @@ function Get-AbrVB365ServerInternetProxy {
                 Section -Style Heading3 'Internet Proxy' {
                     $ServerConfigInfo = @()
                     $inObj = [ordered] @{
-                        'Use Internet Proxy' = ConvertTo-TextYN $ServerConfig.UseInternetProxy
-                        'Proxy Host' = ConvertTo-EmptyToFiller $ServerConfig.Host
-                        'TCP Port' = ConvertTo-EmptyToFiller $ServerConfig.Port
-                        'Use Authentication' = ConvertTo-TextYN $ServerConfig.UseAuthentication
-                        'Proxy User' = ConvertTo-EmptyToFiller $ServerConfig.User
+                        'Use Internet Proxy' = $ServerConfig.UseInternetProxy
+                        'Proxy Host' = $ServerConfig.Host
+                        'TCP Port' = $ServerConfig.Port
+                        'Use Authentication' = $ServerConfig.UseAuthentication
+                        'Proxy User' = $ServerConfig.User
                     }
-                    $ServerConfigInfo = [PSCustomObject]$InObj
+                    $ServerConfigInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                     $TableParams = @{
                         Name = "Internet Proxy - $VeeamBackupServer"

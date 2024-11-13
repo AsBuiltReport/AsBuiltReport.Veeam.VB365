@@ -5,7 +5,7 @@ function Get-AbrVB365ServerTenantAuth {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -33,14 +33,14 @@ function Get-AbrVB365ServerTenantAuth {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Tenant Authentication' {
                             $TenantAuthInfo = @()
                             $inObj = [ordered] @{
-                                'Is Tenant Authentication Enabled' = ConvertTo-TextYN $TenantAuth.AuthenticationEnabled
-                                'Cert Friendly Name' = ConvertTo-EmptyToFiller $TenantAuth.CertificateFriendlyName
-                                'Issued To' = ConvertTo-EmptyToFiller $TenantAuth.CertificateIssuedTo
-                                'Issued By' = ConvertTo-EmptyToFiller $TenantAuth.CertificateIssuedBy
+                                'Is Tenant Authentication Enabled' = $TenantAuth.AuthenticationEnabled
+                                'Cert Friendly Name' = $TenantAuth.CertificateFriendlyName
+                                'Issued To' = $TenantAuth.CertificateIssuedTo
+                                'Issued By' = $TenantAuth.CertificateIssuedBy
                                 'Thumbprint' = $TenantAuth.CertificateThumbprint
-                                'Expiration Date' = ConvertTo-EmptyToFiller $TenantAuth.CertificateExpirationDate.DateTime
+                                'Expiration Date' = $TenantAuth.CertificateExpirationDate.DateTime
                             }
-                            $TenantAuthInfo = [PSCustomObject]$InObj
+                            $TenantAuthInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                             if ($HealthCheck.Infrastructure.ServerConfig) {
                                 $TenantAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
@@ -72,14 +72,14 @@ function Get-AbrVB365ServerTenantAuth {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Restore Operator Authentication' {
                             $OperatorAuthInfo = @()
                             $inObj = [ordered] @{
-                                'Is Restore Operator Authentication Enabled' = ConvertTo-TextYN $OperatorAuth.AuthenticationEnabled
-                                'Cert Friendly Name' = ConvertTo-EmptyToFiller $OperatorAuth.CertificateFriendlyName
-                                'Issued To' = ConvertTo-EmptyToFiller $OperatorAuth.CertificateIssuedTo
-                                'Issued By' = ConvertTo-EmptyToFiller $OperatorAuth.CertificateIssuedBy
+                                'Is Restore Operator Authentication Enabled' = $OperatorAuth.AuthenticationEnabled
+                                'Cert Friendly Name' = $OperatorAuth.CertificateFriendlyName
+                                'Issued To' = $OperatorAuth.CertificateIssuedTo
+                                'Issued By' = $OperatorAuth.CertificateIssuedBy
                                 'Thumbprint' = $OperatorAuth.CertificateThumbprint
-                                'Expiration Date' = ConvertTo-EmptyToFiller $OperatorAuth.CertificateExpirationDate.DateTime
+                                'Expiration Date' = $OperatorAuth.CertificateExpirationDate.DateTime
                             }
-                            $OperatorAuthInfo = [PSCustomObject]$InObj
+                            $OperatorAuthInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                             if ($HealthCheck.Infrastructure.ServerConfig) {
                                 $OperatorAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'

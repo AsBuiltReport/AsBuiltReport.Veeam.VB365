@@ -5,7 +5,7 @@ function Get-AbrVb365RestorePoint {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -73,7 +73,7 @@ function Get-AbrVb365RestorePoint {
                                                     }
                                                 }
                                             }
-                                            $RestorePointInfo += [PSCustomObject]$InObj
+                                            $RestorePointInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                                         } catch {
                                             Write-PScriboMessage -IsWarning "Restore Point table: $($_.Exception.Message)"
                                         }

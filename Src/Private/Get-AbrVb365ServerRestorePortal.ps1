@@ -5,7 +5,7 @@ function Get-AbrVb365ServerRestorePortal {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -30,17 +30,17 @@ function Get-AbrVb365ServerRestorePortal {
                 Section -Style Heading3 'Restore Portal' {
                     $RestorePortalInfo = @()
                     $inObj = [ordered] @{
-                        'Is Restore Portal Enabled' = ConvertTo-TextYN $RestorePortal.IsServiceEnabled
-                        'Region' = ConvertTo-EmptyToFiller $RestorePortal.Region
-                        'Application Id' = ConvertTo-EmptyToFiller $RestorePortal.ApplicationId
-                        'Portal URI' = ConvertTo-EmptyToFiller $RestorePortal.PortalUri
-                        'Certificate Friendly Name' = ConvertTo-EmptyToFiller $RestorePortal.CertificateFriendlyName
-                        'Issued To' = ConvertTo-EmptyToFiller $RestorePortal.CertificateIssuedTo
-                        'Issued By' = ConvertTo-EmptyToFiller $RestorePortal.CertificateIssuedBy
-                        'Thumbprint' = ConvertTo-EmptyToFiller $RestorePortal.CertificateThumbprint
-                        'Expiration Date' = ConvertTo-EmptyToFiller $RestorePortal.CertificateExpirationDate.DateTime
+                        'Is Restore Portal Enabled' = $RestorePortal.IsServiceEnabled
+                        'Region' = $RestorePortal.Region
+                        'Application Id' = $RestorePortal.ApplicationId
+                        'Portal URI' = $RestorePortal.PortalUri
+                        'Certificate Friendly Name' = $RestorePortal.CertificateFriendlyName
+                        'Issued To' = $RestorePortal.CertificateIssuedTo
+                        'Issued By' = $RestorePortal.CertificateIssuedBy
+                        'Thumbprint' = $RestorePortal.CertificateThumbprint
+                        'Expiration Date' = $RestorePortal.CertificateExpirationDate.DateTime
                     }
-                    $RestorePortalInfo = [PSCustomObject]$InObj
+                    $RestorePortalInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                     if ($HealthCheck.Infrastructure.ServerConfig) {
                         $RestorePortalInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'

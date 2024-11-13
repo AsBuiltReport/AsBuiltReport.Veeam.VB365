@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationSyncState {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -42,10 +42,10 @@ function Get-AbrVb365OrganizationSyncState {
                             'Sync Status' = $State.SyncStatus
                             'Type' = $State.Type
                             'Last Sync Time' = $State.LastSyncTime
-                            'Error' = ConvertTo-EmptyToFiller $State.ConfigureApplication
+                            'Error' = $State.ConfigureApplication
                         }
 
-                        $StateInfo += [PSCustomObject]$InObj
+                        $StateInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     if ($HealthCheck.Infrastructure.Organization) {
