@@ -5,7 +5,7 @@ function Get-AbrVB365ProxyPool {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.5
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -37,7 +37,7 @@ function Get-AbrVB365ProxyPool {
                             'Proxies' = $Proxy.Proxies
                             'Description' = $Proxy.Description
                         }
-                        $ProxyInfo += [PSCustomObject]$InObj
+                        $ProxyInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     $TableParams = @{

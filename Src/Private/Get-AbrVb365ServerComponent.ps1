@@ -6,7 +6,7 @@ function Get-AbrVB365ServerComponent {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -39,10 +39,10 @@ function Get-AbrVB365ServerComponent {
                                 $inObj = [ordered] @{
                                     'Name' = $ServerComponent.Name
                                     'Server Name' = $ServerComponent.ServerName
-                                    'Is Online' = ConvertTo-TextYN $ServerComponent.IsOnline
-                                    'Extended Logging' = ConvertTo-TextYN $ServerComponent.ExtendedLoggingEnabled
+                                    'Is Online' = $ServerComponent.IsOnline
+                                    'Extended Logging' = $ServerComponent.ExtendedLoggingEnabled
                                 }
-                                $OutObj += [pscustomobject]$inobj
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             }
                         } catch {
                             Write-PScriboMessage -IsWarning "Server Components Information $($ServerComponent.Name) Section: $($_.Exception.Message)"

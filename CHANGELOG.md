@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.8] - 2024-11-12
+
+### Added
+
+- Add code to properly display diskspace information
+
+### Changed
+
+- Improve detection of empty fields in tables
+- Improve detection of true/false elements in tables
+- Update GitHub release workflow to add post to Bluesky social platform
+- Increase Diagrammer.Core to v0.2.12
+- Update Sample report & diagram files
+
 ## [0.3.7] - 2024-10-12
 
 ### Changed

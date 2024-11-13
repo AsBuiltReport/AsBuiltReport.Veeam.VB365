@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicense {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -31,10 +31,10 @@ function Get-AbrVB365InstalledLicense {
                 try {
                     Write-PScriboMessage "Discovered $($Licenses.LicensedTo) license."
                     $inObj = [ordered] @{
-                        'Licensed To' = ConvertTo-EmptyToFiller $Licenses.LicensedTo
-                        'Edition' = ConvertTo-EmptyToFiller $Licenses.Package
-                        'Type' = ConvertTo-EmptyToFiller $Licenses.Type
-                        'Status' = ConvertTo-EmptyToFiller $Licenses.Status
+                        'Licensed To' = $Licenses.LicensedTo
+                        'Edition' = $Licenses.Package
+                        'Type' = $Licenses.Type
+                        'Status' = $Licenses.Status
                         'Expiration Date' = Switch ([string]::IsNullOrEmpty($Licenses.ExpirationDate)) {
                             $true { "-"; break }
                             default { $Licenses.ExpirationDate.ToShortDateString() }
@@ -43,14 +43,14 @@ function Get-AbrVB365InstalledLicense {
                             $true { "--"; break }
                             default { $Licenses.SupportExpirationDate.ToShortDateString() }
                         }
-                        'Contact Person' = ConvertTo-EmptyToFiller $Licenses.ContactPerson
+                        'Contact Person' = $Licenses.ContactPerson
                         'License Usage' = Switch ([string]::IsNullOrEmpty($Licenses.TotalNumber)) {
                             $true {'--'}
                             $false {"Total: $($Licenses.TotalNumber) - Used: $($Licenses.UsedNumber)"}
                             default {'Unknown'}
                         }
                     }
-                    $OutObj += [pscustomobject]$inobj
+                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                 } catch {
                     Write-PScriboMessage -IsWarning "Installed License Information $($Licenses.LicensedTo) Section: $($_.Exception.Message)"
                 }

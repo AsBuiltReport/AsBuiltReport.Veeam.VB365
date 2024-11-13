@@ -5,7 +5,7 @@ function Get-AbrVb365BackupCopyJob {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -38,11 +38,11 @@ function Get-AbrVb365BackupCopyJob {
                             'Last Run' = $BackupCopyJob.LastRun
                             'Next Run' = $BackupCopyJob.NextRun
                             'Last Backup' = $BackupCopyJob.LastBackup
-                            'Is Enabled' = ConvertTo-TextYN $BackupCopyJob.IsEnabled
-                            'Description' = ConvertTo-EmptyToFiller $BackupCopyJob.Description
+                            'Is Enabled' = $BackupCopyJob.IsEnabled
+                            'Description' = $BackupCopyJob.Description
 
                         }
-                        $BackupCopyJobInfo += [PSCustomObject]$InObj
+                        $BackupCopyJobInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     if ($HealthCheck.Jobs.BackupCopyJob) {

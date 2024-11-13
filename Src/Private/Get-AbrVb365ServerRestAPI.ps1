@@ -5,7 +5,7 @@ function Get-AbrVB365ServerRestAPI {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -30,16 +30,16 @@ function Get-AbrVB365ServerRestAPI {
                 Section -Style Heading3 'RESTful API' {
                     $ServerConfigRestAPIInfo = @()
                     $inObj = [ordered] @{
-                        'Is Service Enabled' = ConvertTo-TextYN $ServerConfigRestAPI.IsServiceEnabled
-                        'Auth Token LifeTime' = ConvertTo-EmptyToFiller $ServerConfigRestAPI.AuthTokenLifeTime
-                        'HTTPS Port' = ConvertTo-EmptyToFiller $ServerConfigRestAPI.HTTPSPort
-                        'Cert Friendly Name' = ConvertTo-EmptyToFiller $ServerConfigRestAPI.CertificateFriendlyName
-                        'Issued To' = ConvertTo-EmptyToFiller $ServerConfigRestAPI.CertificateIssuedTo
-                        'Issued By' = ConvertTo-EmptyToFiller $ServerConfigRestAPI.CertificateIssuedBy
+                        'Is Service Enabled' = $ServerConfigRestAPI.IsServiceEnabled
+                        'Auth Token LifeTime' = $ServerConfigRestAPI.AuthTokenLifeTime
+                        'HTTPS Port' = $ServerConfigRestAPI.HTTPSPort
+                        'Cert Friendly Name' = $ServerConfigRestAPI.CertificateFriendlyName
+                        'Issued To' = $ServerConfigRestAPI.CertificateIssuedTo
+                        'Issued By' = $ServerConfigRestAPI.CertificateIssuedBy
                         'Thumbprint' = $ServerConfigRestAPI.CertificateThumbprint
                         'Expiration Date' = $ServerConfigRestAPI.CertificateExpirationDate.DateTime
                     }
-                    $ServerConfigRestAPIInfo = [PSCustomObject]$InObj
+                    $ServerConfigRestAPIInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                     if ($HealthCheck.Infrastructure.ServerConfig) {
                         $ServerConfigRestAPIInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'

@@ -5,7 +5,7 @@ function Get-AbrVB365ObjectRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.4
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -34,18 +34,18 @@ function Get-AbrVB365ObjectRepository {
                             'Name' = $ObjectRepository.Name
                             'Type' = $ObjectRepository.Type
                             'Folder' = $ObjectRepository.Folder
-                            'Enable Size Limit' = ConvertTo-TextYN $ObjectRepository.EnableSizeLimit
+                            'Enable Size Limit' = $ObjectRepository.EnableSizeLimit
                             'Size Limit' = "$($ObjectRepository.SizeLimit) GB"
                             'Used Space' = ConvertTo-FileSizeString $ObjectRepository.UsedSpace
                             'Free Space' = ConvertTo-FileSizeString $ObjectRepository.FreeSpace
-                            'Is Long Term' = ConvertTo-TextYN $ObjectRepository.IsLongTerm
-                            'Is Secondary' = ConvertTo-TextYN $ObjectRepository.IsSecondary
-                            'Use Archiver Appliance' = ConvertTo-TextYN $ObjectRepository.UseArchiverAppliance
-                            'Immutability Enabled' = ConvertTo-TextYN $ObjectRepository.EnableImmutability
+                            'Is Long Term' = $ObjectRepository.IsLongTerm
+                            'Is Secondary' = $ObjectRepository.IsSecondary
+                            'Use Archiver Appliance' = $ObjectRepository.UseArchiverAppliance
+                            'Immutability Enabled' = $ObjectRepository.EnableImmutability
                             'Description' = $ObjectRepository.Description
 
                         }
-                        $ObjectRepositoryInfo += [PSCustomObject]$InObj
+                        $ObjectRepositoryInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     if ($InfoLevel.Infrastructure.Repository -ge 2) {

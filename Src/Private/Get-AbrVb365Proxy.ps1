@@ -5,7 +5,7 @@ function Get-AbrVB365Proxy {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.7
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -68,9 +68,9 @@ function Get-AbrVB365Proxy {
                             'Type' = $Proxy.Type
                             'Threads Number' = $Proxy.ThreadsNumber
                             'Throttling Value' = $Proxy.ThrottlingValue
-                            'Is Outdated' = ConvertTo-TextYN $Proxy.IsOutdated
-                            'Is Teams Graph API Backup Enabled' = ConvertTo-TextYN $Proxy.IsTeamsGraphAPIBackupEnabled
-                            'Is Domain Joined' = ConvertTo-TextYN $domainJoined
+                            'Is Outdated' = $Proxy.IsOutdated
+                            'Is Teams Graph API Backup Enabled' = $Proxy.IsTeamsGraphAPIBackupEnabled
+                            'Is Domain Joined' = $domainJoined
                             'Version' = $Proxy.Version
                             'Operating System' = $Proxy.OperatingSystemKind
                             'Service Account' = $Proxy.ServiceAccount
@@ -81,7 +81,7 @@ function Get-AbrVB365Proxy {
                             }
                             'Description' = $Proxy.Description
                         }
-                        $ProxyInfo += [PSCustomObject]$InObj
+                        $ProxyInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                         if ($TempCIMSession) {
                             # Remove used CIMSession
