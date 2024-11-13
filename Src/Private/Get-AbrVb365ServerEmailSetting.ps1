@@ -5,7 +5,7 @@ function Get-AbrVB365ServerEmailSetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -30,16 +30,16 @@ function Get-AbrVB365ServerEmailSetting {
                 Section -Style Heading3 'Notification' {
                     $ServerConfigInfo = @()
                     $inObj = [ordered] @{
-                        'Enable Email Notification' = ConvertTo-TextYN $ServerConfig.EnableNotification
-                        'Use Authentication' = ConvertTo-TextYN $ServerConfig.UseAuthentication
-                        'From' = ConvertTo-EmptyToFiller $ServerConfig.From
-                        'To' = ConvertTo-EmptyToFiller $ServerConfig.To
+                        'Enable Email Notification' = $ServerConfig.EnableNotification
+                        'Use Authentication' = $ServerConfig.UseAuthentication
+                        'From' = $ServerConfig.From
+                        'To' = $ServerConfig.To
                         'Subject' = $ServerConfig.Subject
-                        'Notify On Success' = ConvertTo-TextYN $ServerConfig.NotifyOnSuccess
-                        'Notify On Warning' = ConvertTo-TextYN $ServerConfig.NotifyOnWarning
-                        'Notify On Failure' = ConvertTo-TextYN $ServerConfig.NotifyOnFailure
-                        'Supress Until Last Retry' = ConvertTo-TextYN $ServerConfig.SupressUntilLastRetry
-                        'Include Detailed Report as an attachment' = ConvertTo-TextYN $ServerConfig.AttachDetailedReport
+                        'Notify On Success' = $ServerConfig.NotifyOnSuccess
+                        'Notify On Warning' = $ServerConfig.NotifyOnWarning
+                        'Notify On Failure' = $ServerConfig.NotifyOnFailure
+                        'Supress Until Last Retry' = $ServerConfig.SupressUntilLastRetry
+                        'Include Detailed Report as an attachment' = $ServerConfig.AttachDetailedReport
                         'Authentication Type' = $ServerConfig.AuthenticationType
                     }
 
@@ -51,9 +51,9 @@ function Get-AbrVB365ServerEmailSetting {
                         $inObj.Add('SMTP Server', $ServerConfig.SMTPServer)
                         $inObj.Add('SMTP Port', $ServerConfig.Port)
                         $inObj.Add('SMTP Username', $ServerConfig.Username)
-                        $inObj.Add('Use SMTP SSL', (ConvertTo-TextYN $ServerConfig.UseSSL))
+                        $inObj.Add('Use SMTP SSL', ($ServerConfig.UseSSL))
                     }
-                    $ServerConfigInfo = [PSCustomObject]$InObj
+                    $ServerConfigInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                     if ($HealthCheck) {
                         $ServerConfigInfo | Where-Object { $_.'Enable Email Notification' -eq 'No' } | Set-Style -Style Critical -Property 'Enable Email Notification'

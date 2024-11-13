@@ -5,7 +5,7 @@ function Get-AbrVb365Organization {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -37,19 +37,19 @@ function Get-AbrVb365Organization {
                             'Region' = $Organization.Region
                             'Username' = $Organization.Username
                             'Office Name' = $Organization.OfficeName
-                            'Use SSL' = ConvertTo-TextYN $Organization.UseSSL
-                            'BackedUp' = ConvertTo-TextYN $Organization.IsBackedUp
+                            'Use SSL' = $Organization.UseSSL
+                            'BackedUp' = $Organization.IsBackedUp
                             'Licensing Options' = "Licensed Users:$($Organization.LicensingOptions.LicensedUsersCount) Trial Users:$($Organization.LicensingOptions.TrialUsersCount)"
                             'Backup Parts' = $Organization.BackupParts
-                            'Skip CA Verification' = ConvertTo-TextYN $Organization.SkipCAVerification
-                            'Skip Common Name Verification' = ConvertTo-TextYN $Organization.SkipCommonNameVerification
-                            'Skip Revocation Check' = ConvertTo-TextYN $Organization.SkipRevocationCheck
-                            'Is Exchange Server' = ConvertTo-TextYN $Organization.IsExchange
-                            'Is SharePoint' = ConvertTo-TextYN $Organization.IsSharePoint
-                            'Backup Teams' = ConvertTo-TextYN $Organization.BackupTeams
-                            'Backup Teams Chats' = ConvertTo-TextYN $Organization.BackupTeamsChats
-                            'Grant Access To Site Collections' = ConvertTo-TextYN $Organization.GrantAccessToSiteCollections
-                            'Description' = ConvertTo-EmptyToFiller $Organization.Description
+                            'Skip CA Verification' = $Organization.SkipCAVerification
+                            'Skip Common Name Verification' = $Organization.SkipCommonNameVerification
+                            'Skip Revocation Check' = $Organization.SkipRevocationCheck
+                            'Is Exchange Server' = $Organization.IsExchange
+                            'Is SharePoint' = $Organization.IsSharePoint
+                            'Backup Teams' = $Organization.BackupTeams
+                            'Backup Teams Chats' = $Organization.BackupTeamsChats
+                            'Grant Access To Site Collections' = $Organization.GrantAccessToSiteCollections
+                            'Description' = $Organization.Description
 
                         }
 
@@ -72,7 +72,7 @@ function Get-AbrVb365Organization {
                             $inObj.remove("Use SSL")
                         }
 
-                        $OrganizationInfo += [PSCustomObject]$InObj
+                        $OrganizationInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     if ($HealthCheck.Infrastructure.Organization) {

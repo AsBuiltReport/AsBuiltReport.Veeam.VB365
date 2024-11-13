@@ -5,7 +5,7 @@ function Get-AbrVB365BackupRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.5
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -43,12 +43,12 @@ function Get-AbrVB365BackupRepository {
                                 $false { "Disabled" }
                                 default { "Unknown" }
                             }
-                            'Is Outdated' = ConvertTo-TextYN $Repository.IsOutdated
-                            'Is Out Of Sync' = ConvertTo-TextYN $Repository.IsOutOfSync
+                            'Is Outdated' = $Repository.IsOutdated
+                            'Is Out Of Sync' = $Repository.IsOutOfSync
                             'Capacity' = ConvertTo-FileSizeString $Repository.Capacity
                             'Free Space' = ConvertTo-FileSizeString $Repository.FreeSpace
                             'Used Space' = ConvertTo-FileSizeString ($Repository.Capacity - $Repository.FreeSpace)
-                            'Is Long Term' = ConvertTo-TextYN $Repository.IsLongTerm
+                            'Is Long Term' = $Repository.IsLongTerm
                             'Retention Type' = Switch ($Repository.RetentionType) {
                                 'SnapshotBased' { 'Snapshot Based' }
                                 'ItemLevel' { 'Item Level' }
@@ -66,11 +66,11 @@ function Get-AbrVB365BackupRepository {
                                 default { $Repository.RetentionPeriod }
                             }
                             'Retention Frequency Type' = $Repository.RetentionFrequencyType
-                            'Proxy Pool' = ConvertTo-EmptyToFiller $Repository.ProxyPool
+                            'Proxy Pool' = $Repository.ProxyPool
                             'Description' = $Repository.Description
 
                         }
-                        $RepositoryInfo += [PSCustomObject]$InObj
+                        $RepositoryInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     if ($InfoLevel.Infrastructure.Repository -ge 2) {

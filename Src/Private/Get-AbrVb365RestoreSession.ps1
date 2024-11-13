@@ -5,7 +5,7 @@ function Get-AbrVb365RestoreSession {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -40,7 +40,7 @@ function Get-AbrVb365RestoreSession {
                             'Initiated By' = $RestoreSession.InitiatedBy
                             'Processed Objects' = $RestoreSession.ProcessedObjects
                         }
-                        $RestoreSessionInfo += [PSCustomObject]$InObj
+                        $RestoreSessionInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     if ($InfoLevel.Restore.RestoreSession) {

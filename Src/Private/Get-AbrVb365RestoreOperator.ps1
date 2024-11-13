@@ -5,7 +5,7 @@ function Get-AbrVb365RestoreOperator {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -42,7 +42,7 @@ function Get-AbrVb365RestoreOperator {
                             'Description' = $RestoreOperator.Description
                         }
 
-                        $RestoreOperatorInfo += [PSCustomObject]$InObj
+                        $RestoreOperatorInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     $TableParams = @{

@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicenseUser {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -37,11 +37,11 @@ function Get-AbrVB365InstalledLicenseUser {
                                 $inObj = [ordered] @{
                                     'User Name' = $License.UserName
                                     'Organization' = $License.OrganizationName
-                                    'Is Backed Up?' = ConvertTo-TextYN $License.IsBackedUp
+                                    'Is Backed Up?' = $License.IsBackedUp
                                     'Last Backup Date' = $License.LastBackupDate.ToShortDateString()
                                     'License Status' = $License.LicenseStatus
                                 }
-                                $OutObj += [pscustomobject]$inobj
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             }
                         } catch {
                             Write-PScriboMessage -IsWarning "Licensed User Information $($License.UserName) Section: $($_.Exception.Message)"

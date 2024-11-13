@@ -5,7 +5,7 @@ function Get-AbrVB365ServerFolderExclution {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.2
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -33,15 +33,15 @@ function Get-AbrVB365ServerFolderExclution {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Mailbox Folder Exclusion from Backup' {
                             $FolderExclusionInfo = @()
                             $inObj = [ordered] @{
-                                'Deleted Items' = ConvertTo-TextYN $FolderExclusion.DeletedItems
-                                'Draft' = ConvertTo-TextYN $FolderExclusion.Drafts
-                                'Junk Email' = ConvertTo-TextYN $FolderExclusion.JunkEmail
-                                'Outbox' = ConvertTo-TextYN $FolderExclusion.Outbox
-                                'Sync Issues' = ConvertTo-TextYN $FolderExclusion.SyncIssues
-                                'Litigation Hold' = ConvertTo-TextYN $FolderExclusion.LitigationHold
-                                'In Place Hold' = ConvertTo-TextYN $FolderExclusion.InPlaceHold
+                                'Deleted Items' = $FolderExclusion.DeletedItems
+                                'Draft' = $FolderExclusion.Drafts
+                                'Junk Email' = $FolderExclusion.JunkEmail
+                                'Outbox' = $FolderExclusion.Outbox
+                                'Sync Issues' = $FolderExclusion.SyncIssues
+                                'Litigation Hold' = $FolderExclusion.LitigationHold
+                                'In Place Hold' = $FolderExclusion.InPlaceHold
                             }
-                            $FolderExclusionInfo = [PSCustomObject]$InObj
+                            $FolderExclusionInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                             $TableParams = @{
                                 Name = "Mailbox Folder Exclusion from Backup - $VeeamBackupServer"
@@ -58,10 +58,10 @@ function Get-AbrVB365ServerFolderExclution {
                         Section -ExcludeFromTOC -Style NOTOCHeading4 'Mailbox Folder Exclusion from Retention Policy' {
                             $RetentionExclusionInfo = @()
                             $inObj = [ordered] @{
-                                'Skip Calendar' = ConvertTo-TextYN $RetentionExclusion.SkipCalendar
-                                'Skip Contacts' = ConvertTo-TextYN $RetentionExclusion.SkipContacts
+                                'Skip Calendar' = $RetentionExclusion.SkipCalendar
+                                'Skip Contacts' = $RetentionExclusion.SkipContacts
                             }
-                            $RetentionExclusionInfo = [PSCustomObject]$InObj
+                            $RetentionExclusionInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                             $TableParams = @{
                                 Name = "Restore Operator Authentication - $VeeamBackupServer"

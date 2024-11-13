@@ -5,7 +5,7 @@ function Get-AbrVb365CloudCredential {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.1
+        Version:        0.3.8
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -48,7 +48,7 @@ function Get-AbrVb365CloudCredential {
                             'Last Modified' = $CloudCredential.LastModified
                             'Description' = $CloudCredential.Description
                         }
-                        $CloudCredentialInfo += [PSCustomObject]$InObj
+                        $CloudCredentialInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     if ($InfoLevel.Infrastructure.CloudCredential -ge 2) {
