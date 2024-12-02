@@ -130,7 +130,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
                 $DiagramParams = @{
                     'FileName' = "AsBuiltReport.Veeam.VB365"
-                    'OutputFolderPath' = (Get-Location).Path
+                    'OutputFolderPath' = $OutputFolderPath
                     'Direction' = 'top-to-bottom'
                     'MainDiagramLabel' = 'Backup for Microsoft 365'
                     'IconPath' = $IconPath
@@ -184,7 +184,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                             $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
                             if ($Diagram) {
                                 foreach ($OutputFormat in $DiagramFormat) {
-                                    Write-Information "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$((Get-Location).Path)\'." -InformationAction Continue
+                                    Write-Information "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$($OutputFolderPath)'." -InformationAction Continue
                                 }
                             }
                         }

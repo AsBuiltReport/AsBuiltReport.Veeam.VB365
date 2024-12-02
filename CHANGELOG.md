@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.9] - Unreleased
+
+### Changed
+
+- Change the infrastructure diagram default save location to $OutputFolderPath
+- Increase Diagrammer.Core to v0.2.13
+- Increase AsBuiltReport.Core to v1.4.1
+
 ## [0.3.8] - 2024-11-12
 
 ### Added
@@ -24,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.7] - 2024-10-12
 
 ### Changed
-
+Increase Diagrammer.Core to v0.2.12
 - Improve infrastructure diagram
 - Increase Diagrammer.Core to v0.2.9
 - Update Sample Diagram
