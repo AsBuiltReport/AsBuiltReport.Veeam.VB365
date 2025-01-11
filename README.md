@@ -27,6 +27,9 @@
 
 > [!WARNING]
 > I recently made the decision to not apply to the Veeam Vanguard program which was one of the main reasons for developing and maintaining this project. For this reason I will not be maintaining or updating this report. At this time until someone is identified to maintain the project, this report will be frozen in terms of new capabilities.
+>
+#### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
+
 
 # Veeam VB365 As Built Report
 
