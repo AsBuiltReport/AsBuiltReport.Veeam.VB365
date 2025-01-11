@@ -25,6 +25,9 @@
 </p>
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 
+> [!WARNING]
+> I recently made the decision to not apply to the Veeam Vanguard program which was one of the main reasons for developing and maintaining this project. For this reason I will not be maintaining or updating this report. At this time until someone is identified to maintain the project, this report will be frozen in terms of new capabilities.
+
 # Veeam VB365 As Built Report
 
 Veeam VB365 As Built Report is a PowerShell module which works in conjunction with [AsBuiltReport.Core](https://github.com/AsBuiltReport/AsBuiltReport.Core).
