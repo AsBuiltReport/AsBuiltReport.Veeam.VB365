@@ -5,7 +5,7 @@ function Get-AbrVB365ServerRestAPI {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.9
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -39,6 +39,11 @@ function Get-AbrVB365ServerRestAPI {
                         'Thumbprint' = $ServerConfigRestAPI.CertificateThumbprint
                         'Expiration Date' = $ServerConfigRestAPI.CertificateExpirationDate.DateTime
                     }
+                    if ($VBOversion.split('')[0] -ge 8.1) {
+                        $inObj.Add('Enable Swagger UI', $ServerConfigRestAPI.EnableSwaggerUI)
+                        $inObj.Add('Enable Restore Operator Authentication Only', $ServerConfigRestAPI.EnableOperatorAuthenticationOnly)
+                    }
+
                     $ServerConfigRestAPIInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                     if ($HealthCheck.Infrastructure.ServerConfig) {

@@ -5,7 +5,7 @@ function Get-AbrVB365ServerFolderExclution {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.9
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -30,7 +30,7 @@ function Get-AbrVB365ServerFolderExclution {
                 Write-PScriboMessage "Collecting Veeam VB365 folder exclusions."
                 Section -Style Heading3 'Folders' {
                     if ($FolderExclusion) {
-                        Section -ExcludeFromTOC -Style NOTOCHeading5 'Mailbox Folder Exclusion from Backup' {
+                        Section -ExcludeFromTOC -Style NOTOCHeading4 'Mailbox Folder Exclusion from Backup' {
                             $FolderExclusionInfo = @()
                             $inObj = [ordered] @{
                                 'Deleted Items' = $FolderExclusion.DeletedItems

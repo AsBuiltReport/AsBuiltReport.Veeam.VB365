@@ -12,7 +12,7 @@
     RootModule = 'AsBuiltReport.Veeam.VB365.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.3.8'
+    ModuleVersion = '0.3.9'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@
     # CompanyName = 'Unknown'
 
     # Copyright statement for this module
-    Copyright = '(c) 2024 Jonathan Colon. All rights reserved.'
+    Copyright = '(c) 2025 Jonathan Colon. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description = 'A PowerShell module to generate an as built report on the configuration of Veeam Backup for Microsoft 365.'
@@ -55,7 +55,7 @@
     RequiredModules = @(
         @{
             ModuleName = 'AsBuiltReport.Core';
-            ModuleVersion = '1.4.0'
+            ModuleVersion = '1.4.2.1'
         },
         @{
             ModuleName = 'PScriboCharts';
@@ -63,7 +63,7 @@
         },
         @{
             ModuleName = 'Diagrammer.Core';
-            ModuleVersion = '0.2.12'
+            ModuleVersion = '0.2.19'
         }
     )
 

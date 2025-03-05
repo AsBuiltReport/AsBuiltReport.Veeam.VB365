@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.9] - 2025-03-04
+
+### Added
+
+- Improve disk space information
+- Improve RESTful API section details
+
+### Changed
+
+- Update GitHub release workflow for Bluesky integration
+- Update sample report and diagram files
+- Increase dependencies to latest versions
+
+### Fixed
+
+- Resolve issue with diagram watermark text generation
+
 ## [0.3.8] - 2024-11-12
 
 ### Added
@@ -24,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.7] - 2024-10-12
 
 ### Changed
-
+Increase Diagrammer.Core to v0.2.12
 - Improve infrastructure diagram
 - Increase Diagrammer.Core to v0.2.9
 - Update Sample Diagram
