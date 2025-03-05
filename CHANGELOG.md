@@ -7,13 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
-## [0.3.9] - Unreleased
+## [0.3.9] - 2025-03-04
+
+### Added
+
+- Improve disk space information
+- Improve RESTful API section details
 
 ### Changed
 
-- Change the infrastructure diagram default save location to $OutputFolderPath
-- Increase Diagrammer.Core to v0.2.13
-- Increase AsBuiltReport.Core to v1.4.1
+- Update GitHub release workflow for Bluesky integration
+- Update sample report and diagram files
+- Increase dependencies to latest versions
+
+### Fixed
+
+- Resolve issue with diagram watermark text generation
 
 ## [0.3.8] - 2024-11-12
 

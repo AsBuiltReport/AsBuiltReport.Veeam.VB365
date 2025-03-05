@@ -1,7 +1,7 @@
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 <p align="center">
     <a href="https://www.asbuiltreport.com/" alt="AsBuiltReport"></a>
-            <img src='https://avatars.githubusercontent.com/u/42958564' width="8%" height="8%" /></a>
+    <img src='https://avatars.githubusercontent.com/u/42958564' width="8%" height="8%" /></a>
 </p>
 <p align="center">
     <a href="https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/" alt="PowerShell Gallery Version">
@@ -21,21 +21,20 @@
 </p>
 <p align="center">
     <a href="https://twitter.com/AsBuiltReport" alt="Twitter">
-            <img src="https://img.shields.io/twitter/follow/AsBuiltReport.svg?style=social"/></a>
+        <img src="https://img.shields.io/twitter/follow/AsBuiltReport.svg?style=social"/></a>
 </p>
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 
 > [!WARNING]
-> I recently made the decision to not apply to the Veeam Vanguard program which was one of the main reasons for developing and maintaining this project. For this reason I will not be maintaining or updating this report. At this time until someone is identified to maintain the project, this report will be frozen in terms of new capabilities.
->
-#### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
+> I recently decided not to apply to the Veeam Vanguard program, which was one of the main reasons for developing and maintaining this project. Therefore, I will not be maintaining or updating this report. Until someone is identified to maintain the project, this report will be frozen in terms of new capabilities.
 
+#### This project is community maintained and has no sponsorship from Veeam, its employees, or any of its affiliates.
 
 # Veeam VB365 As Built Report
 
-Veeam VB365 As Built Report is a PowerShell module which works in conjunction with [AsBuiltReport.Core](https://github.com/AsBuiltReport/AsBuiltReport.Core).
+Veeam VB365 As Built Report is a PowerShell module that works in conjunction with [AsBuiltReport.Core](https://github.com/AsBuiltReport/AsBuiltReport.Core).
 
-[AsBuiltReport](https://github.com/AsBuiltReport/AsBuiltReport) is an open-sourced community project which utilises PowerShell to produce as-built documentation in multiple document formats for multiple vendors and technologies.
+[AsBuiltReport](https://github.com/AsBuiltReport/AsBuiltReport) is an open-source community project that utilizes PowerShell to produce as-built documentation in multiple document formats for various vendors and technologies.
 
 Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for more detailed information about this project.
 
@@ -52,24 +51,26 @@ Sample Veeam VB365 As Built report diagram file: [Sample Veeam VB365 As Built Re
 ![Sample Diagram](Samples/AsBuiltReport.Veeam.VB365.png)
 
 # :beginner: Getting Started
-Below are the instructions on how to install, configure and generate a Veeam VB365 As Built report.
+
+Below are the instructions on how to install, configure, and generate a Veeam VB365 As Built report.
 
 ## :floppy_disk: Supported Versions
-<!-- ********** Update supported VB365 versions ********** -->
-The Veeam VB365 As Built Report supports the following Veeam Backup for Microsoft 365 version;
+
+The Veeam VB365 As Built Report supports the following Veeam Backup for Microsoft 365 version:
 
 - Veeam Backup for Microsoft 365 v6+
 
 ### PowerShell
-This report is compatible with the following PowerShell versions;
 
-<!-- ********** Update supported PowerShell versions ********** -->
+This report is compatible with the following PowerShell versions:
+
 | Windows PowerShell 5.1 | PowerShell 7 |
 | :--------------------: | :----------: |
 |   :white_check_mark:   |     :x:      |
+
 ## :wrench: System Requirements
-<!-- ********** Update system requirements ********** -->
-PowerShell 5.1, and the following PowerShell modules are required for generating a Veeam VB365 As Built Report.
+
+PowerShell 5.1 and the following PowerShell modules are required for generating a Veeam VB365 As Built Report:
 
 - [Veeam.Archiver.PowerShell Module](https://helpcenter.veeam.com/docs/vbo365/powershell/getting_started.html?ver=70)
 - [PScriboCharts Module](https://github.com/iainbrighton/PScriboCharts)
@@ -78,50 +79,52 @@ PowerShell 5.1, and the following PowerShell modules are required for generating
 - [AsBuiltReport.Veeam.VB365 Module](https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/)
 
 ### :closed_lock_with_key: Required Privileges
-<!-- ********** Define required privileges ********** -->
-<!-- ********** Try to follow best practices to define least privileges ********** -->
-Only users with Local Administrator group permissions can generate a Veeam VB365 As Built Report.
 
+Only users with Local Administrator group permissions can generate a Veeam VB365 As Built Report.
 
 ## :package: Module Installation
 
 ### PowerShell
-<!-- ********** Add installation for any additional PowerShell module(s) ********** -->
+
 ```powershell
-install-module AsBuiltReport.Veeam.VB365
+Install-Module AsBuiltReport.Veeam.VB365
 ```
 
 ### GitHub
+
 If you are unable to use the PowerShell Gallery, you can still install the module manually. Ensure you repeat the following steps for the [system requirements](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365#wrench-system-requirements) also.
 
-1. Download the code package / [latest release](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/releases/latest) zip from GitHub
-2. Extract the zip file
+1. Download the code package / [latest release](https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/releases/latest) zip from GitHub.
+2. Extract the zip file.
 3. Copy the folder `AsBuiltReport.Veeam.VB365` to a path that is set in `$env:PSModulePath`.
-4. Open a PowerShell terminal window and unblock the downloaded files with
+4. Open a PowerShell terminal window and unblock the downloaded files with:
     ```powershell
     $path = (Get-Module -Name AsBuiltReport.Veeam.VB365 -ListAvailable).ModuleBase; Unblock-File -Path $path\*.psd1; Unblock-File -Path $path\Src\Public\*.ps1; Unblock-File -Path $path\Src\Private\*.ps1
     ```
 5. Close and reopen the PowerShell terminal window.
 
-_Note: You are not limited to installing the module to those example paths, you can add a new entry to the environment variable PSModulePath if you want to use another path._
+_Note: You are not limited to installing the module to those example paths; you can add a new entry to the environment variable PSModulePath if you want to use another path._
 
 ## :pencil2: Configuration
 
-The Veeam VB365 As Built Report utilizes a JSON file to allow configuration of report information, options, detail and healthchecks.
+The Veeam VB365 As Built Report utilizes a JSON file to allow configuration of report information, options, detail, and health checks.
 
-A Veeam VB365 report configuration file can be generated by executing the following command;
+A Veeam VB365 report configuration file can be generated by executing the following command:
+
 ```powershell
 New-AsBuiltReportConfig -Report Veeam.VB365 -FolderPath <User specified folder> -Filename <Optional>
 ```
 
-Executing this command will copy the default Veeam VB365 report JSON configuration to a user specified folder.
+Executing this command will copy the default Veeam VB365 report JSON configuration to a user-specified folder.
 
 All report settings can then be configured via the JSON file.
 
-The following provides information of how to configure each schema within the report's JSON file.
+The following provides information on how to configure each schema within the report's JSON file.
 
 <!-- ********** DO NOT CHANGE THE REPORT SCHEMA SETTINGS ********** -->
+
 ### Report
+
 The **Report** schema provides configuration of the Veeam VB365 report information.
 
 | Sub-Schema          | Setting      | Default                     | Description                                                  |
@@ -138,25 +141,26 @@ The **Report** schema provides configuration of the Veeam VB365 report informati
 
 The **Options** schema allows certain options within the report to be toggled on or off.
 
-| Sub-Schema             | Setting             | Default | Description                                                                    |
-| ---------------------- | ------------------- | ------- | ------------------------------------------------------------------------------ |
-| BackupServerPort       | TCP Port            | 9191    | Used to specify the backup service's custom port.                              |
-| ReportStyle            | Veeam/AsBuiltReport | Veeam   | Allow to set report style template.                                            |
-| EnableDiagrams         | true/false          | true    | Toggle to enable/disable the creation of infrastructure diagram.               |
-| EnableDiagramsDebug    | true/false          | false   | Toggle to enable/disable diagram debug option.                                 |
-| DiagramWaterMark       | string              | empty   | Used to set the diagram waterMark.                                             |
-| DiagramTheme           | string              | White   | Used to set the diagram theme. (Black/White/Neon)                              |
-| ExportDiagrams         | true/false          | false   | Toggle to enable/disable diagram export option.                                |
-| ExportDiagramsFormat   | string array        | png     | Set the format used to export the infrastructure diagram. (dot, png, pdf, svg) |
-| EnableDiagramSignature | true/false          | false   | Toggle to enable/disable diagram signature (button right corner)               |
-| SignatureAuthorName    | string              | empty   | Toggle to set signature author name.                                           |
-| SignatureCompanyName   | string              | empty   | Toggle to set signature company name.                                          |
+| Sub-Schema             | Setting             | Default | Description                                                                                  |
+| ---------------------- | ------------------- | ------- | -------------------------------------------------------------------------------------------- |
+| BackupServerPort       | TCP Port            | 9191    | Specifies the custom port for the backup service.                                            |
+| ReportStyle            | Veeam/AsBuiltReport | Veeam   | Sets the report style template.                                                              |
+| EnableDiagrams         | true/false          | true    | Enables or disables the creation of infrastructure diagrams.                                 |
+| EnableDiagramsDebug    | true/false          | false   | Enables or disables the diagram debug option.                                                |
+| DiagramWaterMark       | string              | empty   | Sets the watermark for the diagram.                                                          |
+| DiagramTheme           | string              | White   | Sets the diagram theme. Options are Black, White, or Neon.                                   |
+| ExportDiagrams         | true/false          | false   | Enables or disables the option to export diagrams.                                           |
+| ExportDiagramsFormat   | string array        | png     | Sets the format for exporting the infrastructure diagram. Options are dot, png, pdf, or svg. |
+| EnableDiagramSignature | true/false          | false   | Enables or disables the diagram signature in the bottom right corner.                        |
+| SignatureAuthorName    | string              | empty   | Sets the author name for the diagram signature.                                              |
+| SignatureCompanyName   | string              | empty   | Sets the company name for the diagram signature.                                             |
+| RoundUnits             | int                 | 1       | Sets the rounding units for data values.                                                     |
 
-<!-- ********** Add/Remove the number of InfoLevels as required ********** -->
 ### InfoLevel
+
 The **InfoLevel** schema allows configuration of each section of the report at a granular level. The following sections can be set.
 
-There are 3 levels (0-2) of detail granularity for each section as follows;
+There are 3 levels (0-2) of detail granularity for each section as follows:
 
 | Setting | InfoLevel         | Description                                                          |
 | :-----: | ----------------- | -------------------------------------------------------------------- |
@@ -191,6 +195,7 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 | RestorePoint   |        1        |        1        |
 
 ### Healthcheck
+
 The **Healthcheck** schema is used to toggle health checks on or off.
 
 ## :computer: Examples
@@ -210,7 +215,6 @@ PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local
 
 # Generate a Veeam VB365 As Built Report for Backup Server veeam-vbr365.pharmax.local using stored credentials. Export report to HTML & DOCX formats. Use default report style. Reports are saved to the user profile folder by default. Attach and send reports via e-mail.
 PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local -Username 'Domain\veeam_admin' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
-
 ```
 
 ## :x: Known Issues

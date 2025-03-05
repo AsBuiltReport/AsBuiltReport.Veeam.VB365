@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.9
         Author:         Jonathan Colon
         Twitter:
         Github:
@@ -76,6 +76,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
         Get-AbrVB365ServerConnection
 
         $script:VeeamBackupServer = ((Get-VBOServerComponents -Name Server).ServerName).ToString().ToUpper().Split(".")[0]
+        $script:VBOversion = try { (Get-VBOVersion).ProductVersion } catch { Out-Null }
 
         Section -Style Heading1 $($VeeamBackupServer) {
             Paragraph "The following section provides an overview of the implemented components of Veeam Backup for Microsoft 365."
@@ -133,10 +134,15 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                     'OutputFolderPath' = $OutputFolderPath
                     'Direction' = 'top-to-bottom'
                     'MainDiagramLabel' = 'Backup for Microsoft 365'
+                    'MainDiagramLabelFontsize' = 28
+                    'MainDiagramLabelFontcolor' = '#565656'
+                    'MainDiagramLabelFontname' = 'Segoe UI Black'
                     'IconPath' = $IconPath
                     'ImagesObj' = $Images
                     'LogoName' = 'VBR_LOGO'
                     'SignatureLogoName' = 'VB365_LOGO_Footer'
+                    'WaterMarkText' = $Options.DiagramWaterMark
+                    'WaterMarkColor' = 'DarkGreen'
                 }
 
                 if ($Options.DiagramTheme -eq 'Black') {
@@ -202,7 +208,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
                         if ($Diagram) {
                             If ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
-                            Section -Style Heading3 "Infrastructure Diagram." {
+                            Section -Style Heading2 "Infrastructure Diagram." {
                                 Image -Base64 $Diagram -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
                                 Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
                             }
@@ -214,6 +220,5 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                 }
             }
         }
-    }
-    #endregion foreach loop
+    } #endregion foreach loop
 }
