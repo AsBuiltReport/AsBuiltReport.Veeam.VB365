@@ -19,7 +19,8 @@
         "ExportDiagramsFormat": ["png"],
         "EnableDiagramSignature": false,
         "SignatureAuthorName": "",
-        "SignatureCompanyName": ""
+        "SignatureCompanyName": "",
+        "RoundUnits": 1
     },
     "InfoLevel": {
         "_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",

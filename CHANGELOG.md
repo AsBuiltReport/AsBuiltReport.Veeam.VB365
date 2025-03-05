@@ -9,11 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.9] - Unreleased
 
+### Added
+
+- Add code to properly display diskspace information
+- Improve RESTful API section information
+
 ### Changed
 
 - Change the infrastructure diagram default save location to $OutputFolderPath
-- Increase Diagrammer.Core to v0.2.13
-- Increase AsBuiltReport.Core to v1.4.1
+- Increase Diagrammer.Core to v0.2.17
+- Increase AsBuiltReport.Core to v1.4.2.1
+- Update GitHub release workflow to add post to Bluesky social platform
+- Update Sample report & diagram files
+
+### Fixed
+
+- Fix diagram watermark text not getting generated
 
 ## [0.3.8] - 2024-11-12
 
