@@ -5,10 +5,10 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.9
+        Version:        0.3.10
         Author:         Jonathan Colon
-        Twitter:
-        Github:
+        Twitter:        @jcolonzenpr
+        Github:         @rebelinux
         Credits:        Iain Brighton (@iainbrighton) - PScribo module
 
     .LINK
@@ -43,7 +43,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
         if ($InstalledVersion) {
             Write-PScriboMessage -Plugin "Module" -IsWarning "AsBuiltReport.Veeam.VB365 $($InstalledVersion.ToString()) is currently installed."
             $LatestVersion = Find-Module -Name AsBuiltReport.Veeam.VB365 -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
-            if ($LatestVersion -gt $InstalledVersion) {
+            if ([version]$LatestVersion -gt [version]$InstalledVersion) {
                 Write-PScriboMessage -Plugin "Module" -IsWarning "AsBuiltReport.Veeam.VB365 $($LatestVersion.ToString()) is available."
                 Write-PScriboMessage -Plugin "Module" -IsWarning "Run 'Update-Module -Name AsBuiltReport.Veeam.VB365 -Force' to install the latest version."
             }
@@ -199,25 +199,19 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
                     }
                 } else {
                     try {
-                        try {
-                            $Graph = Get-AbrVb365Diagram
-                            $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
-                        } catch {
-                            Write-PScriboMessage -IsWarning "Unable to generate the Infrastructure Diagram: $($_.Exception.Message)"
-                        }
-
-                        if ($Diagram) {
-                            If ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
-                            Section -Style Heading2 "Infrastructure Diagram." {
-                                Image -Base64 $Diagram -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
-                                Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
-                            }
-                            BlankLine
-                        }
+                        $Graph = Get-AbrVb365Diagram
+                        $script:Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
                     } catch {
-                        Write-PScriboMessage -IsWarning "Infrastructure Diagram: $($_.Exception.Message)"
+                        Write-PScriboMessage -IsWarning "Unable to generate the Infrastructure Diagram: $($_.Exception.Message)"
                     }
                 }
+            }
+        }
+        if ($Diagram) {
+            If ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
+            Section -Style Heading2 "Infrastructure Diagram." -Orientation Landscape {
+                Image -Base64 $Diagram -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
+                Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
             }
         }
     } #endregion foreach loop
