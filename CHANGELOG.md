@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump module version to 0.3.10
 - Update dependencies in changelog
 - Improve diagram AdditionalInfo sorting
+- Refactor Infrastructure Diagram generation logic for clarity and efficiency
 
 ## [0.3.9] - 2025-03-04
 
