@@ -26,7 +26,11 @@
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 
 > [!WARNING]
-> I recently decided not to apply to the Veeam Vanguard program, which was one of the main reasons for developing and maintaining this project. Therefore, I will not be maintaining or updating this report. Until someone is identified to maintain the project, this report will be frozen in terms of new capabilities.
+> I have recently been contacted to ask about the status of this project. Maintaining this report and all the tools that make this project work is time and resource consuming. If you want to keep this project alive, support its development by donating through ko-fi.
+
+<p align="center">
+    <a href='https://ko-fi.com/F1F8DEV80' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://ko-fi.com/img/githubbutton_sm.svg' border='0' alt='Want to keep alive this project? Support me on Ko-fi' /></a>
+</p>
 
 #### This project is community maintained and has no sponsorship from Veeam, its employees, or any of its affiliates.
 

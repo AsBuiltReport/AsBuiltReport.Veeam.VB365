@@ -5,7 +5,7 @@ function Get-AbrVb365Diagram {
     .DESCRIPTION
         Diagram the configuration of Veeam Backup for Microsoft 365 infrastructure in PDF/SVG/DOT/PNG formats using PSGraph and Graphviz.
     .NOTES
-        Version:        0.3.9
+        Version:        0.3.10
         Author(s):      Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -83,7 +83,7 @@ function Get-AbrVb365Diagram {
             $ProxiesInfo = @()
 
             $Proxies | ForEach-Object {
-                $inobj = @{
+                $inobj = [PSCustomObject] [ordered] @{
                     'Type' = $_.Type
                     'Port' = "TCP/$($_.Port)"
                     'OS' = $_.OperatingSystemKind
@@ -168,7 +168,7 @@ function Get-AbrVb365Diagram {
                 } else {
                     $ObjStorage = 'None'
                 }
-                $inobj = [ordered] @{
+                $inobj = [PSCustomObject] [ordered] @{
                     # 'Path' = $Repository.Path
                     'Capacity' = ConvertTo-FileSizeString $Repository.Capacity
                     'Free Space' = ConvertTo-FileSizeString $Repository.FreeSpace
@@ -194,13 +194,13 @@ function Get-AbrVb365Diagram {
             }
         }
         # Object Repositories Graphviz Cluster
-try {
+        try {
 
             $ObjectRepositoriesInfo = @()
             $ORIconType = @()
 
             $ObjectRepositories | ForEach-Object {
-                $inobj = @{
+                $inobj = [PSCustomObject] [ordered] @{
                     'Type' = $_.Type
                     'Folder' = $_.Folder
                     'Immutability' = $_.EnableImmutability
@@ -236,7 +236,7 @@ try {
             $OrganizationsInfo = @()
 
             ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }) | ForEach-Object {
-                $inobj = @{
+                $inobj = [PSCustomObject] [ordered] @{
                     'Users' = "Licensed: $($_.LicensingOptions.LicensedUsersCount) - Trial: $($_.LicensingOptions.TrialUsersCount)"
                     'BackedUp' = ConvertTo-TextYN $_.IsBackedUp
                 }
@@ -255,7 +255,7 @@ try {
             $OrganizationsInfo = @()
 
             ($Organizations | Where-Object { $_.Type -eq 'Office365' }) | ForEach-Object {
-                $inobj = @{
+                $inobj = [PSCustomObject] [ordered] @{
                     'Users' = "Licensed: $($_.LicensingOptions.LicensedUsersCount) - Trial: $($_.LicensingOptions.TrialUsersCount)"
                     'BackedUp' = ConvertTo-TextYN $_.IsBackedUp
                 }
