@@ -5,7 +5,7 @@ function Get-AbrVb365RestorePoint {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,7 +19,7 @@ function Get-AbrVb365RestorePoint {
     )
 
     begin {
-        Write-PScriboMessage "RestorePoint InfoLevel set at $($InfoLevel.Restore.RestorePoint)."
+        Write-PScriboMessage -Message "RestorePoint InfoLevel set at $($InfoLevel.Restore.RestorePoint)."
     }
 
     process {
@@ -27,7 +27,7 @@ function Get-AbrVb365RestorePoint {
             $RestorePoints = Get-VBORestorePoint | Sort-Object -Property BackupTime
             $BackupJobs = Get-VBOJob | Sort-Object -Property Name
             if (($InfoLevel.Restore.RestorePoint -gt 0) -and ($RestorePoints)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Restore Point."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Point."
                 Section -Style Heading2 'Restore Point' {
                     Paragraph "The following section summarizes the configuration of the restore points within the $VeeamBackupServer backup server."
                     BlankLine
@@ -75,7 +75,7 @@ function Get-AbrVb365RestorePoint {
                                             }
                                             $RestorePointInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                                         } catch {
-                                            Write-PScriboMessage -IsWarning "Restore Point table: $($_.Exception.Message)"
+                                            Write-PScriboMessage -IsWarning -Message "Restore Point table: $($_.Exception.Message)"
                                         }
                                     }
 
@@ -95,7 +95,7 @@ function Get-AbrVb365RestorePoint {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Restore Point Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Restore Point Section: $($_.Exception.Message)"
         }
     }
     end {}

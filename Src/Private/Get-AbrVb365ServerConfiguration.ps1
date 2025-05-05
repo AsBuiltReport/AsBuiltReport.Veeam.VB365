@@ -5,7 +5,7 @@ function Get-AbrVB365ServerConfiguration {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,7 +19,7 @@ function Get-AbrVB365ServerConfiguration {
     )
 
     begin {
-        Write-PScriboMessage "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
+        Write-PScriboMessage -Message "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
     }
 
     process {
@@ -29,7 +29,7 @@ function Get-AbrVB365ServerConfiguration {
             $ServerConfig += Get-VBOSecuritySettings
 
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Server Configuration."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Server Configuration."
                 Section -Style Heading2 'Server Configuration' {
                     Paragraph "The following sections detail the server configuration of $VeeamBackupServer backup server."
                     BlankLine
@@ -100,7 +100,7 @@ function Get-AbrVB365ServerConfiguration {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Server Configuration Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Server Configuration Section: $($_.Exception.Message)"
         }
     }
 

@@ -5,7 +5,7 @@ function Get-AbrVB365ServerFolderExclution {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.9
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,7 +19,7 @@ function Get-AbrVB365ServerFolderExclution {
     )
 
     begin {
-        Write-PScriboMessage "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
+        Write-PScriboMessage -Message "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
     }
 
     process {
@@ -27,7 +27,7 @@ function Get-AbrVB365ServerFolderExclution {
             $FolderExclusion = Get-VBOFolderExclusions
             $RetentionExclusion = Get-VBOGlobalRetentionExclusion
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($FolderExclusion -or $RetentionExclusion)) {
-                Write-PScriboMessage "Collecting Veeam VB365 folder exclusions."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 folder exclusions."
                 Section -Style Heading3 'Folders' {
                     if ($FolderExclusion) {
                         Section -ExcludeFromTOC -Style NOTOCHeading4 'Mailbox Folder Exclusion from Backup' {
@@ -77,7 +77,7 @@ function Get-AbrVB365ServerFolderExclution {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Folders Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Folders Section: $($_.Exception.Message)"
         }
     }
 

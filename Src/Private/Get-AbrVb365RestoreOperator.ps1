@@ -5,7 +5,7 @@ function Get-AbrVb365RestoreOperator {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVb365RestoreOperator {
     )
 
     begin {
-        Write-PScriboMessage "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
+        Write-PScriboMessage -Message "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
     }
 
     process {
         try {
             $script:RestoreOperators = try { Get-VBORbacRole | Sort-Object -Property Name} catch { Out-Null }
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($RestoreOperators)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Office365 Restore Operators Settings."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Office365 Restore Operators Settings."
                 Section -Style Heading3 'Restore Operators' {
                     Paragraph "The following table summarizes the configuration of the restore operators within the $VeeamBackupServer backup server."
                     BlankLine
@@ -58,7 +58,7 @@ function Get-AbrVb365RestoreOperator {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "VB365 Office365 Restore Operators Settings Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "VB365 Office365 Restore Operators Settings Section: $($_.Exception.Message)"
         }
     }
 

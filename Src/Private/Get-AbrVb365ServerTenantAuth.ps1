@@ -5,7 +5,7 @@ function Get-AbrVB365ServerTenantAuth {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,7 +19,7 @@ function Get-AbrVB365ServerTenantAuth {
     )
 
     begin {
-        Write-PScriboMessage "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
+        Write-PScriboMessage -Message "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
     }
 
     process {
@@ -27,7 +27,7 @@ function Get-AbrVB365ServerTenantAuth {
             $TenantAuth = Get-VBOTenantAuthenticationSettings
             $OperatorAuth = Get-VBOOperatorAuthenticationSettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($TenantAuth -or $OperatorAuth)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Tenant Authentication."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Tenant Authentication."
                 Section -Style Heading4 'Authentication' {
                     if ($TenantAuth) {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Tenant Authentication' {
@@ -110,7 +110,7 @@ function Get-AbrVB365ServerTenantAuth {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Authentication Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Authentication Section: $($_.Exception.Message)"
         }
     }
 

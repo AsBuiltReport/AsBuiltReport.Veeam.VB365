@@ -420,7 +420,7 @@ function Get-ColumnChart {
     $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format "PNG" -PassThru
 
     if ($PassThru) {
-        Write-Output -InputObject $chartFileItem
+        Write-PScriboMessage -InputObject $chartFileItem
     }
 
     $Base64Image = [convert]::ToBase64String((Get-Content $ChartImage -Encoding byte))
