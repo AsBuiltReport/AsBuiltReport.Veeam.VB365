@@ -5,7 +5,7 @@ function Get-AbrVb365Organization {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVb365Organization {
     )
 
     begin {
-        Write-PScriboMessage "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
+        Write-PScriboMessage -Message "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
     }
 
     process {
         try {
             $script:Organizations = Get-VBOOrganization | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($Organizations)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Backup Organization."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Organization."
                 Section -Style Heading2 'Organizations' {
                     $OrganizationInfo = @()
                     foreach ($Organization in $Organizations) {
@@ -121,7 +121,7 @@ function Get-AbrVb365Organization {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Organization Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Organization Section: $($_.Exception.Message)"
         }
     }
 

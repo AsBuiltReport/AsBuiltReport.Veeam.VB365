@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicense {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrVB365InstalledLicense {
     )
 
     begin {
-        Write-PScriboMessage "Discovering Veeam VB365 License information from $System."
+        Write-PScriboMessage -Message "Discovering Veeam VB365 License information from $System."
     }
 
     process {
@@ -29,7 +29,7 @@ function Get-AbrVB365InstalledLicense {
             if ($Licenses = Get-VBOLicense) {
                 $OutObj = @()
                 try {
-                    Write-PScriboMessage "Discovered $($Licenses.LicensedTo) license."
+                    Write-PScriboMessage -Message "Discovered $($Licenses.LicensedTo) license."
                     $inObj = [ordered] @{
                         'Licensed To' = $Licenses.LicensedTo
                         'Edition' = $Licenses.Package
@@ -52,7 +52,7 @@ function Get-AbrVB365InstalledLicense {
                     }
                     $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                 } catch {
-                    Write-PScriboMessage -IsWarning "Installed License Information $($Licenses.LicensedTo) Section: $($_.Exception.Message)"
+                    Write-PScriboMessage -IsWarning -Message "Installed License Information $($Licenses.LicensedTo) Section: $($_.Exception.Message)"
                 }
 
                 if ($HealthCheck.Infrastructure.License) {
@@ -89,7 +89,7 @@ function Get-AbrVB365InstalledLicense {
                     $chartFileItem = Get-PieChart -SampleData $sampleDataObj -ChartName 'LicenseUsage' -XField 'Category' -YField 'Value' -ChartLegendName 'Category' -ChartTitleText "License Usage (Total: $($Licenses.TotalNumber))"
 
                 } catch {
-                    Write-PScriboMessage -IsWarning "Instance License Usage chart section: $($_.Exception.Message)"
+                    Write-PScriboMessage -IsWarning -Message "Instance License Usage chart section: $($_.Exception.Message)"
                 }
 
                 if ($OutObj) {
@@ -119,7 +119,7 @@ function Get-AbrVB365InstalledLicense {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "License Information Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "License Information Section: $($_.Exception.Message)"
         }
     }
 

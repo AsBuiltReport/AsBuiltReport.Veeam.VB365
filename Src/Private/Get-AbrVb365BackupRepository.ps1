@@ -5,7 +5,7 @@ function Get-AbrVB365BackupRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVB365BackupRepository {
     )
 
     begin {
-        Write-PScriboMessage "Repository InfoLevel set at $($InfoLevel.Infrastructure.Repository)."
+        Write-PScriboMessage -Message "Repository InfoLevel set at $($InfoLevel.Infrastructure.Repository)."
     }
 
     process {
         try {
             $script:Repositories = Get-VBORepository | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Repository -gt 0) -and ($Repositories)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Backup Repository."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Repository."
                 Section -Style Heading2 'Backup Repositories' {
                     $RepositoryInfo = @()
                     foreach ($Repository in $Repositories) {
@@ -136,7 +136,7 @@ function Get-AbrVB365BackupRepository {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Repository Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Repository Section: $($_.Exception.Message)"
         }
     }
 

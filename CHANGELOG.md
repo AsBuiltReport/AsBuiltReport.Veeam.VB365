@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.11] - 2025-05-05
+
+### Added
+
+- Add the `Export-AbrVb365Diagram` function to enhance diagram export capabilities.
+
+### Changed
+
+- Update the module version to `0.3.11`.
+- Upgrade the `Diagrammer.Core` module to version `0.2.25`.
+- Move the infrastructure diagram to appear as the first section in the report.
+- Refactore `Write-PScriboMessage` calls to use the `-Message` parameter for consistency across scripts.
+
+### Removed
+
+- Remove unused diagram generation code.
+
 ## [0.3.10] - 2025-04-11
 
 ### Changed

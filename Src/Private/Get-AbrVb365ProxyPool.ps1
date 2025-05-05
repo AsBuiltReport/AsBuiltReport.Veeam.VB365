@@ -5,7 +5,7 @@ function Get-AbrVB365ProxyPool {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVB365ProxyPool {
     )
 
     begin {
-        Write-PScriboMessage "Proxy InfoLevel set at $($InfoLevel.Infrastructure.Proxy)."
+        Write-PScriboMessage -Message "Proxy InfoLevel set at $($InfoLevel.Infrastructure.Proxy)."
     }
 
     process {
         try {
             $script:ProxyPools = Get-VBOProxyPool -WarningAction SilentlyContinue | Sort-Object -Property Name
             if (($InfoLevel.Infrastructure.Proxy -gt 0) -and ($ProxyPools)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Proxy Pool information."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Proxy Pool information."
                 Section -Style Heading3 'Backup Proxy Pools' {
                     Paragraph "The following table summarizes the configuration of the proxy pools within the $VeeamBackupServer backup server."
                     BlankLine
@@ -52,7 +52,7 @@ function Get-AbrVB365ProxyPool {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Backup Proxy Pools Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Backup Proxy Pools Section: $($_.Exception.Message)"
         }
     }
 

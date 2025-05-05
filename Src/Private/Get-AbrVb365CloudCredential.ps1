@@ -5,7 +5,7 @@ function Get-AbrVb365CloudCredential {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,7 +19,7 @@ function Get-AbrVb365CloudCredential {
     )
 
     begin {
-        Write-PScriboMessage "CloudCredential InfoLevel set at $($InfoLevel.Infrastructure.CloudCredential)."
+        Write-PScriboMessage -Message "CloudCredential InfoLevel set at $($InfoLevel.Infrastructure.CloudCredential)."
     }
 
     process {
@@ -32,7 +32,7 @@ function Get-AbrVb365CloudCredential {
             # $CloudCredentials += Get-VBOAzureServiceAccount
 
             if (($InfoLevel.Infrastructure.CloudCredential -gt 0) -and ($CloudCredentials)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Cloud Credential."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Cloud Credential."
                 Section -Style Heading2 'Cloud Credentials' {
                     $CloudCredentialInfo = @()
                     foreach ($CloudCredential in $CloudCredentials) {
@@ -83,7 +83,7 @@ function Get-AbrVb365CloudCredential {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Cloud Credential Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Cloud Credential Section: $($_.Exception.Message)"
         }
     }
 

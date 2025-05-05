@@ -5,7 +5,7 @@ function Get-AbrVb365BackupCopyJob {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVb365BackupCopyJob {
     )
 
     begin {
-        Write-PScriboMessage "BackupCopyJob InfoLevel set at $($InfoLevel.Jobs.BackupCopyJob)."
+        Write-PScriboMessage -Message "BackupCopyJob InfoLevel set at $($InfoLevel.Jobs.BackupCopyJob)."
     }
 
     process {
         try {
             $BackupCopyJobs = Get-VBOCopyJob | Sort-Object -Property Name
             if (($InfoLevel.Jobs.BackupCopyJob -gt 0) -and ($BackupCopyJobs)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Backup Copy Jobs."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Copy Jobs."
                 Section -Style Heading3 'Backup Copy Jobs' {
                     $BackupCopyJobInfo = @()
                     foreach ($BackupCopyJob in $BackupCopyJobs) {
@@ -71,7 +71,7 @@ function Get-AbrVb365BackupCopyJob {
                         $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'BackupJobs' -AxisXTitle 'Status' -AxisYTitle 'Count' -ChartTitleName 'BackupJob' -ChartTitleText 'Backup Copy Jobs Latest Results'
 
                     } catch {
-                        Write-PScriboMessage -IsWarning "Backup Copy Chart Section: $($_.Exception.Message)"
+                        Write-PScriboMessage -IsWarning -Message "Backup Copy Chart Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Jobs.BackupCopyJob -ge 2) {
@@ -112,7 +112,7 @@ function Get-AbrVb365BackupCopyJob {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Backup Copy Jobs Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Backup Copy Jobs Section: $($_.Exception.Message)"
         }
     }
 

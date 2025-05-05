@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicenseUser {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrVB365InstalledLicenseUser {
     )
 
     begin {
-        Write-PScriboMessage "Discovering Veeam VB365 License information from $System."
+        Write-PScriboMessage -Message "Discovering Veeam VB365 License information from $System."
     }
 
     process {
@@ -33,7 +33,7 @@ function Get-AbrVB365InstalledLicenseUser {
                         $OutObj = @()
                         try {
                             foreach ($License in $Licenses) {
-                                Write-PScriboMessage "Discovered $($License.UserName) license."
+                                Write-PScriboMessage -Message "Discovered $($License.UserName) license."
                                 $inObj = [ordered] @{
                                     'User Name' = $License.UserName
                                     'Organization' = $License.OrganizationName
@@ -44,7 +44,7 @@ function Get-AbrVB365InstalledLicenseUser {
                                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             }
                         } catch {
-                            Write-PScriboMessage -IsWarning "Licensed User Information $($License.UserName) Section: $($_.Exception.Message)"
+                            Write-PScriboMessage -IsWarning -Message "Licensed User Information $($License.UserName) Section: $($_.Exception.Message)"
                         }
 
                         if ($HealthCheck.Infrastructure.Status) {
@@ -63,11 +63,11 @@ function Get-AbrVB365InstalledLicenseUser {
                         $OutObj | Table @TableParams
                     }
                 } catch {
-                    Write-PScriboMessage -IsWarning "Licensed Users Section: $($_.Exception.Message)"
+                    Write-PScriboMessage -IsWarning -Message "Licensed Users Section: $($_.Exception.Message)"
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Licensed Users Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Licensed Users Section: $($_.Exception.Message)"
         }
     }
 

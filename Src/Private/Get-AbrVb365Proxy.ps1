@@ -5,7 +5,7 @@ function Get-AbrVB365Proxy {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVB365Proxy {
     )
 
     begin {
-        Write-PScriboMessage "Proxy InfoLevel set at $($InfoLevel.Infrastructure.Proxy)."
+        Write-PScriboMessage -Message "Proxy InfoLevel set at $($InfoLevel.Infrastructure.Proxy)."
     }
 
     process {
         try {
             $script:Proxies = Get-VBOProxy -WarningAction SilentlyContinue | Sort-Object -Property Hostname
             if (($InfoLevel.Infrastructure.Proxy -gt 0) -and ($Proxies)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Proxy information."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Proxy information."
                 Section -Style Heading2 'Backup Proxies' {
                     $ProxyInfo = @()
                     foreach ($Proxy in $Proxies) {
@@ -54,13 +54,13 @@ function Get-AbrVB365Proxy {
                             }
 
                         } Catch {
-                            Write-PScriboMessage -IsWarning "Unable to connect to VB365 server $($Proxy.Hostname) through CIM session. Continuing"
+                            Write-PScriboMessage -IsWarning -Message "Unable to connect to VB365 server $($Proxy.Hostname) through CIM session. Continuing"
                         }
                         if ($getCimInstance.CimSession) {
                             $domainJoined = (Get-CimInstance @getCimInstance).partofdomain
                         } else {
                             $domainJoined = 'Unknown'
-                            Write-PScriboMessage -IsWarning "Unable to connect to proxy server $($Proxy.Hostname) through CIM session. Continuing"
+                            Write-PScriboMessage -IsWarning -Message "Unable to connect to proxy server $($Proxy.Hostname) through CIM session. Continuing"
                         }
                         $inObj = [ordered] @{
                             'Name' = $Proxy.Hostname
@@ -85,7 +85,7 @@ function Get-AbrVB365Proxy {
 
                         if ($TempCIMSession) {
                             # Remove used CIMSession
-                            Write-PScriboMessage "Clearing CIM Session $($TempCIMSession.Id)"
+                            Write-PScriboMessage -Message "Clearing CIM Session $($TempCIMSession.Id)"
                             Remove-CimSession -CimSession $TempCIMSession
                         }
                     }
@@ -151,7 +151,7 @@ function Get-AbrVB365Proxy {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Backup Proxy Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Backup Proxy Section: $($_.Exception.Message)"
         }
     }
 
