@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationBackupApplication {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -25,7 +25,7 @@ function Get-AbrVb365OrganizationBackupApplication {
     )
 
     begin {
-        Write-PScriboMessage "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
+        Write-PScriboMessage -Message "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
     }
 
     process {
@@ -33,7 +33,7 @@ function Get-AbrVb365OrganizationBackupApplication {
             $Organizations = Get-VBOOrganization -Name $Organization
             $BackupApplications = try { Get-VBOBackupApplication -Organization $Organizations | Sort-Object -Property DisplayName} catch { Out-Null }
             if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($BackupApplications)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Office365 Organization Backup Applications Settings."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Office365 Organization Backup Applications Settings."
                 Section -Style Heading4 'Backup Applications' {
                     $BackupApplicationInfo = @()
                     foreach ($BackupApplication in $BackupApplications) {
@@ -58,7 +58,7 @@ function Get-AbrVb365OrganizationBackupApplication {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "VB365 Office365 Organization Backup Applications Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "VB365 Office365 Organization Backup Applications Section: $($_.Exception.Message)"
         }
     }
 

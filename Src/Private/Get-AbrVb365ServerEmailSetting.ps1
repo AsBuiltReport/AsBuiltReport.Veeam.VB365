@@ -5,7 +5,7 @@ function Get-AbrVB365ServerEmailSetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVB365ServerEmailSetting {
     )
 
     begin {
-        Write-PScriboMessage "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
+        Write-PScriboMessage -Message "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
     }
 
     process {
         try {
             $ServerConfig = Get-VBOEmailSettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
-                Write-PScriboMessage "Collecting Veeam VB365 email settings."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 email settings."
                 Section -Style Heading3 'Notification' {
                     $ServerConfigInfo = @()
                     $inObj = [ordered] @{
@@ -80,7 +80,7 @@ function Get-AbrVB365ServerEmailSetting {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Notification Settings Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Notification Settings Section: $($_.Exception.Message)"
         }
     }
 

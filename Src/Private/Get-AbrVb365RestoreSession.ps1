@@ -5,7 +5,7 @@ function Get-AbrVb365RestoreSession {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVb365RestoreSession {
     )
 
     begin {
-        Write-PScriboMessage "RestoreSession InfoLevel set at $($InfoLevel.Restore.RestoreSession)."
+        Write-PScriboMessage -Message "RestoreSession InfoLevel set at $($InfoLevel.Restore.RestoreSession)."
     }
 
     process {
         try {
             $RestoreSessions = Get-VBORestoreSession | Sort-Object -Property Name
             if (($InfoLevel.Restore.RestoreSession -gt 0) -and ($RestoreSessions)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Restore Session."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Session."
                 Section -Style Heading2 'Restore Session' {
                     $RestoreSessionInfo = @()
                     foreach ($RestoreSession in $RestoreSessions) {
@@ -61,7 +61,7 @@ function Get-AbrVb365RestoreSession {
                         $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'RestoreSessions' -AxisXTitle 'Result' -AxisYTitle 'Count' -ChartTitleName 'RestoreSessions' -ChartTitleText 'Restore Session Results'
 
                     } catch {
-                        Write-PScriboMessage -IsWarning "Restore Sessions Chart Section: $($_.Exception.Message)"
+                        Write-PScriboMessage -IsWarning -Message "Restore Sessions Chart Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Restore.RestoreSession -ge 2) {
@@ -103,7 +103,7 @@ function Get-AbrVb365RestoreSession {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Restore Session Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Restore Session Section: $($_.Exception.Message)"
         }
     }
 

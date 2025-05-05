@@ -5,7 +5,7 @@ function Get-AbrVB365EncryptionKey {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVB365EncryptionKey {
     )
 
     begin {
-        Write-PScriboMessage "EncryptionKey InfoLevel set at $($InfoLevel.Infrastructure.EncryptionKey)."
+        Write-PScriboMessage -Message "EncryptionKey InfoLevel set at $($InfoLevel.Infrastructure.EncryptionKey)."
     }
 
     process {
         try {
             $EncryptionKeys = Get-VBOEncryptionKey | Sort-Object -Property Description
             if (($InfoLevel.Infrastructure.EncryptionKey -gt 0) -and ($EncryptionKeys)) {
-                Write-PScriboMessage "Collecting Veeam VB365 Encryption Key."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Encryption Key."
                 Section -Style Heading2 'Encryption Keys' {
                     $EncryptionKeyInfo = @()
                     foreach ($EncryptionKey in $EncryptionKeys) {
@@ -72,7 +72,7 @@ function Get-AbrVB365EncryptionKey {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "Encryption Key Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "Encryption Key Section: $($_.Exception.Message)"
         }
     }
 

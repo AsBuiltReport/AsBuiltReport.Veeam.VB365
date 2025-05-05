@@ -5,7 +5,7 @@ function Get-AbrVb365ServerHistorySetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.8
+        Version:        0.3.11
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -19,14 +19,14 @@ function Get-AbrVb365ServerHistorySetting {
     )
 
     begin {
-        Write-PScriboMessage "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
+        Write-PScriboMessage -Message "ServerConfig InfoLevel set at $($InfoLevel.Infrastructure.ServerConfig)."
     }
 
     process {
         try {
             $ServerConfig = Get-VBOHistorySettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
-                Write-PScriboMessage "Collecting Veeam VB365 history settings."
+                Write-PScriboMessage -Message "Collecting Veeam VB365 history settings."
                 Section -Style Heading3 'History' {
                     $ServerConfigInfo = @()
                     $inObj = [ordered] @{
@@ -49,7 +49,7 @@ function Get-AbrVb365ServerHistorySetting {
                 }
             }
         } catch {
-            Write-PScriboMessage -IsWarning "History Settings Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning -Message "History Settings Section: $($_.Exception.Message)"
         }
     }
 
