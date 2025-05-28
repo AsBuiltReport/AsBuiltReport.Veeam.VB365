@@ -36,20 +36,24 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     Write-PScriboMessage -Plugin "Module" -IsWarning -Message "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues"
     Write-PScriboMessage -Plugin "Module" -IsWarning -Message "This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates."
 
-    # Check the current AsBuiltReport.Veeam.VB365 module
-    Try {
-        $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Veeam.VB365 -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
+    # Check the version of the dependency modules
+    $ModuleArray = @('AsBuiltReport.Veeam.VB365', 'Diagrammer.Core')
 
-        if ($InstalledVersion) {
-            Write-PScriboMessage -Plugin "Module" -IsWarning -Message "AsBuiltReport.Veeam.VB365 $($InstalledVersion.ToString()) is currently installed."
-            $LatestVersion = Find-Module -Name AsBuiltReport.Veeam.VB365 -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
-            if ([version]$LatestVersion -gt [version]$InstalledVersion) {
-                Write-PScriboMessage -Plugin "Module" -IsWarning -Message "AsBuiltReport.Veeam.VB365 $($LatestVersion.ToString()) is available."
-                Write-PScriboMessage -Plugin "Module" -IsWarning -Message "Run 'Update-Module -Name AsBuiltReport.Veeam.VB365 -Force' to install the latest version."
+    foreach ($Module in $ModuleArray) {
+        Try {
+            $InstalledVersion = Get-Module -ListAvailable -Name $Module -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
+
+            if ($InstalledVersion) {
+                Write-Host "- $Module module v$($InstalledVersion.ToString()) is currently installed."
+                $LatestVersion = Find-Module -Name $Module -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+                if ($InstalledVersion -lt $LatestVersion) {
+                    Write-Host "  - $Module module v$($LatestVersion.ToString()) is available." -ForegroundColor Red
+                    Write-Host "  - Run 'Update-Module -Name $Module -Force' to install the latest version." -ForegroundColor Red
+                }
             }
+        } Catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
-    } Catch {
-        Write-PScriboMessage -IsWarning -Message $_.Exception.Message
     }
 
     # Import Report Configuration
@@ -79,18 +83,18 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
         $script:VBOversion = try { (Get-VBOVersion).ProductVersion } catch { Out-Null }
 
         #---------------------------------------------------------------------------------------------#
-        #                            Export Infrastructure Diagram Section                            #
-        #---------------------------------------------------------------------------------------------#
-
-        Export-AbrVb365Diagram
-
-        #---------------------------------------------------------------------------------------------#
         #                            Backup Infrastructure Section                                    #
         #---------------------------------------------------------------------------------------------#
 
         Section -Style Heading1 $($VeeamBackupServer) -Orientation Portrait {
             Paragraph "The following section provides an overview of the implemented components of Veeam Backup for Microsoft 365."
             BlankLine
+
+            #---------------------------------------------------------------------------------------------#
+            #                            Export Infrastructure Diagram Section                            #
+            #---------------------------------------------------------------------------------------------#
+
+            Export-AbrVb365Diagram
 
             Get-AbrVb365InstalledLicense
             Get-AbrVb365ServerConfiguration

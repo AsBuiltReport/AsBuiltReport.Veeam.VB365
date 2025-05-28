@@ -132,8 +132,8 @@ function Export-AbrVb365Diagram {
                 $Graph = Get-AbrVb365Diagram
                 $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
                 if ($Diagram) {
-                    If ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 1500) { $ImagePrty = 20 } else { $ImagePrty = 50 }
-                    Section -Style Heading1 "Infrastructure Diagram." -Orientation Landscape {
+                    If ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 800) { $ImagePrty = 15 } else { $ImagePrty = 30 }
+                    Section -Style Heading2 "Infrastructure Diagram." {
                         Image -Base64 $Diagram -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
                         Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
                     }
