@@ -97,8 +97,7 @@ function Export-AbrVb365Diagram {
 
             if ($Options.EnableDiagramDebug) {
 
-                $DiagramParams.Add('EnableEdgeDebug', $True)
-                $DiagramParams.Add('EnableSubGraphDebug', $True)
+                $DiagramParams.Add('DraftMode', $True)
 
             }
 

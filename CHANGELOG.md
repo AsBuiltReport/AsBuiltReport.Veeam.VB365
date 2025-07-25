@@ -7,14 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
-## [0.3.12] - 2025-05-XX
+## [0.3.12] - 2025-07-25
 
 ### Changed
 
 - Bump version to 0.3.12
 - Refactor diagram export logic for improved clarity
 - Bump the `Diagrammer.Core` module to version `0.2.27`.
-
+- Update PSScriptAnalyzer settings, enhance Release workflow, and modify output messages in Invoke-AsBuiltReport script
+- Test with VB365 v8.1.2.180 P20250619
 
 ## [0.3.11] - 2025-05-05
 

@@ -30,11 +30,11 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
         break
     }
 
-    Write-PScriboMessage -Plugin "Module" -IsWarning -Message "Please refer to the AsBuiltReport.Veeam.VB365 github website for more detailed information about this project."
-    Write-PScriboMessage -Plugin "Module" -IsWarning -Message "Do not forget to update your report configuration file after each new version release."
-    Write-PScriboMessage -Plugin "Module" -IsWarning -Message "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365"
-    Write-PScriboMessage -Plugin "Module" -IsWarning -Message "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues"
-    Write-PScriboMessage -Plugin "Module" -IsWarning -Message "This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates."
+    Write-Host "- Please refer to the AsBuiltReport.Veeam.VB365 github website for more detailed information about this project."
+    Write-Host "- Do not forget to update your report configuration file after each new version release."
+    Write-Host "- Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365"
+    Write-Host "- Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/issues"
+    Write-Host "- This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates."
 
     # Check the version of the dependency modules
     $ModuleArray = @('AsBuiltReport.Veeam.VB365', 'Diagrammer.Core')
