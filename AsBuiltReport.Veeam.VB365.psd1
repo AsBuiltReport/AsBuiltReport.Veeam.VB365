@@ -12,7 +12,7 @@
     RootModule = 'AsBuiltReport.Veeam.VB365.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.3.11'
+    ModuleVersion = '0.3.12'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -63,7 +63,7 @@
         },
         @{
             ModuleName = 'Diagrammer.Core';
-            ModuleVersion = '0.2.25'
+            ModuleVersion = '0.2.27'
         }
     )
 
@@ -86,10 +86,10 @@
     FunctionsToExport = @('Invoke-AsBuiltReport.Veeam.VB365')
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    # CmdletsToExport = '*'
+    CmdletsToExport = @()
 
     # Variables to export from this module
-    # VariablesToExport = '*'
+    VariablesToExport = @()
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     # AliasesToExport = '*'
