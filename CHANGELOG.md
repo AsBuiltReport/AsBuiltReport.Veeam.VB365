@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improve Infrastructure diagram with latest Diagrammer.Core changes
-- Bump Diagrammer.Core to v0.2.26
+- Bump Diagrammer.Core to v0.2.36
 - Bump AsBuiltReport.Core to v1.5.1
 - Increase module to v0.3.13
 - Update report sample HTML file
