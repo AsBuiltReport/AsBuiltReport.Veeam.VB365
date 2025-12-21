@@ -5,7 +5,7 @@ function Export-AbrVb365Diagram {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -85,7 +85,7 @@ function Export-AbrVb365Diagram {
             }
 
             if ($Options.ExportDiagrams) {
-                if (-Not $Options.ExportDiagramsFormat) {
+                if (-not $Options.ExportDiagramsFormat) {
                     $DiagramFormat = 'png'
                 } else {
                     $DiagramFormat = $Options.ExportDiagramsFormat
@@ -108,7 +108,7 @@ function Export-AbrVb365Diagram {
             }
 
             if ($Options.ExportDiagrams) {
-                Try {
+                try {
                     Write-PScriboMessage -Message "Generating Veeam Infrastructure diagram"
                     $Graph = Get-AbrVb365Diagram
                     if ($Graph) {
@@ -120,7 +120,7 @@ function Export-AbrVb365Diagram {
                             }
                         }
                     }
-                } Catch {
+                } catch {
                     Write-PScriboMessage -IsWarning -Message "Unable to export the Infrastructure Diagram: $($_.Exception.Message)"
                 }
             }
@@ -131,7 +131,7 @@ function Export-AbrVb365Diagram {
                 $Graph = Get-AbrVb365Diagram
                 $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
                 if ($Diagram) {
-                    If ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 800) { $ImagePrty = 15 } else { $ImagePrty = 30 }
+                    if ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 800) { $ImagePrty = 15 } else { $ImagePrty = 30 }
                     Section -Style Heading2 "Infrastructure Diagram." {
                         Image -Base64 $Diagram -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
                         Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2

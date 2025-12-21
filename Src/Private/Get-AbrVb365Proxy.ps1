@@ -5,7 +5,7 @@ function Get-AbrVB365Proxy {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -30,7 +30,7 @@ function Get-AbrVB365Proxy {
                 Section -Style Heading2 'Backup Proxies' {
                     $ProxyInfo = @()
                     foreach ($Proxy in $Proxies) {
-                        Try {
+                        try {
                             # Parameters used to authenticate remote connections
                             $remoteParams = @{
                                 Credential = $Credential
@@ -53,7 +53,7 @@ function Get-AbrVB365Proxy {
                                 CimSession = New-CimSession @newCimSession @remoteParams -Name "Global:TempCIMSession" -ErrorAction SilentlyContinue
                             }
 
-                        } Catch {
+                        } catch {
                             Write-PScriboMessage -IsWarning -Message "Unable to connect to VB365 server $($Proxy.Hostname) through CIM session. Continuing"
                         }
                         if ($getCimInstance.CimSession) {
@@ -74,10 +74,10 @@ function Get-AbrVB365Proxy {
                             'Version' = $Proxy.Version
                             'Operating System' = $Proxy.OperatingSystemKind
                             'Service Account' = $Proxy.ServiceAccount
-                            'Proxy Pool' = Switch ($Proxy.PoolId.Guid) {
+                            'Proxy Pool' = switch ($Proxy.PoolId.Guid) {
                                 '00000000-0000-0000-0000-000000000000' { '-' }
                                 $null { '-' }
-                                Default { (Get-VBOProxyPool -Id $Proxy.PoolId).Name }
+                                default { (Get-VBOProxyPool -Id $Proxy.PoolId).Name }
                             }
                             'Description' = $Proxy.Description
                         }

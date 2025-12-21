@@ -5,7 +5,7 @@ function Get-AbrVB365RequiredModule {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -16,7 +16,7 @@ function Get-AbrVB365RequiredModule {
     #>
     [CmdletBinding()]
 
-    Param
+    param
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $false)]
         [ValidateNotNullOrEmpty()]
@@ -44,7 +44,7 @@ function Get-AbrVB365RequiredModule {
                 Write-PScriboMessage -Message "Identifying Veeam VB365 Powershell module version."
                 switch ($Module.Version.ToString()) {
                     { $_ -eq "6.0" } { [int]$Vb365Version = "6" }
-                    Default { "Unknown" }
+                    default { "Unknown" }
                 }
                 Write-PScriboMessage -Message "Using Veeam VB365 Powershell module version $($Vb365Version)."
             } catch {

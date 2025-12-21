@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicense {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -35,19 +35,19 @@ function Get-AbrVB365InstalledLicense {
                         'Edition' = $Licenses.Package
                         'Type' = $Licenses.Type
                         'Status' = $Licenses.Status
-                        'Expiration Date' = Switch ([string]::IsNullOrEmpty($Licenses.ExpirationDate)) {
+                        'Expiration Date' = switch ([string]::IsNullOrEmpty($Licenses.ExpirationDate)) {
                             $true { "-"; break }
                             default { $Licenses.ExpirationDate.ToShortDateString() }
                         }
-                        'Support Expiration Date' = Switch ([string]::IsNullOrEmpty($Licenses.SupportExpirationDate)) {
+                        'Support Expiration Date' = switch ([string]::IsNullOrEmpty($Licenses.SupportExpirationDate)) {
                             $true { "--"; break }
                             default { $Licenses.SupportExpirationDate.ToShortDateString() }
                         }
                         'Contact Person' = $Licenses.ContactPerson
-                        'License Usage' = Switch ([string]::IsNullOrEmpty($Licenses.TotalNumber)) {
-                            $true {'--'}
-                            $false {"Total: $($Licenses.TotalNumber) - Used: $($Licenses.UsedNumber)"}
-                            default {'Unknown'}
+                        'License Usage' = switch ([string]::IsNullOrEmpty($Licenses.TotalNumber)) {
+                            $true { '--' }
+                            $false { "Total: $($Licenses.TotalNumber) - Used: $($Licenses.UsedNumber)" }
+                            default { 'Unknown' }
                         }
                     }
                     $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)

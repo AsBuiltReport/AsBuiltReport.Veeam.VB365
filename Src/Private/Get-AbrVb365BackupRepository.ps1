@@ -5,7 +5,7 @@ function Get-AbrVB365BackupRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -33,12 +33,12 @@ function Get-AbrVB365BackupRepository {
                         $inObj = [ordered] @{
                             'Name' = $Repository.Name
                             'Path' = $Repository.Path
-                            'Object Storage Repository' = Switch ([string]::IsNullOrEmpty($Repository.ObjectStorageRepository)) {
+                            'Object Storage Repository' = switch ([string]::IsNullOrEmpty($Repository.ObjectStorageRepository)) {
                                 $true { "Disabled" }
                                 $false { $Repository.ObjectStorageRepository }
                                 default { 'Unknown' }
                             }
-                            'Object Storage Encryption Key' = Switch ($Repository.EnableObjectStorageEncryption) {
+                            'Object Storage Encryption Key' = switch ($Repository.EnableObjectStorageEncryption) {
                                 $true { (Get-VBOEncryptionKey -Id $Repository.ObjectStorageEncryptionKey.id).Description }
                                 $false { "Disabled" }
                                 default { "Unknown" }
@@ -49,12 +49,12 @@ function Get-AbrVB365BackupRepository {
                             'Free Space' = ConvertTo-FileSizeString $Repository.FreeSpace
                             'Used Space' = ConvertTo-FileSizeString ($Repository.Capacity - $Repository.FreeSpace)
                             'Is Long Term' = $Repository.IsLongTerm
-                            'Retention Type' = Switch ($Repository.RetentionType) {
+                            'Retention Type' = switch ($Repository.RetentionType) {
                                 'SnapshotBased' { 'Snapshot Based' }
                                 'ItemLevel' { 'Item Level' }
                                 default { $Repository.RetentionType }
                             }
-                            'Retention Period' = Switch ($Repository.RetentionPeriod) {
+                            'Retention Period' = switch ($Repository.RetentionPeriod) {
                                 "Years1" { '1 Year' }
                                 "Years2" { '2 Years' }
                                 "Years3" { '3 Years' }

@@ -5,7 +5,7 @@ function Get-AbrVb365CloudCredential {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -39,7 +39,7 @@ function Get-AbrVb365CloudCredential {
                         $inObj = [ordered] @{
                             'Access Key' = $CloudCredential.AccessKey
                             'Id' = $CloudCredential.Id
-                            'Service Type' = Switch ($CloudCredential.ServiceType) {
+                            'Service Type' = switch ($CloudCredential.ServiceType) {
                                 "AmazonS3Compatible" { "Amazon S3 Compatible" }
                                 "AmazonS3" { "Amazon S3" }
                                 "AmazonS3Compatible" { "Amazon S3 Compatible" }
