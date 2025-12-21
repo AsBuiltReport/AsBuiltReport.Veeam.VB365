@@ -5,7 +5,7 @@ function Get-AbrVB365ServerConfiguration {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -36,7 +36,7 @@ function Get-AbrVB365ServerConfiguration {
                     Section -Style Heading4 'General Information' {
                         $ServerConfigInfo = @()
                         $inObj = [ordered] @{
-                            'Server Product Version' = Switch ([string]::IsNullOrEmpty($ServerConfig.ProductVersion)) {
+                            'Server Product Version' = switch ([string]::IsNullOrEmpty($ServerConfig.ProductVersion)) {
                                 $true { '6 or less, please upgrade' }
                                 $false { $ServerConfig.ProductVersion }
                                 default { 'Unknown' }

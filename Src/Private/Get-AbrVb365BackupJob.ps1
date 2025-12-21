@@ -5,7 +5,7 @@ function Get-AbrVb365BackupJob {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTE
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -34,12 +34,12 @@ function Get-AbrVb365BackupJob {
                             'Name' = $BackupJob.Name
                             'Organization' = $BackupJob.Organization
                             'Job Backup Type' = $BackupJob.JobBackupType
-                            'Selected Items' = Switch ([string]::IsNullOrEmpty($BackupJob.SelectedItems)) {
+                            'Selected Items' = switch ([string]::IsNullOrEmpty($BackupJob.SelectedItems)) {
                                 $true { '--' }
                                 $false { $BackupJob.SelectedItems }
                                 default { 'Unknown' }
                             }
-                            'Excluded Items' = Switch ([string]::IsNullOrEmpty($BackupJob.ExcludedItems)) {
+                            'Excluded Items' = switch ([string]::IsNullOrEmpty($BackupJob.ExcludedItems)) {
                                 $true { '--' }
                                 $false {
                                     & {

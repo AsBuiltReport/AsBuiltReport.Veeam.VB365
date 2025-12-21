@@ -5,7 +5,7 @@ function Get-AbrVB365ServerConnection {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -32,7 +32,7 @@ function Get-AbrVB365ServerConnection {
             Connect-VBOServer -Server $System -Credential $Credential -Port $Options.BackupServerPort
         } catch {
             Write-PScriboMessage -IsWarning -Message $_.Exception.Message
-            Throw "Failed to connect to Veeam Backup Server Host $($System):$($Options.BackupServerPort) with username $($Credential.USERNAME)"
+            throw "Failed to connect to Veeam Backup Server Host $($System):$($Options.BackupServerPort) with username $($Credential.USERNAME)"
         }
 
         Write-PScriboMessage -Message "Successfully connected to $($System):$($Options.BackupServerPort) Backup Server."

@@ -16,7 +16,9 @@
         "DiagramTheme": "White",
         "DiagramWaterMark": "",
         "ExportDiagrams": false,
-        "ExportDiagramsFormat": ["png"],
+        "ExportDiagramsFormat": [
+            "png"
+        ],
         "EnableDiagramSignature": false,
         "SignatureAuthorName": "",
         "SignatureCompanyName": "",

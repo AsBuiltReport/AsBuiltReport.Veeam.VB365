@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.3.13] - Unreleased
+
+### Added
+
+- Add Dependabot support
+- Add support for Veeam Backup for Microsoft 365 v8.3
+
+### Changed
+
+- Improve Infrastructure diagram with latest Diagrammer.Core changes
+- Bump Diagrammer.Core to v0.2.36
+- Bump AsBuiltReport.Core to v1.5.1
+- Increase module to v0.3.13
+- Update report sample HTML file
+
 ## [0.3.12] - 2025-07-25
 
 ### Changed

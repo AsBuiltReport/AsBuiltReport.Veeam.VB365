@@ -5,7 +5,7 @@ function Get-AbrVb365ServerHistorySetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -32,7 +32,7 @@ function Get-AbrVb365ServerHistorySetting {
                     $inObj = [ordered] @{
                         'Keep all sessions' = $ServerConfig.KeepAllSessions
                     }
-                    if (-Not $ServerConfig.KeepAllSessions) {
+                    if (-not $ServerConfig.KeepAllSessions) {
                         $inObj.Add('Keep only last', "$($ServerConfig.KeepOnlyLastXweeks) weeks")
                     }
                     $ServerConfigInfo = [pscustomobject](ConvertTo-HashToYN $inObj)

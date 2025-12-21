@@ -5,7 +5,7 @@ function Get-AbrVb365RestorePoint {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.3.13
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -43,15 +43,15 @@ function Get-AbrVb365RestorePoint {
                                         try {
                                             $inObj = [ordered] @{
                                                 'Backup Time' = $RestorePoint.BackupTime
-                                                'Organization Id' = Switch ([string]::IsNullOrEmpty((Get-VBOOrganization -Id $RestorePoint.OrganizationId))) {
-                                                    $true {"--"}
-                                                    $false {(Get-VBOOrganization -Id $RestorePoint.OrganizationId).Name}
-                                                    default {'Unknown'}
+                                                'Organization Id' = switch ([string]::IsNullOrEmpty((Get-VBOOrganization -Id $RestorePoint.OrganizationId))) {
+                                                    $true { "--" }
+                                                    $false { (Get-VBOOrganization -Id $RestorePoint.OrganizationId).Name }
+                                                    default { 'Unknown' }
                                                 }
-                                                'Repository Id' = Switch ([string]::IsNullOrEmpty((Get-VBORepository -Id $RestorePoint.RepositoryId))) {
-                                                    $true {"--"}
-                                                    $false {(Get-VBORepository -Id $RestorePoint.RepositoryId.Guid).Name}
-                                                    default {'Unknown'}
+                                                'Repository Id' = switch ([string]::IsNullOrEmpty((Get-VBORepository -Id $RestorePoint.RepositoryId))) {
+                                                    $true { "--" }
+                                                    $false { (Get-VBORepository -Id $RestorePoint.RepositoryId.Guid).Name }
+                                                    default { 'Unknown' }
                                                 }
                                                 'Type' = & {
                                                     if ($RestorePoint.IsSharePoint) {
