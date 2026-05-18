@@ -26,30 +26,44 @@ function Get-AbrVB365InstalledLicenseUser {
 
     process {
         try {
-            $Licenses = Get-VBOLicensedUser | Sort-Object -Property OrganizationName
+            if ($script:LicensedUsers) {
+                $Licenses = $script:LicensedUsers
+            } else {
+                $script:LicensedUsers = Get-VBOLicensedUser | Sort-Object -Property OrganizationName
+                $Licenses = $script:LicensedUsers
+            }
             if ($Licenses) {
                 try {
                     Section -Style Heading3 'Licensed Users' {
                         $OutObj = @()
-                        try {
-                            foreach ($License in $Licenses) {
-                                Write-PScriboMessage -Message "Discovered $($License.UserName) license."
+                        Write-PScriboMessage -Message "Discovered $(($Licenses | Measure-Object).Count) licensed users."
+                        foreach ($License in $Licenses) {
+                            try {
+                                $LastBackupDate = Get-AbrVb365PropertyValue -InputObject $License -Name 'LastBackupDate'
+                                $LastBackupDateText = if ($LastBackupDate -is [datetime]) {
+                                    $LastBackupDate.ToShortDateString()
+                                } elseif ($LastBackupDate) {
+                                    $LastBackupDate.ToString()
+                                } else {
+                                    '--'
+                                }
+
                                 $inObj = [ordered] @{
-                                    'User Name' = $License.UserName
-                                    'Organization' = $License.OrganizationName
-                                    'Is Backed Up?' = $License.IsBackedUp
-                                    'Last Backup Date' = $License.LastBackupDate.ToShortDateString()
-                                    'License Status' = $License.LicenseStatus
+                                    'User Name' = ConvertTo-AbrVb365DisplayValue -InputObject (Get-AbrVb365PropertyValue -InputObject $License -Name 'UserName')
+                                    'Organization' = ConvertTo-AbrVb365DisplayValue -InputObject (Get-AbrVb365PropertyValue -InputObject $License -Name 'OrganizationName')
+                                    'Is Backed Up?' = Get-AbrVb365PropertyValue -InputObject $License -Name 'IsBackedUp' -Default $false
+                                    'Last Backup Date' = $LastBackupDateText
+                                    'License Status' = ConvertTo-AbrVb365DisplayValue -InputObject (Get-AbrVb365PropertyValue -InputObject $License -Name 'LicenseStatus')
                                 }
                                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+                            } catch {
+                                Write-PScriboMessage -IsWarning -Message "Licensed User Information Section: $($_.Exception.Message)"
                             }
-                        } catch {
-                            Write-PScriboMessage -IsWarning -Message "Licensed User Information $($License.UserName) Section: $($_.Exception.Message)"
                         }
 
-                        if ($HealthCheck.Infrastructure.Status) {
+                        if ($HealthCheck.Infrastructure.License) {
                             $OutObj | Where-Object { $_.'License Status' -ne 'Licensed' } | Set-Style -Style Critical -Property 'License Status'
-                            $OutObj | Where-Object { $_.'Is Backed Up' -eq 'No' } | Set-Style -Style Warning -Property 'Is Backed Up'
+                            $OutObj | Where-Object { $_.'Is Backed Up?' -eq 'No' } | Set-Style -Style Warning -Property 'Is Backed Up?'
                         }
 
                         $TableParams = @{
@@ -60,11 +74,17 @@ function Get-AbrVB365InstalledLicenseUser {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $OutObj | Table @TableParams
+                        if ($OutObj) {
+                            $OutObj | Table @TableParams
+                        } else {
+                            Paragraph "No licensed user records could be rendered from Get-VBOLicensedUser output."
+                        }
                     }
                 } catch {
                     Write-PScriboMessage -IsWarning -Message "Licensed Users Section: $($_.Exception.Message)"
                 }
+            } else {
+                Write-PScriboMessage -IsWarning -Message "Licensed Users Section: Get-VBOLicensedUser returned no licensed user records."
             }
         } catch {
             Write-PScriboMessage -IsWarning -Message "Licensed Users Section: $($_.Exception.Message)"

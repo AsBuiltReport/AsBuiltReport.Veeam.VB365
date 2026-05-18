@@ -22,6 +22,8 @@ function Get-AbrVB365InstalledLicense {
 
     begin {
         Write-PScriboMessage -Message "Discovering Veeam VB365 License information from $System."
+        $LicenseInfoLevel = Get-AbrVb365InfoLevelValue -Scope 'Infrastructure' -Name 'License' -Alias 'Licenses', 'Licensing', 'Licence', 'Licences', 'LicensedUser', 'LicensedUsers'
+        Write-PScriboMessage -Message "License InfoLevel set at $LicenseInfoLevel."
     }
 
     process {
@@ -112,7 +114,7 @@ function Get-AbrVB365InstalledLicense {
                         }
 
                         # Per user license information
-                        if ($InfoLevel.Infrastructure.License -ge 2) {
+                        if ($LicenseInfoLevel -ge 2) {
                             Get-AbrVB365InstalledLicenseUser
                         }
                     }

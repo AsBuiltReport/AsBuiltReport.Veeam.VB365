@@ -24,7 +24,12 @@ function Get-AbrVB365ProxyPool {
 
     process {
         try {
-            $script:ProxyPools = Get-VBOProxyPool -WarningAction SilentlyContinue | Sort-Object -Property Name
+            if ($script:ProxyPools) {
+                $ProxyPools = $script:ProxyPools
+            } else {
+                $script:ProxyPools = Get-VBOProxyPool -WarningAction SilentlyContinue | Sort-Object -Property Name
+                $ProxyPools = $script:ProxyPools
+            }
             if (($InfoLevel.Infrastructure.Proxy -gt 0) -and ($ProxyPools)) {
                 Write-PScriboMessage -Message "Collecting Veeam VB365 Proxy Pool information."
                 Section -Style Heading3 'Backup Proxy Pools' {

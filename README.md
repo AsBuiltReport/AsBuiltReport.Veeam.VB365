@@ -75,7 +75,7 @@ PowerShell 5.1 and the following PowerShell modules are required for generating 
 - [Veeam.Archiver.PowerShell Module](https://helpcenter.veeam.com/docs/vbo365/powershell/getting_started.html?ver=70)
 - [PScriboCharts Module](https://github.com/iainbrighton/PScriboCharts)
 - [PSGraph Module](https://github.com/KevinMarquette/PSGraph)
-- [Diagrammer.Core Module](https://github.com/rebelinux/Diagrammer.Core)
+- [AsBuiltReport.Diagram Module](https://www.powershellgallery.com/packages/AsBuiltReport.Diagram/)
 - [AsBuiltReport.Veeam.VB365 Module](https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/)
 
 ### :closed_lock_with_key: Required Privileges

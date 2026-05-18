@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
+## [0.4.0] - v8.4, Diagrammer Migration and PS7 Compatibility Fork
+
+### Added
+
+- Support for Veeam Backup for Microsoft 365 v8.4 (upgraded from v8.3).
+- Support for PowerShell 7 (Core) while maintaining full compatibility with Windows PowerShell 5.1 (Desktop).
+- Performance-enhancing shared cached inventory and lookups for organizations, repositories, jobs, restore sessions, and proxy pools to reduce API overhead in large environments.
+- Defensive programming features including timed backup job property diagnostics and repository resolvers using `TryGetProperty('Repository')`.
+- Repository lookup timeout boundaries to prevent report generation from hanging on unresponsive Veeam API properties.
+
+### Changed
+
+- Migrated infrastructure diagram engine from `Diagrammer.Core` to `AsBuiltReport.Diagram` with legacy compatibility aliases for report logic stability.
+- Implemented cross-edition binary content handling for chart images using dynamic parameter splatting (PS5.1 vs PS7 compatibility).
+- Refactored Veeam PowerShell module detection to support version 6.0+ and modern product versioning validation.
+- Standardized logging by ensuring all `Write-PScriboMessage` calls explicitly use the `-Message` parameter.
+- Optimized report generation speed for large environments by reducing redundant API lookups for encryption keys and organizations.
+- Improved InfoLevel 1 performance by simplifying repository name collection and skipping expensive enrichment for restore points.
+- Enhanced repository-map helper collection to automatically fallback between `pwsh`, `powershell.exe`, and `powershell` hosts.
+- Improved PScribo table rendering by converting complex backup job and backup copy job summary object references into scalar display values.
+
 ## [0.3.13] - Unreleased
 
 ### Added
@@ -240,4 +261,3 @@ Increase Diagrammer.Core to v0.2.12
     - Server Configuration
     - Object Repository
     - Organizations
-

@@ -25,13 +25,14 @@ function Get-AbrVb365OrganizationEXConnSetting {
     )
 
     begin {
-        Write-PScriboMessage -Message "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
+        $OrganizationInfoLevel = Get-AbrVb365InfoLevelValue -Scope 'Infrastructure' -Name 'Organization' -Alias 'Organizations', 'Organisation', 'Organisations'
+        Write-PScriboMessage -Message "Organizations InfoLevel set at $OrganizationInfoLevel."
     }
 
     process {
         try {
-            $Organizations = Get-VBOOrganization -Name $Organization
-            if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($Organizations.Office365ExchangeConnectionSettings)) {
+            $Organizations = Get-AbrVb365OrganizationByName -Name $Organization
+            if (($OrganizationInfoLevel -gt 0) -and ($Organizations.Office365ExchangeConnectionSettings)) {
                 Write-PScriboMessage -Message "Collecting Veeam VB365 Office365 Exchange Connection Settings."
                 Section -Style Heading4 'Exchange Connection Setting' {
                     $OrganizationInfo = @()

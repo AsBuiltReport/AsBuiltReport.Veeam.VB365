@@ -51,7 +51,7 @@ function ConvertTo-EmptyToFiller {
     Used by As Built Report to convert empty culumns to "-".
     .DESCRIPTION
     .NOTES
-        Version:        0.5.0
+        Version:        0.4.0
         Author:         Jonathan Colon
     .EXAMPLE
     .LINK
@@ -161,6 +161,78 @@ function Convert-Size {
     }
 
     return [Math]::Round($value, $Precision, [MidPointRounding]::AwayFromZero)
+}
+function Get-AbrVb365InfoLevelValue {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Scope,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Name,
+
+        [Parameter(Mandatory = $false)]
+        [string[]] $Alias = @(),
+
+        [Parameter(Mandatory = $false)]
+        [int] $Default = 0
+    )
+
+    $Config = $script:InfoLevel
+    if (-not $Config) {
+        $Config = $InfoLevel
+    }
+
+    $ScopeObject = Get-AbrVb365PropertyValue -InputObject $Config -Name $Scope
+    if (-not $ScopeObject) {
+        return $Default
+    }
+
+    foreach ($PropertyName in @($Name) + $Alias) {
+        $Property = $ScopeObject.PSObject.Properties[$PropertyName]
+        if ($Property) {
+            $Value = $Property.Value
+            if ($null -eq $Value -or "$Value" -eq '') {
+                return $Default
+            }
+
+            try {
+                return [int]$Value
+            } catch {
+                Write-PScriboMessage -IsWarning -Message "InfoLevel value '$Scope.$PropertyName' is not numeric: $Value"
+                return $Default
+            }
+        }
+    }
+
+    $SiblingLevels = @()
+    foreach ($Property in $ScopeObject.PSObject.Properties) {
+        if ($Property.Name -like '_*') {
+            continue
+        }
+
+        if ($null -eq $Property.Value -or "$($Property.Value)" -eq '') {
+            continue
+        }
+
+        try {
+            $SiblingLevels += [int]$Property.Value
+        } catch {
+            continue
+        }
+    }
+
+    if ($SiblingLevels) {
+        $FallbackLevel = ($SiblingLevels | Measure-Object -Maximum).Maximum
+        if ($FallbackLevel -gt 0) {
+            Write-PScriboMessage -Message "InfoLevel value '$Scope.$Name' was not found. Using $Scope fallback level $FallbackLevel."
+            return [int]$FallbackLevel
+        }
+    }
+
+    return $Default
 }
 function Get-PieChart {
     <#
@@ -287,7 +359,7 @@ function Get-PieChart {
 
     $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format "PNG" -PassThru
 
-    $Base64Image = [convert]::ToBase64String((Get-Content $ChartImage -Encoding byte))
+    $Base64Image = [convert]::ToBase64String([System.IO.File]::ReadAllBytes($ChartImage.FullName))
 
     Remove-Item -Path $ChartImage.FullName
 
@@ -423,7 +495,7 @@ function Get-ColumnChart {
         Write-PScriboMessage -InputObject $chartFileItem
     }
 
-    $Base64Image = [convert]::ToBase64String((Get-Content $ChartImage -Encoding byte))
+    $Base64Image = [convert]::ToBase64String([System.IO.File]::ReadAllBytes($ChartImage.FullName))
 
     Remove-Item -Path $ChartImage.FullName
 

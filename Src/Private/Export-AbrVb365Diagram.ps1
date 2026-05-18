@@ -113,7 +113,7 @@ function Export-AbrVb365Diagram {
                     $Graph = Get-AbrVb365Diagram
                     if ($Graph) {
                         Write-PScriboMessage -Message "Saving Veeam Infrastructure diagram"
-                        $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
+                        $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph
                         if ($Diagram) {
                             foreach ($OutputFormat in $DiagramFormat) {
                                 Write-Information -MessageData "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$($OutputFolderPath)'." -InformationAction Continue
@@ -129,9 +129,9 @@ function Export-AbrVb365Diagram {
                 $DiagramParams.Add('Format', "base64")
 
                 $Graph = Get-AbrVb365Diagram
-                $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
+                $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph
                 if ($Diagram) {
-                    if ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 800) { $ImagePrty = 15 } else { $ImagePrty = 30 }
+                    if ((Get-ImagePercent -GraphObj $Diagram).Width -gt 800) { $ImagePrty = 15 } else { $ImagePrty = 30 }
                     Section -Style Heading2 "Infrastructure Diagram." {
                         Image -Base64 $Diagram -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
                         Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2

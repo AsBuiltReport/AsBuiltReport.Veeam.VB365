@@ -24,8 +24,26 @@ function Get-AbrVb365RestorePoint {
 
     process {
         try {
-            $RestorePoints = Get-VBORestorePoint | Sort-Object -Property BackupTime
-            $BackupJobs = Get-VBOJob | Sort-Object -Property Name
+            if ($InfoLevel.Restore.RestorePoint -le 0) {
+                return
+            }
+
+            if ($script:RestorePoints) {
+                Write-PScriboMessage -Message "Using cached Veeam VB365 Restore Point inventory."
+                $RestorePoints = $script:RestorePoints
+            } else {
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Point inventory."
+                $script:RestorePoints = Get-VBORestorePoint | Sort-Object -Property BackupTime
+                $RestorePoints = $script:RestorePoints
+            }
+
+            if ($script:BackupJobs) {
+                $BackupJobs = $script:BackupJobs
+            } else {
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Jobs inventory for restore point mapping."
+                $BackupJobs = Get-AbrVb365BackupJobInventory
+            }
+
             if (($InfoLevel.Restore.RestorePoint -gt 0) -and ($RestorePoints)) {
                 Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Point."
                 Section -Style Heading2 'Restore Point' {
@@ -34,25 +52,61 @@ function Get-AbrVb365RestorePoint {
                     Section -Style Heading3 'Backup Jobs Restore Point' {
                         Paragraph "The following section summarizes the backup jobs restore points."
                         BlankLine
+                        $OrganizationLookup = Get-AbrVb365OrganizationNameLookup
+                        $RepositoryLookup = @{}
+                        if ($InfoLevel.Restore.RestorePoint -ge 2) {
+                            $RepositoryLookup = Get-AbrVb365RepositoryNameLookup
+                        } else {
+                            Write-PScriboMessage -Message "Skipping restore point repository name lookup at InfoLevel 1 because VB365 8.4 can trigger a blocking repository backend lookup."
+                        }
+                        $RestorePointsByJob = @{}
+                        foreach ($RestorePoint in $RestorePoints) {
+                            $JobKey = ConvertTo-AbrVb365LookupKey -Id $RestorePoint.JobId
+                            if (-not $JobKey) {
+                                continue
+                            }
+                            if (-not $RestorePointsByJob.ContainsKey($JobKey)) {
+                                $RestorePointsByJob[$JobKey] = New-Object System.Collections.Generic.List[object]
+                            }
+                            $RestorePointsByJob[$JobKey].Add($RestorePoint)
+                        }
+
                         foreach ($BackupJob in $BackupJobs) {
-                            $BackupJobRestorePoints = $RestorePoints | Where-Object { $_.JobId -eq $BackupJob.id }
+                            $BackupJobKey = ConvertTo-AbrVb365LookupKey -Id $BackupJob.Id
+                            $BackupJobRepositoryProperty = $BackupJob.PSObject.Properties['AbrRepositoryName']
+                            $BackupJobRepositoryName = if ($BackupJobRepositoryProperty -and $BackupJobRepositoryProperty.Value) {
+                                $BackupJobRepositoryProperty.Value
+                            } else {
+                                '--'
+                            }
+                            $BackupJobRestorePoints = if ($BackupJobKey -and $RestorePointsByJob.ContainsKey($BackupJobKey)) {
+                                $RestorePointsByJob[$BackupJobKey]
+                            } else {
+                                $null
+                            }
                             if ($BackupJobRestorePoints) {
                                 Section -Style Heading4  $BackupJob.Name {
                                     $RestorePointInfo = @()
                                     foreach ($RestorePoint in $BackupJobRestorePoints) {
                                         try {
+                                            $OrganizationKey = ConvertTo-AbrVb365LookupKey -Id $RestorePoint.OrganizationId
+                                            $RepositoryKey = ConvertTo-AbrVb365LookupKey -Id $RestorePoint.RepositoryId
+                                            $OrganizationName = if ($OrganizationKey -and $OrganizationLookup.ContainsKey($OrganizationKey)) {
+                                                $OrganizationLookup[$OrganizationKey]
+                                            } else {
+                                                '--'
+                                            }
+                                            $RepositoryName = if ($RepositoryKey -and $RepositoryLookup.ContainsKey($RepositoryKey)) {
+                                                $RepositoryLookup[$RepositoryKey]
+                                            } elseif ($BackupJobRepositoryName -and $BackupJobRepositoryName -ne '--') {
+                                                $BackupJobRepositoryName
+                                            } else {
+                                                '--'
+                                            }
                                             $inObj = [ordered] @{
                                                 'Backup Time' = $RestorePoint.BackupTime
-                                                'Organization Id' = switch ([string]::IsNullOrEmpty((Get-VBOOrganization -Id $RestorePoint.OrganizationId))) {
-                                                    $true { "--" }
-                                                    $false { (Get-VBOOrganization -Id $RestorePoint.OrganizationId).Name }
-                                                    default { 'Unknown' }
-                                                }
-                                                'Repository Id' = switch ([string]::IsNullOrEmpty((Get-VBORepository -Id $RestorePoint.RepositoryId))) {
-                                                    $true { "--" }
-                                                    $false { (Get-VBORepository -Id $RestorePoint.RepositoryId.Guid).Name }
-                                                    default { 'Unknown' }
-                                                }
+                                                'Organization Id' = $OrganizationName
+                                                'Repository Id' = $RepositoryName
                                                 'Type' = & {
                                                     if ($RestorePoint.IsSharePoint) {
                                                         return "SharePoint"

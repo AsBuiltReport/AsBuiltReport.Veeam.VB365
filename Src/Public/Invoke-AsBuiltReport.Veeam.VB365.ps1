@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonzenpr
         Github:         @rebelinux
@@ -22,7 +22,6 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     )
 
     #Requires -Version 5.1
-    #Requires -PSEdition Desktop
     #Requires -RunAsAdministrator
 
     if ($psISE) {
@@ -37,7 +36,7 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
     Write-Host "- This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates."
 
     # Check the version of the dependency modules
-    $ModuleArray = @('AsBuiltReport.Veeam.VB365', 'Diagrammer.Core')
+    $ModuleArray = @('AsBuiltReport.Veeam.VB365', 'AsBuiltReport.Diagram')
 
     foreach ($Module in $ModuleArray) {
         Try {
@@ -81,6 +80,13 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
         $script:VeeamBackupServer = ((Get-VBOServerComponents -Name Server).ServerName).ToString().ToUpper().Split(".")[0]
         $script:VBOversion = try { (Get-VBOVersion).ProductVersion } catch { Out-Null }
+        if ($script:VBOversion) {
+            Write-PScriboMessage -Message "Detected Veeam VB365 product version $($script:VBOversion)."
+            $VersionMatch = [regex]::Match([string]$script:VBOversion, '\d+(\.\d+){1,3}')
+            if ($VersionMatch.Success -and ([version]$VersionMatch.Value -lt [version]'8.4')) {
+                Write-PScriboMessage -IsWarning -Message "This v8.4, Diagrammer Migration and PS7 Compatibility Fork is being validated against Veeam Backup for Microsoft 365 8.4 or later. Detected product version $($script:VBOversion)."
+            }
+        }
 
         #---------------------------------------------------------------------------------------------#
         #                            Backup Infrastructure Section                                    #

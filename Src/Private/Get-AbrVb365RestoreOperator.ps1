@@ -19,26 +19,36 @@ function Get-AbrVb365RestoreOperator {
     )
 
     begin {
-        Write-PScriboMessage -Message "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
+        $OrganizationInfoLevel = Get-AbrVb365InfoLevelValue -Scope 'Infrastructure' -Name 'Organization' -Alias 'Organizations', 'Organisation', 'Organisations'
+        Write-PScriboMessage -Message "Organizations InfoLevel set at $OrganizationInfoLevel."
     }
 
     process {
         try {
-            $script:RestoreOperators = try { Get-VBORbacRole | Sort-Object -Property Name } catch { Out-Null }
-            if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($RestoreOperators)) {
+            if ($script:RestoreOperators) {
+                $RestoreOperators = $script:RestoreOperators
+            } else {
+                $script:RestoreOperators = try { Get-VBORbacRole | Sort-Object -Property Name } catch { Out-Null }
+                $RestoreOperators = $script:RestoreOperators
+            }
+            if (($OrganizationInfoLevel -gt 0) -and ($RestoreOperators)) {
                 Write-PScriboMessage -Message "Collecting Veeam VB365 Office365 Restore Operators Settings."
                 Section -Style Heading3 'Restore Operators' {
                     Paragraph "The following table summarizes the configuration of the restore operators within the $VeeamBackupServer backup server."
                     BlankLine
                     $RestoreOperatorInfo = @()
+                    $OrganizationLookup = Get-AbrVb365OrganizationNameLookup
                     foreach ($RestoreOperator in $RestoreOperators) {
+                        $OrganizationId = Get-AbrVb365PropertyValue -InputObject $RestoreOperator -Name 'OrganizationId'
+                        $OrganizationKey = ConvertTo-AbrVb365LookupKey -Id $OrganizationId
+                        $OrganizationName = if ($OrganizationKey -and $OrganizationLookup.ContainsKey($OrganizationKey)) {
+                            $OrganizationLookup[$OrganizationKey]
+                        } else {
+                            '--'
+                        }
                         $inObj = [ordered] @{
                             'Name' = $RestoreOperator.Name
-                            'Organization' = switch ([string]::IsNullOrEmpty((Get-VBOOrganization -Id $RestoreOperator.OrganizationId))) {
-                                $true { '--' }
-                                $false { (Get-VBOOrganization -Id $RestoreOperator.OrganizationId).Name }
-                                default { 'Unknown' }
-                            }
+                            'Organization' = $OrganizationName
                             'Description' = $RestoreOperator.Description
                         }
 

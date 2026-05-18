@@ -24,7 +24,19 @@ function Get-AbrVb365RestoreSession {
 
     process {
         try {
-            $RestoreSessions = Get-VBORestoreSession | Sort-Object -Property Name
+            if ($InfoLevel.Restore.RestoreSession -le 0) {
+                return
+            }
+
+            if ($script:RestoreSessions) {
+                Write-PScriboMessage -Message "Using cached Veeam VB365 Restore Session inventory."
+                $RestoreSessions = $script:RestoreSessions
+            } else {
+                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Session inventory."
+                $script:RestoreSessions = Get-VBORestoreSession | Sort-Object -Property Name
+                $RestoreSessions = $script:RestoreSessions
+            }
+
             if (($InfoLevel.Restore.RestoreSession -gt 0) -and ($RestoreSessions)) {
                 Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Session."
                 Section -Style Heading2 'Restore Session' {
@@ -34,12 +46,16 @@ function Get-AbrVb365RestoreSession {
                             'Name' = $RestoreSession.Name
                             'Start Time' = $RestoreSession.StartTime
                             'End Time' = $RestoreSession.EndTime
-                            'Status' = $RestoreSession.Status
                             'Result' = $RestoreSession.Result
-                            'Type' = $RestoreSession.Type
                             'Initiated By' = $RestoreSession.InitiatedBy
-                            'Processed Objects' = $RestoreSession.ProcessedObjects
                         }
+
+                        if ($InfoLevel.Restore.RestoreSession -ge 2) {
+                            $inObj.Add('Status', $RestoreSession.Status)
+                            $inObj.Add('Type', $RestoreSession.Type)
+                            $inObj.Add('Processed Objects', $RestoreSession.ProcessedObjects)
+                        }
+
                         $RestoreSessionInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
@@ -51,9 +67,9 @@ function Get-AbrVb365RestoreSession {
 
                     try {
                         $sampleData = [ordered]@{
-                            'Success' = ($RestoreSessions.Result | Where-Object { $_ -eq "Success" } | Measure-Object).Count
-                            'Warning' = ($RestoreSessions.Result | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
-                            'Failed' = ($RestoreSessions.Result | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
+                            'Success' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq "Success" } | Measure-Object).Count
+                            'Warning' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
+                            'Failed' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
                         }
 
                         $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }

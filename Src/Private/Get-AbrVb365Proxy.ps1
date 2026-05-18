@@ -24,10 +24,35 @@ function Get-AbrVB365Proxy {
 
     process {
         try {
-            $script:Proxies = Get-VBOProxy -WarningAction SilentlyContinue | Sort-Object -Property Hostname
+            if ($InfoLevel.Infrastructure.Proxy -le 0) {
+                return
+            }
+
+            if ($script:Proxies) {
+                Write-PScriboMessage -Message "Using cached Veeam VB365 Proxy inventory."
+                $Proxies = $script:Proxies
+            } else {
+                $script:Proxies = Get-VBOProxy -WarningAction SilentlyContinue | Sort-Object -Property Hostname
+                $Proxies = $script:Proxies
+            }
+
             if (($InfoLevel.Infrastructure.Proxy -gt 0) -and ($Proxies)) {
                 Write-PScriboMessage -Message "Collecting Veeam VB365 Proxy information."
                 Section -Style Heading2 'Backup Proxies' {
+                    $ProxyPoolLookup = @{}
+                    if ($InfoLevel.Infrastructure.Proxy -ge 2) {
+                        try {
+                            $script:ProxyPools = Get-VBOProxyPool -WarningAction SilentlyContinue | Sort-Object -Property Name
+                            foreach ($ProxyPool in ($script:ProxyPools | Where-Object { $_ })) {
+                                if ($ProxyPool.Id) {
+                                    $ProxyPoolLookup[$ProxyPool.Id.ToString()] = $ProxyPool.Name
+                                }
+                            }
+                        } catch {
+                            Write-PScriboMessage -IsWarning -Message "Backup Proxy Pool Inventory: $($_.Exception.Message)"
+                        }
+                    }
+
                     $ProxyInfo = @()
                     foreach ($Proxy in $Proxies) {
                         try {
@@ -66,21 +91,30 @@ function Get-AbrVB365Proxy {
                             'Name' = $Proxy.Hostname
                             'Port' = $Proxy.Port
                             'Type' = $Proxy.Type
-                            'Threads Number' = $Proxy.ThreadsNumber
-                            'Throttling Value' = $Proxy.ThrottlingValue
                             'Is Outdated' = $Proxy.IsOutdated
-                            'Is Teams Graph API Backup Enabled' = $Proxy.IsTeamsGraphAPIBackupEnabled
                             'Is Domain Joined' = $domainJoined
-                            'Version' = $Proxy.Version
-                            'Operating System' = $Proxy.OperatingSystemKind
-                            'Service Account' = $Proxy.ServiceAccount
-                            'Proxy Pool' = switch ($Proxy.PoolId.Guid) {
-                                '00000000-0000-0000-0000-000000000000' { '-' }
-                                $null { '-' }
-                                default { (Get-VBOProxyPool -Id $Proxy.PoolId).Name }
-                            }
-                            'Description' = $Proxy.Description
                         }
+
+                        if ($InfoLevel.Infrastructure.Proxy -ge 2) {
+                            $ProxyPoolKey = ConvertTo-AbrVb365LookupKey -Id $Proxy.PoolId
+                            $ProxyPoolName = if (-not $ProxyPoolKey -or $ProxyPoolKey -eq '00000000-0000-0000-0000-000000000000') {
+                                '-'
+                            } elseif ($ProxyPoolLookup.ContainsKey($ProxyPoolKey)) {
+                                $ProxyPoolLookup[$ProxyPoolKey]
+                            } else {
+                                'Unknown'
+                            }
+
+                            $inObj.Add('Threads Number', $Proxy.ThreadsNumber)
+                            $inObj.Add('Throttling Value', $Proxy.ThrottlingValue)
+                            $inObj.Add('Is Teams Graph API Backup Enabled', $Proxy.IsTeamsGraphAPIBackupEnabled)
+                            $inObj.Add('Version', $Proxy.Version)
+                            $inObj.Add('Operating System', $Proxy.OperatingSystemKind)
+                            $inObj.Add('Service Account', $Proxy.ServiceAccount)
+                            $inObj.Add('Proxy Pool', $ProxyPoolName)
+                            $inObj.Add('Description', $Proxy.Description)
+                        }
+
                         $ProxyInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                         if ($TempCIMSession) {
@@ -145,7 +179,10 @@ function Get-AbrVB365Proxy {
                             BlankLine
                         }
                     }
-                    if (Get-VBOProxyPool -WarningAction SilentlyContinue) {
+                    if (-not $script:ProxyPools) {
+                        $script:ProxyPools = Get-VBOProxyPool -WarningAction SilentlyContinue | Sort-Object -Property Name
+                    }
+                    if ($script:ProxyPools) {
                         Get-AbrVB365ProxyPool
                     }
                 }

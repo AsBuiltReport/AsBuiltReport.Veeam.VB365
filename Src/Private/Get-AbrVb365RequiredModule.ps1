@@ -5,7 +5,7 @@ function Get-AbrVB365RequiredModule {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.13
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -29,34 +29,34 @@ function Get-AbrVB365RequiredModule {
         $Version
     )
     process {
-        $MyModulePath = "C:\Program Files\Veeam\Backup365\Veeam.Archiver.PowerShell\"
-        $env:PSModulePath = $env:PSModulePath + "$([System.IO.Path]::PathSeparator)$MyModulePath"
-        if ($Modules = Get-Module -ListAvailable -Name Veeam.Archiver.PowerShell) {
+        $MyModulePath = 'C:\Program Files\Veeam\Backup365\Veeam.Archiver.PowerShell'
+        if ((Test-Path -LiteralPath $MyModulePath) -and ($env:PSModulePath -notlike "*$MyModulePath*")) {
+            $env:PSModulePath = $env:PSModulePath + "$([System.IO.Path]::PathSeparator)$MyModulePath"
+        }
+
+        if ($Modules = Get-Module -ListAvailable -Name $Name) {
             try {
                 Write-PScriboMessage -Message "Trying to import Veeam VB365 modules."
-                $Modules | Import-Module -WarningAction SilentlyContinue
+                $Modules | Sort-Object -Property Version -Descending | Select-Object -First 1 | Import-Module -WarningAction SilentlyContinue
             } catch {
                 Write-PScriboMessage -IsWarning -Message "Failed to load Veeam VB365 Modules"
             }
         }
-        if ($Module = Get-Module -ListAvailable -Name Veeam.Archiver.PowerShell) {
+        if ($Module = Get-Module -ListAvailable -Name $Name | Sort-Object -Property Version -Descending | Select-Object -First 1) {
             try {
                 Write-PScriboMessage -Message "Identifying Veeam VB365 Powershell module version."
-                switch ($Module.Version.ToString()) {
-                    { $_ -eq "6.0" } { [int]$Vb365Version = "6" }
-                    default { "Unknown" }
-                }
-                Write-PScriboMessage -Message "Using Veeam VB365 Powershell module version $($Vb365Version)."
+                Write-PScriboMessage -Message "Using Veeam VB365 Powershell module version $($Module.Version)."
             } catch {
                 Write-PScriboMessage -IsWarning -Message "Failed to get Version from Module"
             }
         } else {
             try {
-                Write-PScriboMessage -Message "No Veeam Modules found, tryng to import module manually."
-                Import-Module "C:\Program Files\Veeam\Backup365\Veeam.Archiver.PowerShell\Veeam.Archiver.PowerShell.psd1"
-                [int]$Vb365Version = (Get-Module -ListAvailable -Name Veeam.Archiver.PowerShell).Version.ToString()
-                if ($Vb365Version) {
-                    Write-PScriboMessage -Message "Using Veeam VB365 Powershell module version $($Vb365Version)."
+                Write-PScriboMessage -Message "No Veeam Modules found, trying to import module manually."
+                $ManualModulePath = Join-Path -Path $MyModulePath -ChildPath 'Veeam.Archiver.PowerShell.psd1'
+                Import-Module $ManualModulePath -ErrorAction Stop
+                $Module = Get-Module -ListAvailable -Name $Name | Sort-Object -Property Version -Descending | Select-Object -First 1
+                if ($Module) {
+                    Write-PScriboMessage -Message "Using Veeam VB365 Powershell module version $($Module.Version)."
                 }
             } catch {
                 throw "Failed to get version from manual Module import"
@@ -64,11 +64,10 @@ function Get-AbrVB365RequiredModule {
         }
         # Check if the required version of VMware PowerCLI is installed
         $RequiredModule = Get-Module -ListAvailable -Name $Name | Sort-Object -Property Version -Descending | Select-Object -First 1
-        $ModuleVersion = "$($RequiredModule.Version.Major)" + "." + "$($RequiredModule.Version.Minor)"
-        if ($ModuleVersion -eq ".") {
+        if (-not $RequiredModule) {
             throw "$Name $Version or higher is required to run the Veeam VB365 As Built Report. Install the Veeam Backup & Replication for Microsoft 365 console that provide the required modules."
         }
-        if ($ModuleVersion -lt $Version) {
+        if ($RequiredModule.Version -lt [version]$Version) {
             throw "$Name $Version or higher is required to run the Veeam VB365 As Built Report. Update the Veeam Backup & Replication for Microsoft 365 console that provide the required modules."
         }
     }

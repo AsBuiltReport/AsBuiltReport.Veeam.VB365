@@ -12,10 +12,10 @@
     RootModule = 'AsBuiltReport.Veeam.VB365.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.3.13'
+    ModuleVersion = '0.4.0'
 
     # Supported PSEditions
-    # CompatiblePSEditions = @()
+    CompatiblePSEditions = @('Desktop', 'Core')
 
     # ID used to uniquely identify this module
     GUID = '3da0eaed-e086-4c3d-ab3b-41291378fa05'
@@ -24,13 +24,13 @@
     Author = 'Jonathan Colon'
 
     # Company or vendor of this module
-    # CompanyName = 'Unknown'
+    CompanyName = 'v8.4, Diagrammer Migration and PS7 Compatibility Fork'
 
     # Copyright statement for this module
     Copyright = '(c) 2025 Jonathan Colon. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description = 'A PowerShell module to generate an as built report on the configuration of Veeam Backup for Microsoft 365.'
+    Description = 'v8.4, Diagrammer Migration and PS7 Compatibility Fork of the As Built Report module for Veeam Backup for Microsoft 365.'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.1'
@@ -62,8 +62,8 @@
             ModuleVersion = '0.9.0'
         },
         @{
-            ModuleName = 'Diagrammer.Core';
-            ModuleVersion = '0.2.36'
+            ModuleName = 'AsBuiltReport.Diagram';
+            ModuleVersion = '1.0.7'
         }
     )
 

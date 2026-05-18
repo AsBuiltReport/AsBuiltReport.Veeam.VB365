@@ -24,31 +24,43 @@ function Get-AbrVB365BackupRepository {
 
     process {
         try {
-            $script:Repositories = Get-VBORepository | Sort-Object -Property Name
+            if ($InfoLevel.Infrastructure.Repository -le 0) {
+                return
+            }
+
+            if ($script:Repositories) {
+                Write-PScriboMessage -Message "Using cached Veeam VB365 Backup Repository inventory."
+                $Repositories = $script:Repositories
+            } else {
+                if ($InfoLevel.Infrastructure.Repository -ge 2) {
+                    Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Repository inventory."
+                    $Repositories = Get-AbrVb365BackupRepositoryInventory
+                } else {
+                    Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Repository summary from job references."
+                    $Repositories = Get-AbrVb365BackupRepositoryInventory -SummaryOnly
+                }
+            }
+
             if (($InfoLevel.Infrastructure.Repository -gt 0) -and ($Repositories)) {
                 Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Repository."
                 Section -Style Heading2 'Backup Repositories' {
+                    $EncryptionKeyLookup = @{}
+                    if (($InfoLevel.Infrastructure.Repository -ge 2 -or $HealthCheck.Infrastructure.Repository) -and ($Repositories | Where-Object { $_.EnableObjectStorageEncryption })) {
+                        $KnownEncryptionKeys = if ($script:EncryptionKeys) { $script:EncryptionKeys } else { Get-VBOEncryptionKey }
+                        foreach ($EncryptionKey in ($KnownEncryptionKeys | Where-Object { $_ })) {
+                            if ($EncryptionKey.Id) {
+                                $EncryptionKeyLookup[$EncryptionKey.Id.ToString()] = $EncryptionKey.Description
+                            }
+                        }
+                    }
+
                     $RepositoryInfo = @()
                     foreach ($Repository in $Repositories) {
                         $inObj = [ordered] @{
                             'Name' = $Repository.Name
                             'Path' = $Repository.Path
-                            'Object Storage Repository' = switch ([string]::IsNullOrEmpty($Repository.ObjectStorageRepository)) {
-                                $true { "Disabled" }
-                                $false { $Repository.ObjectStorageRepository }
-                                default { 'Unknown' }
-                            }
-                            'Object Storage Encryption Key' = switch ($Repository.EnableObjectStorageEncryption) {
-                                $true { (Get-VBOEncryptionKey -Id $Repository.ObjectStorageEncryptionKey.id).Description }
-                                $false { "Disabled" }
-                                default { "Unknown" }
-                            }
-                            'Is Outdated' = $Repository.IsOutdated
-                            'Is Out Of Sync' = $Repository.IsOutOfSync
-                            'Capacity' = ConvertTo-FileSizeString $Repository.Capacity
-                            'Free Space' = ConvertTo-FileSizeString $Repository.FreeSpace
-                            'Used Space' = ConvertTo-FileSizeString ($Repository.Capacity - $Repository.FreeSpace)
-                            'Is Long Term' = $Repository.IsLongTerm
+                            'Capacity' = if ($null -ne $Repository.Capacity) { ConvertTo-FileSizeString $Repository.Capacity } else { '--' }
+                            'Free Space' = if ($null -ne $Repository.FreeSpace) { ConvertTo-FileSizeString $Repository.FreeSpace } else { '--' }
                             'Retention Type' = switch ($Repository.RetentionType) {
                                 'SnapshotBased' { 'Snapshot Based' }
                                 'ItemLevel' { 'Item Level' }
@@ -65,11 +77,44 @@ function Get-AbrVB365BackupRepository {
                                 "KeepForever" { 'Keep Forever' }
                                 default { $Repository.RetentionPeriod }
                             }
-                            'Retention Frequency Type' = $Repository.RetentionFrequencyType
-                            'Proxy Pool' = $Repository.ProxyPool
-                            'Description' = $Repository.Description
-
                         }
+
+                        if ($InfoLevel.Infrastructure.Repository -ge 2 -or $HealthCheck.Infrastructure.Repository) {
+                            $ObjectStorageRepository = Get-AbrVb365PropertyValue -InputObject $Repository -Name 'ObjectStorageRepository'
+                            $ObjectStorageEncryptionKey = Get-AbrVb365PropertyValue -InputObject $Repository -Name 'ObjectStorageEncryptionKey'
+                            $ObjectStorageEncryptionKeyId = Get-AbrVb365PropertyValue -InputObject $ObjectStorageEncryptionKey -Name 'Id'
+
+                            $ObjectStorageRepositoryValue = switch ([string]::IsNullOrEmpty($ObjectStorageRepository)) {
+                                $true { "Disabled" }
+                                $false { $ObjectStorageRepository }
+                                default { 'Unknown' }
+                            }
+                            $ObjectStorageEncryptionKeyValue = switch ($Repository.EnableObjectStorageEncryption) {
+                                $true {
+                                    if ($ObjectStorageEncryptionKeyId -and $EncryptionKeyLookup.ContainsKey($ObjectStorageEncryptionKeyId.ToString())) {
+                                        $EncryptionKeyLookup[$ObjectStorageEncryptionKeyId.ToString()]
+                                    } else {
+                                        Get-AbrVb365PropertyValue -InputObject $ObjectStorageEncryptionKey -Name 'Description' -Default 'Unknown'
+                                    }
+                                }
+                                $false { "Disabled" }
+                                default { "Unknown" }
+                            }
+
+                            $inObj.Add('Object Storage Repository', $ObjectStorageRepositoryValue)
+                            $inObj.Add('Object Storage Encryption Key', $ObjectStorageEncryptionKeyValue)
+                        }
+
+                        if ($InfoLevel.Infrastructure.Repository -ge 2) {
+                            $inObj.Add('Is Outdated', $Repository.IsOutdated)
+                            $inObj.Add('Is Out Of Sync', $Repository.IsOutOfSync)
+                            $inObj.Add('Used Space', (ConvertTo-FileSizeString ($Repository.Capacity - $Repository.FreeSpace)))
+                            $inObj.Add('Is Long Term', $Repository.IsLongTerm)
+                            $inObj.Add('Retention Frequency Type', $Repository.RetentionFrequencyType)
+                            $inObj.Add('Proxy Pool', $Repository.ProxyPool)
+                            $inObj.Add('Description', $Repository.Description)
+                        }
+
                         $RepositoryInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
