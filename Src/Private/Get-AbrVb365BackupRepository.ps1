@@ -56,11 +56,14 @@ function Get-AbrVB365BackupRepository {
 
                     $RepositoryInfo = @()
                     foreach ($Repository in $Repositories) {
+                        $PercentFree = if ($null -ne $Repository.Capacity -and $Repository.Capacity -ne 0) { '{0:N0}' -f ((($Repository.Capacity - $Repository.FreeSpace) / $Repository.Capacity) * 100) } else { 0 }
                         $inObj = [ordered] @{
                             'Name' = $Repository.Name
                             'Path' = $Repository.Path
                             'Capacity' = if ($null -ne $Repository.Capacity) { ConvertTo-FileSizeString $Repository.Capacity } else { '--' }
                             'Free Space' = if ($null -ne $Repository.FreeSpace) { ConvertTo-FileSizeString $Repository.FreeSpace } else { '--' }
+                            'Used Space %' = $PercentFree
+                            'Free Space %' = if ($null -ne $PercentFree -and $PercentFree -ne 0) { 100 - $PercentFree } else { 0 }
                             'Retention Type' = switch ($Repository.RetentionType) {
                                 'SnapshotBased' { 'Snapshot Based' }
                                 'ItemLevel' { 'Item Level' }
@@ -117,9 +120,30 @@ function Get-AbrVB365BackupRepository {
 
                         $RepositoryInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
+                    try {
+                        $sampleData = $RepositoryInfo | Select-Object Name, 'Used Space %', 'Free Space %'
+
+                        $chartLabels = [string[]]$sampleData.Name
+                        $chartCategories = @('Used Space %', 'Free Space %')
+                        $chartUsedValues = [double[]]@($sampleData.'Used Space %')
+                        $chartFreeValues = [double[]]@($sampleData.'Free Space %')
+                        $chartValues = @()
+                        foreach ($i in $chartLabels) {
+                            $chartValues += , @($chartUsedValues[$chartLabels.IndexOf($i)], $chartFreeValues[$chartLabels.IndexOf($i)])
+                        }
+
+                        $statusCustomPalette = @('#DFF0D0', '#FFF3C4')
+
+                        $chartFileItem = New-StackedBarChart -Title 'Backup Repository' -Values $chartValues -Labels $chartLabels -LegendCategories $chartCategories -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 600 -Format base64 -TitleFontBold -TitleFontSize 16 -AreaOrientation Horizontal -LabelXAxis 'Backup Repositories' -LabelYAxis 'Percentage %' -EnableLegend -LegendAlignment UpperCenter -AxesMarginsTop 0.2 -LegendOrientation Horizontal
+                    } catch {
+                        Write-PScriboMessage -IsWarning "Backup Repository graph Section: $($_.Exception.Message)"
+                    }
 
                     if ($InfoLevel.Infrastructure.Repository -ge 2) {
                         Paragraph "The following sections detail the configuration of the backup repository within $VeeamBackupServer backup server."
+                        if ($chartFileItem) {
+                            Image -Text 'Backup Repository' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         foreach ($Repository in $RepositoryInfo) {
                             if ($HealthCheck.Infrastructure.Repository) {
                                 $Repository | Where-Object { $_.'Is Outdated' -eq 'Yes' } | Set-Style -Style Warning -Property 'Is Outdated'
@@ -155,6 +179,9 @@ function Get-AbrVB365BackupRepository {
                         }
                         Paragraph "The following table summarizes the configuration of the backup repository within within the $VeeamBackupServer backup server."
                         BlankLine
+                        if ($chartFileItem) {
+                            Image -Text 'Backup Repository' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         $TableParams = @{
                             Name = "Repositories - $VeeamBackupServer"
                             List = $false
