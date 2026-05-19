@@ -64,17 +64,17 @@ The Veeam VB365 As Built Report supports the following Veeam Backup for Microsof
 
 This report is compatible with the following PowerShell versions:
 
-| Windows PowerShell 5.1 | PowerShell 7 |
-| :--------------------: | :----------: |
-|   :white_check_mark:   |     :x:      |
+| Windows PowerShell 5.1 |    PowerShell 7    |
+| :--------------------: | :----------------: |
+|   :white_check_mark:   | :white_check_mark: |
 
 ## :wrench: System Requirements
 
-PowerShell 5.1 and the following PowerShell modules are required for generating a Veeam VB365 As Built Report:
+PowerShell 5.1+ and the following PowerShell modules are required for generating a Veeam VB365 As Built Report:
 
 - [Veeam.Archiver.PowerShell Module](https://helpcenter.veeam.com/docs/vbo365/powershell/getting_started.html?ver=70)
-- [PScriboCharts Module](https://github.com/iainbrighton/PScriboCharts)
 - [PSGraph Module](https://github.com/KevinMarquette/PSGraph)
+- [AsBuiltReport.Chart Module](https://www.powershellgallery.com/packages/AsBuiltReport.Chart/)
 - [AsBuiltReport.Diagram Module](https://www.powershellgallery.com/packages/AsBuiltReport.Diagram/)
 - [AsBuiltReport.Veeam.VB365 Module](https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/)
 
@@ -155,6 +155,7 @@ The **Options** schema allows certain options within the report to be toggled on
 | SignatureAuthorName    | string              | empty   | Sets the author name for the diagram signature.                                              |
 | SignatureCompanyName   | string              | empty   | Sets the company name for the diagram signature.                                             |
 | RoundUnits             | int                 | 1       | Sets the rounding units for data values.                                                     |
+| UpdateCheck            | true/false          | true    | Enables or disables the update check option.                                                 |
 
 ### InfoLevel
 

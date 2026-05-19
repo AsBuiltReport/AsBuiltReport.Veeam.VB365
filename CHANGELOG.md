@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
-## [0.4.0] - v8.4, Diagrammer Migration and PS7 Compatibility Fork
+## [0.4.0] - Unreleased
 
 ### Added
 
@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved InfoLevel 1 performance by simplifying repository name collection and skipping expensive enrichment for restore points.
 - Enhanced repository-map helper collection to automatically fallback between `pwsh`, `powershell.exe`, and `powershell` hosts.
 - Improved PScribo table rendering by converting complex backup job and backup copy job summary object references into scalar display values.
+- Upgrade actions/checkout to v6 in workflows
+- Change module version to 0.4.0 in manifest
+- Update dependencies and their versions
+- Enhance README and changelog with new features and compatibility
 
 ## [0.3.13] - Unreleased
 

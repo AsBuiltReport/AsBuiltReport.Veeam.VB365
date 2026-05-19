@@ -24,13 +24,13 @@
     Author = 'Jonathan Colon'
 
     # Company or vendor of this module
-    CompanyName = 'v8.4, Diagrammer Migration and PS7 Compatibility Fork'
+    # CompanyName = 'Unknown'
 
     # Copyright statement for this module
-    Copyright = '(c) 2025 Jonathan Colon. All rights reserved.'
+    Copyright = '(c) 2026 Jonathan Colon. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description = 'v8.4, Diagrammer Migration and PS7 Compatibility Fork of the As Built Report module for Veeam Backup for Microsoft 365.'
+    Description = 'A PowerShell module to generate an as built report on the configuration of Veeam Backup for Microsoft 365.'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.1'
@@ -55,11 +55,11 @@
     RequiredModules = @(
         @{
             ModuleName = 'AsBuiltReport.Core';
-            ModuleVersion = '1.5.1'
+            ModuleVersion = '1.6.4'
         },
         @{
-            ModuleName = 'PScriboCharts';
-            ModuleVersion = '0.9.0'
+            ModuleName = 'AsBuiltReport.Chart';
+            ModuleVersion = '0.3.2'
         },
         @{
             ModuleName = 'AsBuiltReport.Diagram';
