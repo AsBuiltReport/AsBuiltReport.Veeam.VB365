@@ -106,9 +106,9 @@ function Get-AbrVb365RestoreSession {
                     } else {
                         Paragraph "The following table summarizes the configuration of the restore sessions within the $VeeamBackupServer backup server."
                         BlankLine
-                        # if ($chartFileItem) {
-                        #     Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
-                        # }
+                        if ($chartFileItem) {
+                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         BlankLine
                         $TableParams = @{
                             Name = "Restore Sessions - $VeeamBackupServer"

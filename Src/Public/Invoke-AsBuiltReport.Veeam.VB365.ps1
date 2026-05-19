@@ -21,7 +21,6 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
         [PSCredential] $Credential
     )
 
-    #Requires -Version 5.1
     #Requires -RunAsAdministrator
 
     if ($psISE) {
