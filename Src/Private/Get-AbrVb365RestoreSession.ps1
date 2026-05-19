@@ -5,7 +5,7 @@ function Get-AbrVb365RestoreSession {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -29,16 +29,16 @@ function Get-AbrVb365RestoreSession {
             }
 
             if ($script:RestoreSessions) {
-                Write-PScriboMessage -Message "Using cached Veeam VB365 Restore Session inventory."
+                Write-PScriboMessage -Message 'Using cached Veeam VB365 Restore Session inventory.'
                 $RestoreSessions = $script:RestoreSessions
             } else {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Session inventory."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Restore Session inventory.'
                 $script:RestoreSessions = Get-VBORestoreSession | Sort-Object -Property Name
                 $RestoreSessions = $script:RestoreSessions
             }
 
             if (($InfoLevel.Restore.RestoreSession -gt 0) -and ($RestoreSessions)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Session."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Restore Session.'
                 Section -Style Heading2 'Restore Session' {
                     $RestoreSessionInfo = @()
                     foreach ($RestoreSession in $RestoreSessions) {
@@ -65,26 +65,26 @@ function Get-AbrVb365RestoreSession {
                         $RestoreSessionInfo | Where-Object { $_.'Result' -eq 'Failed' } | Set-Style -Style Critical -Property 'Result'
                     }
 
-                    try {
-                        $sampleData = [ordered]@{
-                            'Success' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq "Success" } | Measure-Object).Count
-                            'Warning' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
-                            'Failed' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
-                        }
+                    # try {
+                    #     $sampleData = [ordered]@{
+                    #         'Success' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
+                    #         'Warning' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
+                    #         'Failed' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
+                    #     }
 
-                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
+                    #     $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
 
-                        $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'RestoreSessions' -AxisXTitle 'Result' -AxisYTitle 'Count' -ChartTitleName 'RestoreSessions' -ChartTitleText 'Restore Session Results'
+                    #     $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'RestoreSessions' -AxisXTitle 'Result' -AxisYTitle 'Count' -ChartTitleName 'RestoreSessions' -ChartTitleText 'Restore Session Results'
 
-                    } catch {
-                        Write-PScriboMessage -IsWarning -Message "Restore Sessions Chart Section: $($_.Exception.Message)"
-                    }
+                    # } catch {
+                    #     Write-PScriboMessage -IsWarning -Message "Restore Sessions Chart Section: $($_.Exception.Message)"
+                    # }
 
                     if ($InfoLevel.Restore.RestoreSession -ge 2) {
                         Paragraph "The following sections details the configuration of the restore sessions within $VeeamBackupServer backup server."
-                        if ($chartFileItem) {
-                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
-                        }
+                        # if ($chartFileItem) {
+                        #     Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        # }
                         foreach ($RestoreSession in $RestoreSessionInfo) {
                             Section -ExcludeFromTOC -Style NOTOCHeading4 "$($RestoreSession.Name)" {
                                 $TableParams = @{
@@ -101,9 +101,9 @@ function Get-AbrVb365RestoreSession {
                     } else {
                         Paragraph "The following table summarizes the configuration of the restore sessions within the $VeeamBackupServer backup server."
                         BlankLine
-                        if ($chartFileItem) {
-                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
-                        }
+                        # if ($chartFileItem) {
+                        #     Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        # }
                         BlankLine
                         $TableParams = @{
                             Name = "Restore Sessions - $VeeamBackupServer"

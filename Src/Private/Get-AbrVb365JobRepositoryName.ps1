@@ -12,8 +12,7 @@ function Get-AbrVb365PowerShellProcessPath {
         if ($CurrentProcessPath -and (Test-Path -LiteralPath $CurrentProcessPath)) {
             return $CurrentProcessPath
         }
-    } catch {
-    }
+    } catch { Out-Null }
 
     foreach ($CommandName in @('pwsh', 'powershell.exe', 'powershell')) {
         $Command = Get-Command -Name $CommandName -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -25,6 +24,7 @@ function Get-AbrVb365PowerShellProcessPath {
 
 function Set-AbrVb365JobRepositoryMetadata {
     [CmdletBinding()]
+    [OutputType([string], [pscustomobject])]
     param (
         [Parameter(Mandatory = $true)]
         [object] $Job,
@@ -89,6 +89,7 @@ function Set-AbrVb365JobRepositoryMetadata {
 
 function Get-AbrVb365ExternalJobRepositoryMap {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param (
     )
 
@@ -119,7 +120,7 @@ function Get-AbrVb365ExternalJobRepositoryMap {
 
     $PowerShellProcessPath = Get-AbrVb365PowerShellProcessPath
     if (-not $PowerShellProcessPath) {
-        Write-PScriboMessage -IsWarning -Message "Backup Job Repository map skipped because a PowerShell executable was not found."
+        Write-PScriboMessage -IsWarning -Message 'Backup Job Repository map skipped because a PowerShell executable was not found.'
         $script:BackupJobRepositoryLookup = $Lookup
         return $script:BackupJobRepositoryLookup
     }
@@ -129,7 +130,7 @@ function Get-AbrVb365ExternalJobRepositoryMap {
         $TimeoutSeconds = 180
     }
 
-    $TempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("AbrVb365RepoMap-{0}" -f ([guid]::NewGuid().ToString('N')))
+    $TempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('AbrVb365RepoMap-{0}' -f ([guid]::NewGuid().ToString('N')))
     $ScriptPath = Join-Path $TempRoot 'Get-Vb365JobRepositoryMap.ps1'
     $CredentialPath = Join-Path $TempRoot 'credential.xml'
     $OutputPath = Join-Path $TempRoot 'repository-map.json'
@@ -169,11 +170,6 @@ try {
     Import-Module Veeam.Archiver.PowerShell -ErrorAction Stop
 }
 
-try {
-    Disconnect-VBOServer -ErrorAction SilentlyContinue
-} catch {
-}
-
 Connect-VBOServer -Server $Server -Credential $Credential -Port $Port
 
 $orgs = Get-VBOOrganization
@@ -206,14 +202,10 @@ $rows = foreach ($j in $jobs) {
 
 $rows | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $OutputPath -Encoding UTF8
 
-try {
-    Disconnect-VBOServer -ErrorAction SilentlyContinue
-} catch {
-}
 '@
         Set-Content -LiteralPath $ScriptPath -Value $CaptureScript -Encoding UTF8
 
-        Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Job repository map in a separate PowerShell process."
+        Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Job repository map in a separate PowerShell process.'
         $ArgumentList = @(
             '-NoLogo',
             '-NoProfile',
@@ -234,8 +226,7 @@ try {
         if (-not $Process.WaitForExit($TimeoutSeconds * 1000)) {
             try {
                 $Process.Kill()
-            } catch {
-            }
+            } catch { Out-Null }
             Write-PScriboMessage -IsWarning -Message "Backup Job Repository map timed out after $TimeoutSeconds seconds."
             $script:BackupJobRepositoryLookup = $Lookup
             return $script:BackupJobRepositoryLookup
@@ -260,7 +251,7 @@ try {
             }
             Write-PScriboMessage -Message "Collected Veeam VB365 Backup Job repository map with $($Lookup.Count) lookup keys."
         } else {
-            Write-PScriboMessage -IsWarning -Message "Backup Job Repository map did not produce an output file."
+            Write-PScriboMessage -IsWarning -Message 'Backup Job Repository map did not produce an output file.'
         }
     } catch {
         Write-PScriboMessage -IsWarning -Message "Backup Job Repository map failed: $($_.Exception.Message)"
@@ -276,6 +267,7 @@ try {
 
 function Get-AbrVb365ExternalBackupCopyJobRepositoryMap {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param (
     )
 
@@ -306,7 +298,7 @@ function Get-AbrVb365ExternalBackupCopyJobRepositoryMap {
 
     $PowerShellProcessPath = Get-AbrVb365PowerShellProcessPath
     if (-not $PowerShellProcessPath) {
-        Write-PScriboMessage -IsWarning -Message "Backup Copy Job Repository map skipped because a PowerShell executable was not found."
+        Write-PScriboMessage -IsWarning -Message 'Backup Copy Job Repository map skipped because a PowerShell executable was not found.'
         $script:BackupCopyJobRepositoryLookup = $Lookup
         return $script:BackupCopyJobRepositoryLookup
     }
@@ -316,7 +308,7 @@ function Get-AbrVb365ExternalBackupCopyJobRepositoryMap {
         $TimeoutSeconds = 180
     }
 
-    $TempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("AbrVb365CopyRepoMap-{0}" -f ([guid]::NewGuid().ToString('N')))
+    $TempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('AbrVb365CopyRepoMap-{0}' -f ([guid]::NewGuid().ToString('N')))
     $ScriptPath = Join-Path $TempRoot 'Get-Vb365CopyJobRepositoryMap.ps1'
     $CredentialPath = Join-Path $TempRoot 'credential.xml'
     $OutputPath = Join-Path $TempRoot 'copy-repository-map.json'
@@ -356,11 +348,6 @@ try {
     Import-Module Veeam.Archiver.PowerShell -ErrorAction Stop
 }
 
-try {
-    Disconnect-VBOServer -ErrorAction SilentlyContinue
-} catch {
-}
-
 Connect-VBOServer -Server $Server -Credential $Credential -Port $Port
 
 $jobs = Get-VBOCopyJob
@@ -388,15 +375,10 @@ $rows = foreach ($j in $jobs) {
 }
 
 $rows | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $OutputPath -Encoding UTF8
-
-try {
-    Disconnect-VBOServer -ErrorAction SilentlyContinue
-} catch {
-}
 '@
         Set-Content -LiteralPath $ScriptPath -Value $CaptureScript -Encoding UTF8
 
-        Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Copy Job repository map in a separate PowerShell process."
+        Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Copy Job repository map in a separate PowerShell process.'
         $ArgumentList = @(
             '-NoLogo',
             '-NoProfile',
@@ -417,8 +399,7 @@ try {
         if (-not $Process.WaitForExit($TimeoutSeconds * 1000)) {
             try {
                 $Process.Kill()
-            } catch {
-            }
+            } catch { Out-Null }
             Write-PScriboMessage -IsWarning -Message "Backup Copy Job Repository map timed out after $TimeoutSeconds seconds."
             $script:BackupCopyJobRepositoryLookup = $Lookup
             return $script:BackupCopyJobRepositoryLookup
@@ -443,7 +424,7 @@ try {
             }
             Write-PScriboMessage -Message "Collected Veeam VB365 Backup Copy Job repository map with $($Lookup.Count) lookup keys."
         } else {
-            Write-PScriboMessage -IsWarning -Message "Backup Copy Job Repository map did not produce an output file."
+            Write-PScriboMessage -IsWarning -Message 'Backup Copy Job Repository map did not produce an output file.'
         }
     } catch {
         Write-PScriboMessage -IsWarning -Message "Backup Copy Job Repository map failed: $($_.Exception.Message)"
@@ -459,6 +440,7 @@ try {
 
 function Get-AbrVb365JobRepositoryName {
     [CmdletBinding()]
+    [OutputType([string], [pscustomobject])]
     param (
         [Parameter(Mandatory = $true)]
         [object] $Job,

@@ -24,11 +24,11 @@ function ConvertTo-TextYN {
     )
 
     switch ($TEXT) {
-        "" { "--"; break }
-        " " { "--"; break }
-        $Null { "--"; break }
-        "True" { "Yes"; break }
-        "False" { "No"; break }
+        '' { '--'; break }
+        ' ' { '--'; break }
+        $Null { '--'; break }
+        'True' { 'Yes'; break }
+        'False' { 'No'; break }
         default { $TEXT }
     }
 } # end
@@ -68,7 +68,7 @@ function ConvertTo-EmptyToFiller {
     )
 
     switch ([string]::IsNullOrEmpty($TEXT)) {
-        $true { "--"; break }
+        $true { '--'; break }
         default { $TEXT }
     }
 } # end
@@ -119,7 +119,7 @@ function ConvertTo-FileSizeString {
     }
 
     if ($SourceSpaceUnit) {
-        return "$([math]::Round(($Size * $("1" + $SourceSpaceUnit) / $("1" + $TargetSpaceUnit)), $RoundUnits)) $TargetSpaceUnit"
+        return "$([math]::Round(($Size * $('1' + $SourceSpaceUnit) / $('1' + $TargetSpaceUnit)), $RoundUnits)) $TargetSpaceUnit"
     } else {
         $Unit = switch ($Size) {
             { $Size -gt 1PB } { 'PB' ; break }
@@ -128,35 +128,35 @@ function ConvertTo-FileSizeString {
             { $Size -gt 1Mb } { 'MB' ; break }
             default { 'KB' }
         }
-        return "$([math]::Round(($Size / $("1" + $Unit)), $RoundUnits)) $Unit"
+        return "$([math]::Round(($Size / $('1' + $Unit)), $RoundUnits)) $Unit"
     }
 } # end
 
 function Convert-Size {
     [cmdletbinding()]
     param(
-        [validateset("Bytes", "KB", "MB", "GB", "TB")]
+        [validateset('Bytes', 'KB', 'MB', 'GB', 'TB')]
         [string]$From,
-        [validateset("Bytes", "KB", "MB", "GB", "TB")]
+        [validateset('Bytes', 'KB', 'MB', 'GB', 'TB')]
         [string]$To,
         [Parameter(Mandatory = $true)]
         [double]$Value,
         [int]$Precision = 4
     )
     switch ($From) {
-        "Bytes" { $value = $Value }
-        "KB" { $value = $Value * 1024 }
-        "MB" { $value = $Value * 1024 * 1024 }
-        "GB" { $value = $Value * 1024 * 1024 * 1024 }
-        "TB" { $value = $Value * 1024 * 1024 * 1024 * 1024 }
+        'Bytes' { $value = $Value }
+        'KB' { $value = $Value * 1024 }
+        'MB' { $value = $Value * 1024 * 1024 }
+        'GB' { $value = $Value * 1024 * 1024 * 1024 }
+        'TB' { $value = $Value * 1024 * 1024 * 1024 * 1024 }
     }
 
     switch ($To) {
-        "Bytes" { return $value }
-        "KB" { $Value = $Value / 1KB }
-        "MB" { $Value = $Value / 1MB }
-        "GB" { $Value = $Value / 1GB }
-        "TB" { $Value = $Value / 1TB }
+        'Bytes' { return $value }
+        'KB' { $Value = $Value / 1KB }
+        'MB' { $Value = $Value / 1MB }
+        'GB' { $Value = $Value / 1GB }
+        'TB' { $Value = $Value / 1TB }
 
     }
 
@@ -164,6 +164,7 @@ function Convert-Size {
 }
 function Get-AbrVb365InfoLevelValue {
     [CmdletBinding()]
+    [OutputType([int])]
     param (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -357,7 +358,7 @@ function Get-PieChart {
 
     $TempPath = Resolve-Path ([System.IO.Path]::GetTempPath())
 
-    $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format "PNG" -PassThru
+    $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format 'PNG' -PassThru
 
     $Base64Image = [convert]::ToBase64String([System.IO.File]::ReadAllBytes($ChartImage.FullName))
 
@@ -489,7 +490,7 @@ function Get-ColumnChart {
 
     $TempPath = Resolve-Path ([System.IO.Path]::GetTempPath())
 
-    $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format "PNG" -PassThru
+    $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format 'PNG' -PassThru
 
     if ($PassThru) {
         Write-PScriboMessage -InputObject $chartFileItem
@@ -511,36 +512,36 @@ function Get-VB365DebugObject {
     )
 
     $script:RestoreOperators = @{
-        Name = "RestoreOperators1", "RestoreOperators2", "RestoreOperators3", "RestoreOperators4", "RestoreOperators5", "RestoreOperators6", "RestoreOperators7"
+        Name = 'RestoreOperators1', 'RestoreOperators2', 'RestoreOperators3', 'RestoreOperators4', 'RestoreOperators5', 'RestoreOperators6', 'RestoreOperators7'
     }
 
     $script:Proxies = @{
-        HostName = "Proxy1", "Proxy2", "Proxy3", "Proxy4", "Proxy5", "Proxy6", "Proxy7"
+        HostName = 'Proxy1', 'Proxy2', 'Proxy3', 'Proxy4', 'Proxy5', 'Proxy6', 'Proxy7'
     }
 
     $script:RestorePortal = @{
         IsServiceEnabled = $true
-        PortalUri = "https://publicurl.internet.com:4443"
+        PortalUri = 'https://publicurl.internet.com:4443'
     }
 
     $script:Repositories = @{
-        Name = "Repository1", "Repository2", "Repository3", "Repository4", "Repository5", "Repository6", "Repository7"
+        Name = 'Repository1', 'Repository2', 'Repository3', 'Repository4', 'Repository5', 'Repository6', 'Repository7'
     }
 
 
     $script:ObjectRepositories = @{
-        Name = "ObjectRepositor1", "ObjectRepositor2", "ObjectRepositor3", "ObjectRepositor4", "ObjectRepositor5", "ObjectRepositor6", "ObjectRepositor7"
+        Name = 'ObjectRepositor1', 'ObjectRepositor2', 'ObjectRepositor3', 'ObjectRepositor4', 'ObjectRepositor5', 'ObjectRepositor6', 'ObjectRepositor7'
     }
 
     $script:Organizations = @()
     $inOrganizationOffice365Obj = [ordered] @{
-        Name = "ObjectRepositor1", "ObjectRepositor2", "ObjectRepositor3", "ObjectRepositor7", "ObjectRepositor8", "ObjectRepositor9"
-        Type = "Office365"
+        Name = 'ObjectRepositor1', 'ObjectRepositor2', 'ObjectRepositor3', 'ObjectRepositor7', 'ObjectRepositor8', 'ObjectRepositor9'
+        Type = 'Office365'
     }
 
     $inOrganizationOnPremisesObj = [ordered] @{
-        Name = "ObjectRepositor4", "ObjectRepositor5", "ObjectRepositor6", "ObjectRepositor10", "ObjectRepositor11", "ObjectRepositor12"
-        Type = "OnPremises"
+        Name = 'ObjectRepositor4', 'ObjectRepositor5', 'ObjectRepositor6', 'ObjectRepositor10', 'ObjectRepositor11', 'ObjectRepositor12'
+        Type = 'OnPremises'
     }
 
     $Organizations += [PSCustomObject]$inOrganizationOffice365Obj

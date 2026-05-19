@@ -21,6 +21,7 @@ function ConvertTo-AbrVb365LookupKey {
 
 function ConvertTo-AbrVb365DisplayValue {
     [CmdletBinding()]
+    [OutputType([pscustomobject], [string])]
     param (
         [Parameter(Mandatory = $false)]
         [AllowNull()]
@@ -68,6 +69,7 @@ function Get-AbrVb365OrganizationInventory {
 
 function Get-AbrVb365OrganizationNameLookup {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param (
     )
 
@@ -100,6 +102,7 @@ function Get-AbrVb365OrganizationByName {
 
 function Get-AbrVb365RepositoryNameLookup {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param (
     )
 
@@ -167,7 +170,7 @@ function Get-AbrVb365BackupJobInventory {
             return $script:BackupJobs
         }
 
-        Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Jobs inventory with global query."
+        Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Jobs inventory with global query.'
         $BackupJobs = Get-VBOJob
         $RepositoryLookup = Get-AbrVb365ExternalJobRepositoryMap
         foreach ($BackupJob in ($BackupJobs | Where-Object { $_ })) {

@@ -5,7 +5,7 @@ function Get-AbrVB365ObjectRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVB365ObjectRepository {
         try {
             $script:ObjectRepositories = Get-AbrVb365ObjectStorageRepository
             if (($InfoLevel.Infrastructure.Repository -gt 0) -and ($ObjectRepositories)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Object Repository."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Object Repository.'
                 Section -Style Heading2 'Object Repositories' {
                     $ObjectRepositoryInfo = @()
                     foreach ($ObjectRepository in $ObjectRepositories) {
@@ -66,12 +66,12 @@ function Get-AbrVB365ObjectRepository {
                                 }
                                 $ObjectRepository | Table @TableParams
                                 if (($HealthCheck.Infrastructure.Repository) -and ($ObjectRepository | Where-Object { $_.'Immutability Enabled' -eq 'No' })) {
-                                    Paragraph "Health Check:" -Bold -Underline
+                                    Paragraph 'Health Check:' -Bold -Underline
                                     BlankLine
                                     Paragraph {
-                                        Text "Best Practice:" -Bold
-                                        Text "Veeam recommend to implement Immutability where it is supported. It,s done for increased security: immutability protects your data from loss as a result of attacks, malware activity or any other injurious actions."
-                                        Text "https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html" -Color Blue
+                                        Text 'Best Practice:' -Bold
+                                        Text 'Veeam recommend to implement Immutability where it is supported. It,s done for increased security: immutability protects your data from loss as a result of attacks, malware activity or any other injurious actions.'
+                                        Text 'https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html' -Color Blue
                                     }
                                     BlankLine
                                 }
@@ -94,12 +94,12 @@ function Get-AbrVB365ObjectRepository {
                         }
                         $ObjectRepositoryInfo | Table @TableParams
                         if (($HealthCheck.Infrastructure.Repository) -and ($ObjectRepositoryInfo | Where-Object { $_.'Immutability Enabled' -eq 'No' })) {
-                            Paragraph "Health Check:" -Bold -Underline
+                            Paragraph 'Health Check:' -Bold -Underline
                             BlankLine
                             Paragraph {
-                                Text "Best Practice:" -Bold
-                                Text "Veeam recommend to implement Immutability where it is supported. It,s done for increased security: immutability protects your data from loss as a result of attacks, malware activity or any other injurious actions."
-                                Text "https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html" -Color Blue
+                                Text 'Best Practice:' -Bold
+                                Text 'Veeam recommend to implement Immutability where it is supported. It,s done for increased security: immutability protects your data from loss as a result of attacks, malware activity or any other injurious actions.'
+                                Text 'https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html' -Color Blue
                             }
                             BlankLine
                         }

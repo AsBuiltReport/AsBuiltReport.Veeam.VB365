@@ -5,7 +5,7 @@ function Get-AbrVb365CloudCredential {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.13
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -27,12 +27,12 @@ function Get-AbrVb365CloudCredential {
             $CloudCredentials = @()
             $CloudCredentials += Get-VBOAmazonS3Account
             $CloudCredentials += Get-VBOAmazonS3CompatibleAccount
-            $CloudCredentials += Get-VBOAzureBlobAccount | Select-Object -Property id, Description, LastModified, @{Name = 'AccessKey'; Expression = { $_.Name } }, @{Name = 'ServiceType'; Expression = { "AzureBlobStorage" } }
+            $CloudCredentials += Get-VBOAzureBlobAccount | Select-Object -Property id, Description, LastModified, @{Name = 'AccessKey'; Expression = { $_.Name } }, @{Name = 'ServiceType'; Expression = { 'AzureBlobStorage' } }
 
             # $CloudCredentials += Get-VBOAzureServiceAccount
 
             if (($InfoLevel.Infrastructure.CloudCredential -gt 0) -and ($CloudCredentials)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Cloud Credential."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Cloud Credential.'
                 Section -Style Heading2 'Cloud Credentials' {
                     $CloudCredentialInfo = @()
                     foreach ($CloudCredential in $CloudCredentials) {
@@ -40,10 +40,10 @@ function Get-AbrVb365CloudCredential {
                             'Access Key' = $CloudCredential.AccessKey
                             'Id' = $CloudCredential.Id
                             'Service Type' = switch ($CloudCredential.ServiceType) {
-                                "AmazonS3Compatible" { "Amazon S3 Compatible" }
-                                "AmazonS3" { "Amazon S3" }
-                                "AmazonS3Compatible" { "Amazon S3 Compatible" }
-                                "AzureBlobStorage" { "Microsoft Azure Storage" }
+                                'AmazonS3Compatible' { 'Amazon S3 Compatible' }
+                                'AmazonS3' { 'Amazon S3' }
+                                'AmazonS3Compatible' { 'Amazon S3 Compatible' }
+                                'AzureBlobStorage' { 'Microsoft Azure Storage' }
                             }
                             'Last Modified' = $CloudCredential.LastModified
                             'Description' = $CloudCredential.Description

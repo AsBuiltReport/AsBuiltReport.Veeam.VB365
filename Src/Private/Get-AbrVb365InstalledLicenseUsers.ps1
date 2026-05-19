@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicenseUser {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -77,14 +77,14 @@ function Get-AbrVB365InstalledLicenseUser {
                         if ($OutObj) {
                             $OutObj | Table @TableParams
                         } else {
-                            Paragraph "No licensed user records could be rendered from Get-VBOLicensedUser output."
+                            Paragraph 'No licensed user records could be rendered from Get-VBOLicensedUser output.'
                         }
                     }
                 } catch {
                     Write-PScriboMessage -IsWarning -Message "Licensed Users Section: $($_.Exception.Message)"
                 }
             } else {
-                Write-PScriboMessage -IsWarning -Message "Licensed Users Section: Get-VBOLicensedUser returned no licensed user records."
+                Write-PScriboMessage -IsWarning -Message 'Licensed Users Section: Get-VBOLicensedUser returned no licensed user records.'
             }
         } catch {
             Write-PScriboMessage -IsWarning -Message "Licensed Users Section: $($_.Exception.Message)"

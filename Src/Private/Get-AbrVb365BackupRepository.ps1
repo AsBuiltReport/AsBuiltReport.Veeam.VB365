@@ -5,7 +5,7 @@ function Get-AbrVB365BackupRepository {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.13
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -29,20 +29,20 @@ function Get-AbrVB365BackupRepository {
             }
 
             if ($script:Repositories) {
-                Write-PScriboMessage -Message "Using cached Veeam VB365 Backup Repository inventory."
+                Write-PScriboMessage -Message 'Using cached Veeam VB365 Backup Repository inventory.'
                 $Repositories = $script:Repositories
             } else {
                 if ($InfoLevel.Infrastructure.Repository -ge 2) {
-                    Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Repository inventory."
+                    Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Repository inventory.'
                     $Repositories = Get-AbrVb365BackupRepositoryInventory
                 } else {
-                    Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Repository summary from job references."
+                    Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Repository summary from job references.'
                     $Repositories = Get-AbrVb365BackupRepositoryInventory -SummaryOnly
                 }
             }
 
             if (($InfoLevel.Infrastructure.Repository -gt 0) -and ($Repositories)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Repository."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Repository.'
                 Section -Style Heading2 'Backup Repositories' {
                     $EncryptionKeyLookup = @{}
                     if (($InfoLevel.Infrastructure.Repository -ge 2 -or $HealthCheck.Infrastructure.Repository) -and ($Repositories | Where-Object { $_.EnableObjectStorageEncryption })) {
@@ -67,14 +67,14 @@ function Get-AbrVB365BackupRepository {
                                 default { $Repository.RetentionType }
                             }
                             'Retention Period' = switch ($Repository.RetentionPeriod) {
-                                "Years1" { '1 Year' }
-                                "Years2" { '2 Years' }
-                                "Years3" { '3 Years' }
-                                "Years5" { '5 Years' }
-                                "Years7" { '7 Years' }
-                                "Years10" { '10 Years' }
-                                "Years25" { '25 Years' }
-                                "KeepForever" { 'Keep Forever' }
+                                'Years1' { '1 Year' }
+                                'Years2' { '2 Years' }
+                                'Years3' { '3 Years' }
+                                'Years5' { '5 Years' }
+                                'Years7' { '7 Years' }
+                                'Years10' { '10 Years' }
+                                'Years25' { '25 Years' }
+                                'KeepForever' { 'Keep Forever' }
                                 default { $Repository.RetentionPeriod }
                             }
                         }
@@ -85,7 +85,7 @@ function Get-AbrVB365BackupRepository {
                             $ObjectStorageEncryptionKeyId = Get-AbrVb365PropertyValue -InputObject $ObjectStorageEncryptionKey -Name 'Id'
 
                             $ObjectStorageRepositoryValue = switch ([string]::IsNullOrEmpty($ObjectStorageRepository)) {
-                                $true { "Disabled" }
+                                $true { 'Disabled' }
                                 $false { $ObjectStorageRepository }
                                 default { 'Unknown' }
                             }
@@ -97,8 +97,8 @@ function Get-AbrVB365BackupRepository {
                                         Get-AbrVb365PropertyValue -InputObject $ObjectStorageEncryptionKey -Name 'Description' -Default 'Unknown'
                                     }
                                 }
-                                $false { "Disabled" }
-                                default { "Unknown" }
+                                $false { 'Disabled' }
+                                default { 'Unknown' }
                             }
 
                             $inObj.Add('Object Storage Repository', $ObjectStorageRepositoryValue)
@@ -137,12 +137,12 @@ function Get-AbrVB365BackupRepository {
                                 $Repository | Table @TableParams
                                 if ($HealthCheck.Infrastructure.Repository) {
                                     if ($Repository | Where-Object { $_.'Object Storage Repository' -ne 'Disabled' -and $_.'Object Storage Encryption Key' -eq 'Disabled' }) {
-                                        Paragraph "Health Check:" -Bold -Underline
+                                        Paragraph 'Health Check:' -Bold -Underline
                                         BlankLine
                                         Paragraph {
-                                            Text "Best Practice:" -Bold
+                                            Text 'Best Practice:' -Bold
                                             Text "Backups data is a high potential source of vulnerability. To secure data stored in object repositories, use Veeam's inbuilt encryption to protect data in backups."
-                                            Text "https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html" -Color Blue
+                                            Text 'https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html' -Color Blue
                                         }
                                         BlankLine
                                     }
@@ -167,12 +167,12 @@ function Get-AbrVB365BackupRepository {
                         $RepositoryInfo | Table @TableParams
                         if ($HealthCheck.Infrastructure.Repository) {
                             if ($RepositoryInfo | Where-Object { $_.'Object Storage Repository' -ne 'Disabled' -and $_.'Object Storage Encryption Key' -eq 'Disabled' }) {
-                                Paragraph "Health Check:" -Bold -Underline
+                                Paragraph 'Health Check:' -Bold -Underline
                                 BlankLine
                                 Paragraph {
-                                    Text "Best Practice:" -Bold
+                                    Text 'Best Practice:' -Bold
                                     Text "Found a Object Storage repository without encryption enabled. Backups data is a high potential source of vulnerability. To secure data stored in object repositories, use Veeam's inbuilt encryption to protect data in backups."
-                                    Text "https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html" -Color Blue
+                                    Text 'https://bp.veeam.com/vb365/guide/design/hardening/Repo_specifics.html' -Color Blue
                                 }
                                 BlankLine
                             }

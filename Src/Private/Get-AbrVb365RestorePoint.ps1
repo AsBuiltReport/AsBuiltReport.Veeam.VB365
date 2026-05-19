@@ -5,7 +5,7 @@ function Get-AbrVb365RestorePoint {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.13
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -29,10 +29,10 @@ function Get-AbrVb365RestorePoint {
             }
 
             if ($script:RestorePoints) {
-                Write-PScriboMessage -Message "Using cached Veeam VB365 Restore Point inventory."
+                Write-PScriboMessage -Message 'Using cached Veeam VB365 Restore Point inventory.'
                 $RestorePoints = $script:RestorePoints
             } else {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Point inventory."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Restore Point inventory.'
                 $script:RestorePoints = Get-VBORestorePoint | Sort-Object -Property BackupTime
                 $RestorePoints = $script:RestorePoints
             }
@@ -40,24 +40,24 @@ function Get-AbrVb365RestorePoint {
             if ($script:BackupJobs) {
                 $BackupJobs = $script:BackupJobs
             } else {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Jobs inventory for restore point mapping."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Jobs inventory for restore point mapping.'
                 $BackupJobs = Get-AbrVb365BackupJobInventory
             }
 
             if (($InfoLevel.Restore.RestorePoint -gt 0) -and ($RestorePoints)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Point."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Restore Point.'
                 Section -Style Heading2 'Restore Point' {
                     Paragraph "The following section summarizes the configuration of the restore points within the $VeeamBackupServer backup server."
                     BlankLine
                     Section -Style Heading3 'Backup Jobs Restore Point' {
-                        Paragraph "The following section summarizes the backup jobs restore points."
+                        Paragraph 'The following section summarizes the backup jobs restore points.'
                         BlankLine
                         $OrganizationLookup = Get-AbrVb365OrganizationNameLookup
                         $RepositoryLookup = @{}
                         if ($InfoLevel.Restore.RestorePoint -ge 2) {
                             $RepositoryLookup = Get-AbrVb365RepositoryNameLookup
                         } else {
-                            Write-PScriboMessage -Message "Skipping restore point repository name lookup at InfoLevel 1 because VB365 8.4 can trigger a blocking repository backend lookup."
+                            Write-PScriboMessage -Message 'Skipping restore point repository name lookup at InfoLevel 1 because VB365 8.4 can trigger a blocking repository backend lookup.'
                         }
                         $RestorePointsByJob = @{}
                         foreach ($RestorePoint in $RestorePoints) {
@@ -85,7 +85,7 @@ function Get-AbrVb365RestorePoint {
                                 $null
                             }
                             if ($BackupJobRestorePoints) {
-                                Section -Style Heading4  $BackupJob.Name {
+                                Section -Style Heading4 $BackupJob.Name {
                                     $RestorePointInfo = @()
                                     foreach ($RestorePoint in $BackupJobRestorePoints) {
                                         try {
@@ -109,21 +109,21 @@ function Get-AbrVb365RestorePoint {
                                                 'Repository Id' = $RepositoryName
                                                 'Type' = & {
                                                     if ($RestorePoint.IsSharePoint) {
-                                                        return "SharePoint"
+                                                        return 'SharePoint'
                                                     } elseif ($RestorePoint.IsOneDrive) {
-                                                        return "OneDrive"
+                                                        return 'OneDrive'
                                                     } elseif ($RestorePoint.IsTeams) {
-                                                        return "Teams"
+                                                        return 'Teams'
                                                     } elseif ($RestorePoint.IsExchange) {
-                                                        return "Exchange"
+                                                        return 'Exchange'
                                                     } elseif ($RestorePoint.IsCopy) {
-                                                        return "IsCopy"
+                                                        return 'IsCopy'
                                                     } elseif ($RestorePoint.IsLongTermCopy) {
-                                                        return "IsLongTermCopy"
+                                                        return 'IsLongTermCopy'
                                                     } elseif ($RestorePoint.IsLongTermCopy) {
-                                                        return "IsLongTermCopy"
+                                                        return 'IsLongTermCopy'
                                                     } else {
-                                                        return "Unknown"
+                                                        return 'Unknown'
                                                     }
                                                 }
                                             }

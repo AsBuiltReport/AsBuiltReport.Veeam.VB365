@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationSyncState {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -34,7 +34,7 @@ function Get-AbrVb365OrganizationSyncState {
             $Organizations = Get-AbrVb365OrganizationByName -Name $Organization
             $SyncState = try { Get-VBOOrganizationSynchronizationState -Organization $Organizations } catch { Out-Null }
             if (($OrganizationInfoLevel -gt 0) -and ($SyncState)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Office365 Synchronization State Settings."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Office365 Synchronization State Settings.'
                 Section -Style Heading4 'Synchronization State' {
                     $StateInfo = @()
                     foreach ($State in $SyncState) {

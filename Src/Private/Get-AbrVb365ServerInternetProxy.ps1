@@ -5,7 +5,7 @@ function Get-AbrVB365ServerInternetProxy {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVB365ServerInternetProxy {
         try {
             $ServerConfig = Get-VBOInternetProxySettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 internet proxy."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 internet proxy.'
                 Section -Style Heading3 'Internet Proxy' {
                     $ServerConfigInfo = @()
                     $inObj = [ordered] @{

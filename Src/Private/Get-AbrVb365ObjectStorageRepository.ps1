@@ -33,6 +33,20 @@ function Get-AbrVb365ObjectStorageRepository {
         storage repositories; that path can be slow in production environments, so the report
         keeps the deprecated cmdlet for full output parity and falls back to Get-VBORepository
         only if the deprecated cmdlet is unavailable.
+    .DESCRIPTION
+        Global Get-VBORepository can be slow in larger VB365 environments. This helper uses the
+        documented Proxy and ProxyPool parameter sets first, which still return full VBORepository
+        objects and therefore preserve detailed report output.
+    .NOTES
+        Version:        0.4.0
+        Author:         Richard Bradley
+        Twitter:        @acgdickie
+        Github:         rebelinux
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
+
+    .LINK
+        https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365
+    #>
     #>
     [CmdletBinding()]
     param (

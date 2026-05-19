@@ -6,7 +6,7 @@ function Get-AbrVB365InstalledLicense {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.13
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -38,11 +38,11 @@ function Get-AbrVB365InstalledLicense {
                         'Type' = $Licenses.Type
                         'Status' = $Licenses.Status
                         'Expiration Date' = switch ([string]::IsNullOrEmpty($Licenses.ExpirationDate)) {
-                            $true { "-"; break }
+                            $true { '-'; break }
                             default { $Licenses.ExpirationDate.ToShortDateString() }
                         }
                         'Support Expiration Date' = switch ([string]::IsNullOrEmpty($Licenses.SupportExpirationDate)) {
-                            $true { "--"; break }
+                            $true { '--'; break }
                             default { $Licenses.SupportExpirationDate.ToShortDateString() }
                         }
                         'Contact Person' = $Licenses.ContactPerson
@@ -74,41 +74,41 @@ function Get-AbrVB365InstalledLicense {
                     $TableParams['Caption'] = "- $($TableParams.Name)"
                 }
 
-                try {
-                    $sampleData = [ordered]@{
-                        'Free' = & {
-                            if ($Licenses.TotalNumber -ne 0 -and $Licenses.UsedNumber -ne 0) {
-                                return $Licenses.TotalNumber - $Licenses.UsedNumber
-                            } else {
-                                return 0
-                            }
-                        }
-                        'Used' = $Licenses.UsedNumber
-                    }
+                # try {
+                #     $sampleData = [ordered]@{
+                #         'Free' = & {
+                #             if ($Licenses.TotalNumber -ne 0 -and $Licenses.UsedNumber -ne 0) {
+                #                 return $Licenses.TotalNumber - $Licenses.UsedNumber
+                #             } else {
+                #                 return 0
+                #             }
+                #         }
+                #         'Used' = $Licenses.UsedNumber
+                #     }
 
-                    $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category'
+                #     $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category'
 
-                    $chartFileItem = Get-PieChart -SampleData $sampleDataObj -ChartName 'LicenseUsage' -XField 'Category' -YField 'Value' -ChartLegendName 'Category' -ChartTitleText "License Usage (Total: $($Licenses.TotalNumber))"
+                #     $chartFileItem = Get-PieChart -SampleData $sampleDataObj -ChartName 'LicenseUsage' -XField 'Category' -YField 'Value' -ChartLegendName 'Category' -ChartTitleText "License Usage (Total: $($Licenses.TotalNumber))"
 
-                } catch {
-                    Write-PScriboMessage -IsWarning -Message "Instance License Usage chart section: $($_.Exception.Message)"
-                }
+                # } catch {
+                #     Write-PScriboMessage -IsWarning -Message "Instance License Usage chart section: $($_.Exception.Message)"
+                # }
 
                 if ($OutObj) {
                     Section -Style Heading2 'Licenses' {
                         Paragraph "The following table summarizes the licensing information within $VeeamBackupServer backup server."
                         BlankLine
-                        if ($chartFileItem -and ($sampleData.Values | Measure-Object -Sum).Sum -ne 0) {
-                            Image -Text 'License Usage - Chart' -Align 'Center' -Percent 100 -Base64 $chartFileItem
-                        }
+                        # if ($chartFileItem -and ($sampleData.Values | Measure-Object -Sum).Sum -ne 0) {
+                        #     Image -Text 'License Usage - Chart' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        # }
                         BlankLine
                         $OutObj | Table @TableParams
                         if ($HealthCheck.Infrastructure.License -and ($Licenses.UsedNumber -ge $Licenses.TotalNumber)) {
-                            Paragraph "Health Check:" -Bold -Underline
+                            Paragraph 'Health Check:' -Bold -Underline
                             BlankLine
                             Paragraph {
-                                Text "Best Practice:" -Bold
-                                Text "Warning: Your license has exceeded its user limit."
+                                Text 'Best Practice:' -Bold
+                                Text 'Warning: Your license has exceeded its user limit.'
                             }
                             BlankLine
                         }

@@ -6,8 +6,18 @@ function Get-AbrVb365BackupRepositoryInventory {
         Global Get-VBORepository can be slow in larger VB365 environments. This helper uses the
         documented Proxy and ProxyPool parameter sets first, which still return full VBORepository
         objects and therefore preserve detailed report output.
+    .NOTES
+        Version:        0.4.0
+        Author:         Richard Bradley
+        Twitter:        @acgdickie
+        Github:         rebelinux
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
+
+    .LINK
+        https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365
     #>
     [CmdletBinding()]
+    [OutputType([pscustomobject], [object[]])]
     param (
         [Parameter(Mandatory = $false)]
         [switch] $SummaryOnly
@@ -46,23 +56,23 @@ function Get-AbrVb365BackupRepositoryInventory {
             if (-not $RepositoryReferences) {
                 $JobRepositoryLookup = Get-AbrVb365ExternalJobRepositoryMap
                 $RepositoryReferences += $JobRepositoryLookup.Values |
-                    Where-Object { $_ -and $_ -ne '--' } |
-                    Sort-Object -Unique |
-                    ForEach-Object {
-                        [pscustomobject]@{
-                            Name = $_
-                            Path = '--'
-                            Capacity = $null
-                            FreeSpace = $null
-                            RetentionType = '--'
-                            RetentionPeriod = '--'
-                            IsSummaryOnly = $true
-                        }
+                Where-Object { $_ -and $_ -ne '--' } |
+                Sort-Object -Unique |
+                ForEach-Object {
+                    [pscustomobject]@{
+                        Name = $_
+                        Path = '--'
+                        Capacity = $null
+                        FreeSpace = $null
+                        RetentionType = '--'
+                        RetentionPeriod = '--'
+                        IsSummaryOnly = $true
                     }
+                }
             }
 
             if (-not $RepositoryReferences) {
-                Write-PScriboMessage -IsWarning -Message "Backup Repository summary skipped because no cached repository inventory or job repository references are available at InfoLevel 1."
+                Write-PScriboMessage -IsWarning -Message 'Backup Repository summary skipped because no cached repository inventory or job repository references are available at InfoLevel 1.'
                 return @()
             }
 
@@ -141,7 +151,7 @@ function Get-AbrVb365BackupRepositoryInventory {
             return $script:Repositories
         }
 
-        Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Repository inventory with global query."
+        Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Repository inventory with global query.'
         $script:Repositories = Get-VBORepository | Sort-Object -Property Name
         return $script:Repositories
     }

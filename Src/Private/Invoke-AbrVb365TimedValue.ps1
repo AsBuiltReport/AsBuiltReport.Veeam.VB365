@@ -14,6 +14,6 @@ function Invoke-AbrVb365TimedValue {
         & $ScriptBlock
     } finally {
         $Stopwatch.Stop()
-        Write-PScriboMessage -Message ("Completed {0} in {1:n2}s." -f $Label, $Stopwatch.Elapsed.TotalSeconds)
+        Write-PScriboMessage -Message ('Completed {0} in {1:n2}s.' -f $Label, $Stopwatch.Elapsed.TotalSeconds)
     }
 }

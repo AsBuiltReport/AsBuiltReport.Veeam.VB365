@@ -36,22 +36,22 @@ function Get-AbrVB365RequiredModule {
 
         if ($Modules = Get-Module -ListAvailable -Name $Name) {
             try {
-                Write-PScriboMessage -Message "Trying to import Veeam VB365 modules."
+                Write-PScriboMessage -Message 'Trying to import Veeam VB365 modules.'
                 $Modules | Sort-Object -Property Version -Descending | Select-Object -First 1 | Import-Module -WarningAction SilentlyContinue
             } catch {
-                Write-PScriboMessage -IsWarning -Message "Failed to load Veeam VB365 Modules"
+                Write-PScriboMessage -IsWarning -Message 'Failed to load Veeam VB365 Modules'
             }
         }
         if ($Module = Get-Module -ListAvailable -Name $Name | Sort-Object -Property Version -Descending | Select-Object -First 1) {
             try {
-                Write-PScriboMessage -Message "Identifying Veeam VB365 Powershell module version."
+                Write-PScriboMessage -Message 'Identifying Veeam VB365 Powershell module version.'
                 Write-PScriboMessage -Message "Using Veeam VB365 Powershell module version $($Module.Version)."
             } catch {
-                Write-PScriboMessage -IsWarning -Message "Failed to get Version from Module"
+                Write-PScriboMessage -IsWarning -Message 'Failed to get Version from Module'
             }
         } else {
             try {
-                Write-PScriboMessage -Message "No Veeam Modules found, trying to import module manually."
+                Write-PScriboMessage -Message 'No Veeam Modules found, trying to import module manually.'
                 $ManualModulePath = Join-Path -Path $MyModulePath -ChildPath 'Veeam.Archiver.PowerShell.psd1'
                 Import-Module $ManualModulePath -ErrorAction Stop
                 $Module = Get-Module -ListAvailable -Name $Name | Sort-Object -Property Version -Descending | Select-Object -First 1
@@ -59,7 +59,7 @@ function Get-AbrVB365RequiredModule {
                     Write-PScriboMessage -Message "Using Veeam VB365 Powershell module version $($Module.Version)."
                 }
             } catch {
-                throw "Failed to get version from manual Module import"
+                throw 'Failed to get version from manual Module import'
             }
         }
         # Check if the required version of VMware PowerCLI is installed

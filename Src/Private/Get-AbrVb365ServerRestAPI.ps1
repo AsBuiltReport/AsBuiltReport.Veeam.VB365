@@ -5,7 +5,7 @@ function Get-AbrVB365ServerRestAPI {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVB365ServerRestAPI {
         try {
             $script:ServerConfigRestAPI = Get-VBORestAPISettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfigRestAPI)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 RESTful API."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 RESTful API.'
                 Section -Style Heading3 'RESTful API' {
                     $ServerConfigRestAPIInfo = @()
                     $inObj = [ordered] @{
@@ -50,7 +50,7 @@ function Get-AbrVB365ServerRestAPI {
                         $ServerConfigRestAPIInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
                         $ServerConfigRestAPIInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
                         foreach ( $OBJ in ($ServerConfigRestAPIInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' })) {
-                            $OBJ.'Expiration Date' = $OBJ.'Expiration Date' + " (Expires <=90 days)"
+                            $OBJ.'Expiration Date' = $OBJ.'Expiration Date' + ' (Expires <=90 days)'
                         }
                     }
 
@@ -64,22 +64,22 @@ function Get-AbrVB365ServerRestAPI {
                     }
                     $ServerConfigRestAPIInfo | Table @TableParams
                     if ($HealthCheck.Infrastructure.ServerConfig -and ($ServerConfigRestAPIInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
-                        Paragraph "Health Check:" -Bold -Underline
+                        Paragraph 'Health Check:' -Bold -Underline
                         BlankLine
                         Paragraph {
-                            Text "Best Practice:" -Bold
-                            Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. For the Restore Portal and API Server, consider using trusted certificates as these are services accessed by end users."
-                            Text "https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage" -Color Blue
+                            Text 'Best Practice:' -Bold
+                            Text 'While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. For the Restore Portal and API Server, consider using trusted certificates as these are services accessed by end users.'
+                            Text 'https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage' -Color Blue
                         }
                         BlankLine
                     }
                     if ($HealthCheck.Infrastructure.ServerConfig -and ($ServerConfigRestAPIInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
-                        Paragraph "Health Check:" -Bold -Underline
+                        Paragraph 'Health Check:' -Bold -Underline
                         BlankLine
                         Paragraph {
-                            Text "Best Practice:" -Bold
-                            Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. For the Restore Portal and API Server, consider using trusted certificates as these are services accessed by end users."
-                            Text "https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage" -Color Blue
+                            Text 'Best Practice:' -Bold
+                            Text 'While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. For the Restore Portal and API Server, consider using trusted certificates as these are services accessed by end users.'
+                            Text 'https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage' -Color Blue
                         }
                         BlankLine
                     }

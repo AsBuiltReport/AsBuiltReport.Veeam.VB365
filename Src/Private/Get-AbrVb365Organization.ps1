@@ -5,7 +5,7 @@ function Get-AbrVb365Organization {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -30,14 +30,14 @@ function Get-AbrVb365Organization {
             }
 
             if ($script:Organizations) {
-                Write-PScriboMessage -Message "Using cached Veeam VB365 Backup Organization inventory."
+                Write-PScriboMessage -Message 'Using cached Veeam VB365 Backup Organization inventory.'
             } else {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Organization inventory."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Organization inventory.'
             }
             $Organizations = Get-AbrVb365OrganizationInventory
 
             if (($OrganizationInfoLevel -gt 0) -and ($Organizations)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Organization."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Organization.'
                 Section -Style Heading2 'Organizations' {
                     if ($OrganizationInfoLevel -ge 2) {
                         Paragraph "The following sections detail the configuration of the organization within $VeeamBackupServer backup server."
@@ -71,22 +71,22 @@ function Get-AbrVb365Organization {
                                     'Description' = Get-AbrVb365PropertyValue -InputObject $Organization -Name 'Description' -Default '--'
                                 }
 
-                                if ($OrganizationType -ne "Office365") {
-                                    $inObj.remove("Backup Teams")
-                                    $inObj.remove("Backup Teams Chats")
-                                    $inObj.remove("Region")
-                                    $inObj.remove("Office Name")
-                                    $inObj.remove("Grant Access To Site Collections")
+                                if ($OrganizationType -ne 'Office365') {
+                                    $inObj.remove('Backup Teams')
+                                    $inObj.remove('Backup Teams Chats')
+                                    $inObj.remove('Region')
+                                    $inObj.remove('Office Name')
+                                    $inObj.remove('Grant Access To Site Collections')
                                 }
 
-                                if ($OrganizationType -eq "Office365") {
-                                    $inObj.remove("Skip CA Verification")
-                                    $inObj.remove("Skip Common Name Verification")
-                                    $inObj.remove("Skip Revocation Check")
-                                    $inObj.remove("Is Exchange Server")
-                                    $inObj.remove("Is SharePoint")
-                                    $inObj.remove("Server")
-                                    $inObj.remove("Use SSL")
+                                if ($OrganizationType -eq 'Office365') {
+                                    $inObj.remove('Skip CA Verification')
+                                    $inObj.remove('Skip Common Name Verification')
+                                    $inObj.remove('Skip Revocation Check')
+                                    $inObj.remove('Is Exchange Server')
+                                    $inObj.remove('Is SharePoint')
+                                    $inObj.remove('Server')
+                                    $inObj.remove('Use SSL')
                                 }
 
                                 $OrganizationInfo = [pscustomobject](ConvertTo-HashToYN $inObj)
@@ -108,7 +108,7 @@ function Get-AbrVb365Organization {
 
                                     $OrganizationInfo | Table @TableParams
 
-                                    if ($OrganizationType -eq "Office365") {
+                                    if ($OrganizationType -eq 'Office365') {
                                         try { Get-AbrVb365OrganizationBackupApplication -Organization $OrganizationName } catch { Write-PScriboMessage -IsWarning -Message "Organization '$OrganizationName' Backup Applications Section: $($_.Exception.Message)" }
                                         try { Get-AbrVb365OrganizationRestoreOperator -Organization $OrganizationName } catch { Write-PScriboMessage -IsWarning -Message "Organization '$OrganizationName' Restore Operators Section: $($_.Exception.Message)" }
                                         try { Get-AbrVb365OrganizationSyncState -Organization $OrganizationName } catch { Write-PScriboMessage -IsWarning -Message "Organization '$OrganizationName' Synchronization State Section: $($_.Exception.Message)" }
