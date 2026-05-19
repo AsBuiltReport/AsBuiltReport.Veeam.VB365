@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change module version to 0.4.0 in manifest
 - Update dependencies and their versions
 - Enhance README and changelog with new features and compatibility
+- Increase diagram label font size and enhance HTML table styling in diagram functions
 
 ## [0.3.13] - Unreleased
 

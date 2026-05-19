@@ -20,36 +20,36 @@ function Get-AbrVB365ServerConnection {
     )
 
     begin {
-        Write-PScriboMessage -IsWarning -Message "Establishing initial connection to Backup Server for Microsoft 365: $($System)."
+        Write-PScriboMessage -Message "Establishing initial connection to Backup Server for Microsoft 365: $($System)."
     }
 
     process {
         $serverInfo = try { Get-VBOServerComponents -Name Server } catch { Out-Null }
 
         if (-not $serverInfo) {
-            Write-PScriboMessage -IsWarning -Message "Not currently connected to any Backup Server for Microsoft 365. Attempting to connect to: $($System)."
+            Write-PScriboMessage -Message "Not currently connected to any Backup Server for Microsoft 365. Attempting to connect to: $($System)."
             try {
-                Write-PScriboMessage -IsWarning -Message "Connecting to $($System) with $($Credential.USERNAME) credentials"
+                Write-PScriboMessage -Message "Connecting to $($System) with $($Credential.USERNAME) credentials"
                 Connect-VBOServer -Server $System -Credential $Credential -Port $Options.BackupServerPort
             } catch {
                 Write-PScriboMessage -IsWarning -Message $_.Exception.Message
                 throw "Failed to connect to Veeam Backup Server Host $($System):$($Options.BackupServerPort) with username $($Credential.USERNAME)"
             }
-            Write-PScriboMessage -IsWarning -Message "Successfully connected to $($System):$($Options.BackupServerPort) Backup Server."
+            Write-PScriboMessage -Message "Successfully connected to $($System):$($Options.BackupServerPort) Backup Server."
 
         } elseif ($serverInfo.ServerName -ne $System.split('.')[0].ToUpper()) {
-            Write-PScriboMessage -IsWarning -Message "Not currently connected to $($System). Attempting to connect to: $($System)."
+            Write-PScriboMessage -Message "Not currently connected to $($System). Attempting to connect to: $($System)."
             Disconnect-VBOServer
             try {
-                Write-PScriboMessage -IsWarning -Message "Connecting to $($System) with $($Credential.USERNAME) credentials"
+                Write-PScriboMessage -Message "Connecting to $($System) with $($Credential.USERNAME) credentials"
                 Connect-VBOServer -Server $System -Credential $Credential -Port $Options.BackupServerPort
             } catch {
                 Write-PScriboMessage -IsWarning -Message $_.Exception.Message
                 throw "Failed to connect to Veeam Backup Server Host $($System):$($Options.BackupServerPort) with username $($Credential.USERNAME)"
             }
-            Write-PScriboMessage -IsWarning -Message "Successfully connected to $($System):$($Options.BackupServerPort) Backup Server."
+            Write-PScriboMessage -Message "Successfully connected to $($System):$($Options.BackupServerPort) Backup Server."
         } else {
-            Write-PScriboMessage -IsWarning -Message "Already connected to $($serverInfo.ServerName):$($Options.BackupServerPort) Backup Server."
+            Write-PScriboMessage -Message "Already connected to $($serverInfo.ServerName):$($Options.BackupServerPort) Backup Server."
         }
     }
     end {}

@@ -128,7 +128,7 @@ function Get-AbrVb365Diagram {
             }
 
             $ProxyPoolNodes = foreach ($ProxyPool in $ProxyPools) {
-                Add-HtmlTable -Name ('ProxyPool_{0}' -f ([regex]::Replace([string] $ProxyPool.Name, '[^A-Za-z0-9_]+', '_').Trim('_'))) -ImagesObj $Images -Rows ($ProxyPool.Proxies.Hostname | ForEach-Object { $_.Split('.')[0] }) -ALIGN 'Center' -ColumnSize 2 -IconDebug $IconDebug -Subgraph -SubgraphIconType 'VB365_Proxy_Server' -SubgraphLabel $ProxyPool.Name -SubgraphLabelPos 'top' -FontColor '#000000' -TableStyle 'dashed,rounded' -TableBorderColor $Edgecolor -TableBorder '1' -NoFontBold -SubgraphLabelFontsize 22 -FontSize 18 -SubgraphFontBold -SubgraphFontColor $Fontcolor
+                Add-HtmlTable -Name ('ProxyPool_{0}' -f ([regex]::Replace([string] $ProxyPool.Name, '[^A-Za-z0-9_]+', '_').Trim('_'))) -ImagesObj $Images -Rows ($ProxyPool.Proxies.Hostname | ForEach-Object { $_.Split('.')[0] }) -ALIGN 'Center' -ColumnSize 2 -IconDebug $IconDebug -Subgraph -SubgraphIconType 'VB365_Proxy_Server' -SubgraphLabel $ProxyPool.Name -SubgraphLabelPos 'top' -FontColor '#000000' -TableStyle 'dashed,rounded' -TableBorderColor $Edgecolor -TableBorder '1' -SubgraphTableStyle 'dashed,rounded' -NoFontBold -SubgraphLabelFontsize 22 -FontSize 18 -SubgraphFontBold -SubgraphFontColor $Fontcolor
             }
         } catch {
             Write-PScriboMessage -Message 'Error: Unable to create Proxies Pool Objects. Disabling the section'

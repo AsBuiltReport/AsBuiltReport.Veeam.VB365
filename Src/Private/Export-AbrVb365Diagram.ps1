@@ -58,7 +58,7 @@ function Export-AbrVb365Diagram {
                 'OutputFolderPath' = $OutputFolderPath
                 'Direction' = 'top-to-bottom'
                 'MainDiagramLabel' = 'Backup for Microsoft 365'
-                'MainDiagramLabelFontsize' = 28
+                'MainDiagramLabelFontsize' = 38
                 'MainDiagramLabelFontcolor' = '#565656'
                 'MainDiagramLabelFontname' = 'Segoe UI Black'
                 'IconPath' = $IconPath
@@ -113,7 +113,7 @@ function Export-AbrVb365Diagram {
                     $Graph = Get-AbrVb365Diagram
                     if ($Graph) {
                         Write-PScriboMessage -Message 'Saving Veeam Infrastructure diagram'
-                        $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph
+                        $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph -MainGraphLogoSizePercent 50
                         if ($Diagram) {
                             foreach ($OutputFormat in $DiagramFormat) {
                                 Write-Information -MessageData "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$($OutputFolderPath)'." -InformationAction Continue
@@ -129,12 +129,11 @@ function Export-AbrVb365Diagram {
                 $DiagramParams.Add('Format', 'base64')
 
                 $Graph = Get-AbrVb365Diagram
-                $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph
+                $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph -MainGraphLogoSizePercent 50
                 if ($Diagram) {
-                    if ((Get-ImagePercent -GraphObj $Diagram).Width -gt 800) { $ImagePrty = 15 } else { $ImagePrty = 30 }
+                    $BestAspectRatio = Get-BestImageAspectRatio -GraphObj $Diagram -MaxWidth 600 -MaxHeight 600
                     Section -Style Heading2 'Infrastructure Diagram.' {
-                        Image -Base64 $Diagram -Text 'Veeam Backup for Microsoft 365 Diagram' -Percent $ImagePrty -Align Center
-                        Paragraph 'Image preview: Opens the image in a new tab to view it at full resolution.' -Tabs 2
+                        Image -Base64 $Diagram -Text 'Veeam Backup for Microsoft 365 Diagram' -Width $BestAspectRatio.Width -Height $BestAspectRatio.Height -Align Center
                     }
                 }
             } catch {
