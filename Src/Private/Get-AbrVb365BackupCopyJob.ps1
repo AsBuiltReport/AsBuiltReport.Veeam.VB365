@@ -88,34 +88,38 @@ function Get-AbrVb365BackupCopyJob {
                         $BackupCopyJobInfo | Where-Object { $_.'Last Status' -eq 'Failed' } | Set-Style -Style Critical -Property 'Last Status'
                     }
 
-                    # try {
-                    #     $Alljobs = @()
+                    try {
+                        $Alljobs = @()
 
-                    #     if ($BackupCopyJobInfo.'Last Status') {
-                    #         $Alljobs += $BackupCopyJobInfo.'Last Status'
-                    #     }
+                        if ($BackupCopyJobInfo.'Last Status') {
+                            $Alljobs += $BackupCopyJobInfo.'Last Status'
+                        }
 
-                    #     $sampleData = [ordered]@{
-                    #         'Success' = ($Alljobs | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
-                    #         'Warning' = ($Alljobs | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
-                    #         'Failed'  = ($Alljobs | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
-                    #         'Stopped' = ($Alljobs | Where-Object { $_ -eq 'Stopped' } | Measure-Object).Count
-                    #     }
+                        $sampleData = [ordered]@{
+                            'Success' = ($Alljobs | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
+                            'Warning' = ($Alljobs | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
+                            'Failed' = ($Alljobs | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
+                            'Stopped' = ($Alljobs | Where-Object { $_ -eq 'Stopped' } | Measure-Object).Count
+                        }
 
-                    #     $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
+                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
 
-                    #     $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'BackupJobs' -AxisXTitle 'Status' -AxisYTitle 'Count' -ChartTitleName 'BackupJob' -ChartTitleText 'Backup Copy Jobs Latest Results'
+                        $chartLabels = [string[]]$sampleDataObj.Category
+                        $chartValues = [double[]]$sampleDataObj.Value
 
-                    # }
-                    # catch {
-                    #     Write-PScriboMessage -IsWarning -Message "Backup Copy Chart Section: $($_.Exception.Message)"
-                    # }
+                        $statusCustomPalette = @('#DFF0D0', '#FFF3C4', '#FECDD1', '#ADACAF')
+
+                        $chartFileItem = New-BarChart -Title 'Backup Copy Jobs Latest Results' -Values $chartValues -Labels $chartLabels -LabelXAxis 'Status' -LabelYAxis 'Results' -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 400 -Format base64 -EnableLegend -LegendOrientation Horizontal -LegendAlignment UpperCenter -AxesMarginsTop 0.5 -TitleFontBold -TitleFontSize 16
+
+                    } catch {
+                        Write-PScriboMessage -IsWarning -Message "Backup Copy Chart Section: $($_.Exception.Message)"
+                    }
 
                     if ($InfoLevel.Jobs.BackupCopyJob -ge 2) {
                         Paragraph "The following sections detail the configuration of the backup copy job within $VeeamBackupServer backup server."
-                        # if ($chartFileItem) {
-                        #     Image -Text 'Backup Copy Job - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
-                        # }
+                        if ($chartFileItem) {
+                            Image -Text 'Backup Copy Job - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         foreach ($BackupCopyJob in $BackupCopyJobInfo) {
                             Section -ExcludeFromTOC -Style NOTOCHeading4 "$($BackupCopyJob.Name)" {
                                 $TableParams = @{
@@ -132,9 +136,9 @@ function Get-AbrVb365BackupCopyJob {
                     } else {
                         Paragraph "The following table summarizes the configuration of the backup copy jobs within the $VeeamBackupServer backup server."
                         BlankLine
-                        # if ($chartFileItem) {
-                        #     Image -Text 'Backup Copy Job - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
-                        # }
+                        if ($chartFileItem) {
+                            Image -Text 'Backup Copy Job - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         $TableParams = @{
                             Name = "Backup Copy Job - $VeeamBackupServer"
                             List = $false

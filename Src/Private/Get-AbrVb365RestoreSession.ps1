@@ -65,26 +65,31 @@ function Get-AbrVb365RestoreSession {
                         $RestoreSessionInfo | Where-Object { $_.'Result' -eq 'Failed' } | Set-Style -Style Critical -Property 'Result'
                     }
 
-                    # try {
-                    #     $sampleData = [ordered]@{
-                    #         'Success' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
-                    #         'Warning' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
-                    #         'Failed' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
-                    #     }
+                    try {
+                        $sampleData = [ordered]@{
+                            'Success' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
+                            'Warning' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
+                            'Failed' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
+                        }
 
-                    #     $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
+                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
 
-                    #     $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'RestoreSessions' -AxisXTitle 'Result' -AxisYTitle 'Count' -ChartTitleName 'RestoreSessions' -ChartTitleText 'Restore Session Results'
+                        $chartLabels = [string[]]$sampleDataObj.Category
+                        $chartValues = [double[]]$sampleDataObj.Value
 
-                    # } catch {
-                    #     Write-PScriboMessage -IsWarning -Message "Restore Sessions Chart Section: $($_.Exception.Message)"
-                    # }
+                        $statusCustomPalette = @('#DFF0D0', '#FFF3C4', '#FECDD1', '#ADACAF')
+
+                        $chartFileItem = New-BarChart -Title 'Restore Session Results' -Values $chartValues -Labels $chartLabels -LabelXAxis 'Status' -LabelYAxis 'Results' -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 400 -Format base64 -EnableLegend -LegendOrientation Horizontal -LegendAlignment UpperCenter -AxesMarginsTop 0.5 -TitleFontBold -TitleFontSize 16
+
+                    } catch {
+                        Write-PScriboMessage -IsWarning -Message "Restore Sessions Chart Section: $($_.Exception.Message)"
+                    }
 
                     if ($InfoLevel.Restore.RestoreSession -ge 2) {
                         Paragraph "The following sections details the configuration of the restore sessions within $VeeamBackupServer backup server."
-                        # if ($chartFileItem) {
-                        #     Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
-                        # }
+                        if ($chartFileItem) {
+                            Image -Text 'Restore Sessions - Diagram' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         foreach ($RestoreSession in $RestoreSessionInfo) {
                             Section -ExcludeFromTOC -Style NOTOCHeading4 "$($RestoreSession.Name)" {
                                 $TableParams = @{
