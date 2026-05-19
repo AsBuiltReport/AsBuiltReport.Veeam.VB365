@@ -74,33 +74,38 @@ function Get-AbrVB365InstalledLicense {
                     $TableParams['Caption'] = "- $($TableParams.Name)"
                 }
 
-                # try {
-                #     $sampleData = [ordered]@{
-                #         'Free' = & {
-                #             if ($Licenses.TotalNumber -ne 0 -and $Licenses.UsedNumber -ne 0) {
-                #                 return $Licenses.TotalNumber - $Licenses.UsedNumber
-                #             } else {
-                #                 return 0
-                #             }
-                #         }
-                #         'Used' = $Licenses.UsedNumber
-                #     }
+                try {
+                    $sampleData = [ordered]@{
+                        'Free' = & {
+                            if ($Licenses.TotalNumber -ne 0 -and $Licenses.UsedNumber -ne 0) {
+                                return $Licenses.TotalNumber - $Licenses.UsedNumber
+                            } else {
+                                return 0
+                            }
+                        }
+                        'Used' = $Licenses.UsedNumber
+                    }
 
-                #     $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category'
+                    $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } } | Sort-Object -Property 'Category'
 
-                #     $chartFileItem = Get-PieChart -SampleData $sampleDataObj -ChartName 'LicenseUsage' -XField 'Category' -YField 'Value' -ChartLegendName 'Category' -ChartTitleText "License Usage (Total: $($Licenses.TotalNumber))"
+                    $chartLabels = [string[]]$sampleDataObj.Category
+                    $chartValues = [double[]]$sampleDataObj.Value
 
-                # } catch {
-                #     Write-PScriboMessage -IsWarning -Message "Instance License Usage chart section: $($_.Exception.Message)"
-                # }
+                    $statusCustomPalette = @('#DFF0D0', '#FFF3C4', '#FECDD1', '#ADACAF')
+
+                    $chartFileItem = New-PieChart -Title "License Usage (Total: $($Licenses.TotalNumber))" -Values $chartValues -Labels $chartLabels -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 400 -Format base64 -EnableLegend -LegendOrientation Horizontal -LegendAlignment UpperCenter -TitleFontBold -TitleFontSize 16
+
+                } catch {
+                    Write-PScriboMessage -IsWarning -Message "Instance License Usage chart section: $($_.Exception.Message)"
+                }
 
                 if ($OutObj) {
                     Section -Style Heading2 'Licenses' {
                         Paragraph "The following table summarizes the licensing information within $VeeamBackupServer backup server."
                         BlankLine
-                        # if ($chartFileItem -and ($sampleData.Values | Measure-Object -Sum).Sum -ne 0) {
-                        #     Image -Text 'License Usage - Chart' -Align 'Center' -Percent 100 -Base64 $chartFileItem
-                        # }
+                        if ($chartFileItem -and ($sampleData.Values | Measure-Object -Sum).Sum -ne 0) {
+                            Image -Text 'License Usage - Chart' -Align 'Center' -Percent 100 -Base64 $chartFileItem
+                        }
                         BlankLine
                         $OutObj | Table @TableParams
                         if ($HealthCheck.Infrastructure.License -and ($Licenses.UsedNumber -ge $Licenses.TotalNumber)) {
