@@ -66,16 +66,16 @@ This report is compatible with the following PowerShell versions:
 
 | Windows PowerShell 5.1 | PowerShell 7 |
 | :--------------------: | :----------: |
-|   :white_check_mark:   |     :x:      |
+|   :white_check_mark:   | :white_check_mark: |
 
 ## :wrench: System Requirements
 
-PowerShell 5.1 and the following PowerShell modules are required for generating a Veeam VB365 As Built Report:
+PowerShell 5.1 or PowerShell 7 and the following PowerShell modules are required for generating a Veeam VB365 As Built Report:
 
 - [Veeam.Archiver.PowerShell Module](https://helpcenter.veeam.com/docs/vbo365/powershell/getting_started.html?ver=70)
-- [PScriboCharts Module](https://github.com/iainbrighton/PScriboCharts)
-- [PSGraph Module](https://github.com/KevinMarquette/PSGraph)
-- [Diagrammer.Core Module](https://github.com/rebelinux/Diagrammer.Core)
+- [AsBuiltReport.Core Module](https://www.powershellgallery.com/packages/AsBuiltReport.Core/)
+- [AsBuiltReport.Chart Module](https://www.powershellgallery.com/packages/AsBuiltReport.Chart/)
+- [AsBuiltReport.Diagram Module](https://www.powershellgallery.com/packages/AsBuiltReport.Diagram/)
 - [AsBuiltReport.Veeam.VB365 Module](https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/)
 
 ### :closed_lock_with_key: Required Privileges
@@ -87,8 +87,13 @@ Only users with Local Administrator group permissions can generate a Veeam VB365
 ### PowerShell
 
 ```powershell
+Install-Module AsBuiltReport.Core
+Install-Module AsBuiltReport.Diagram
+Install-Module AsBuiltReport.Chart
 Install-Module AsBuiltReport.Veeam.VB365
 ```
+
+`AsBuiltReport.Chart` is used for report chart generation. This replaces the legacy `PScriboCharts` dependency.
 
 ### GitHub
 
@@ -145,6 +150,7 @@ The **Options** schema allows certain options within the report to be toggled on
 | ---------------------- | ------------------- | ------- | -------------------------------------------------------------------------------------------- |
 | BackupServerPort       | TCP Port            | 9191    | Specifies the custom port for the backup service.                                            |
 | ReportStyle            | Veeam/AsBuiltReport | Veeam   | Sets the report style template.                                                              |
+| EnableCharts           | true/false          | true    | Enables or disables report chart generation.                                                 |
 | EnableDiagrams         | true/false          | true    | Enables or disables the creation of infrastructure diagrams.                                 |
 | EnableDiagramsDebug    | true/false          | false   | Enables or disables the diagram debug option.                                                |
 | DiagramWaterMark       | string              | empty   | Sets the watermark for the diagram.                                                          |
@@ -155,6 +161,7 @@ The **Options** schema allows certain options within the report to be toggled on
 | SignatureAuthorName    | string              | empty   | Sets the author name for the diagram signature.                                              |
 | SignatureCompanyName   | string              | empty   | Sets the company name for the diagram signature.                                             |
 | RoundUnits             | int                 | 1       | Sets the rounding units for data values.                                                     |
+| UpdateCheck            | true/false          | true    | Enables or disables the update check option.                                                 |
 
 ### InfoLevel
 

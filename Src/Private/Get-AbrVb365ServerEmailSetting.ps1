@@ -5,7 +5,7 @@ function Get-AbrVB365ServerEmailSetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrVB365ServerEmailSetting {
         try {
             $ServerConfig = Get-VBOEmailSettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($ServerConfig)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 email settings."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 email settings.'
                 Section -Style Heading3 'Notification' {
                     $ServerConfigInfo = @()
                     $inObj = [ordered] @{
@@ -69,11 +69,11 @@ function Get-AbrVB365ServerEmailSetting {
                     }
                     $ServerConfigInfo | Table @TableParams
                     if ($HealthCheck -and ($ServerConfigInfo | Where-Object { $_.'Enable Email Notification' -eq 'No' })) {
-                        Paragraph "Health Check:" -Bold -Underline
+                        Paragraph 'Health Check:' -Bold -Underline
                         BlankLine
                         Paragraph {
-                            Text "Best Practice:" -Bold
-                            Text "Veeam recommends configuring email notifications to be able to receive jobs alerts also without setting up an email and server in the email notifications users will not get notified when there are issues."
+                            Text 'Best Practice:' -Bold
+                            Text 'Veeam recommends configuring email notifications to be able to receive jobs alerts also without setting up an email and server in the email notifications users will not get notified when there are issues.'
                         }
                         BlankLine
                     }

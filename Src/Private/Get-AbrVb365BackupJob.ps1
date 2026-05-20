@@ -5,7 +5,7 @@ function Get-AbrVb365BackupJob {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTE
-        Version:        0.3.13
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -24,43 +24,90 @@ function Get-AbrVb365BackupJob {
 
     process {
         try {
-            $BackupJobs = Get-VBOJob | Sort-Object -Property Name
+            if ($InfoLevel.Jobs.BackupJob -le 0 -and $InfoLevel.Jobs.BackupCopyJob -le 0) {
+                return
+            }
+
+            if ($script:BackupJobs) {
+                Write-PScriboMessage -Message 'Using cached Veeam VB365 Backup Jobs inventory.'
+                $BackupJobs = $script:BackupJobs
+            } else {
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Jobs inventory.'
+                $BackupJobs = Get-AbrVb365BackupJobInventory
+            }
+
             if (($InfoLevel.Jobs.BackupJob -gt 0) -and ($BackupJobs)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Backup Jobs."
+                $BackupJobRepositoryLookup = @{}
+                Write-PScriboMessage -Message 'Using pre-captured Veeam VB365 Backup Job repository inventory.'
+                foreach ($BackupJob in $BackupJobs) {
+                    $LookupJobName = Get-AbrVb365PropertyValue -InputObject $BackupJob -Name 'Name' -Default 'Unknown'
+                    $LookupJobId = Get-AbrVb365PropertyValue -InputObject $BackupJob -Name 'Id'
+                    $LookupKey = ConvertTo-AbrVb365LookupKey -Id $LookupJobId
+                    if (-not $LookupKey) {
+                        $LookupKey = $LookupJobName
+                    }
+
+                    $RepositoryNameProperty = $BackupJob.PSObject.Properties['AbrRepositoryName']
+                    $BackupJobRepositoryLookup[$LookupKey] = if ($RepositoryNameProperty -and $RepositoryNameProperty.Value) { $RepositoryNameProperty.Value } else { '--' }
+                }
+
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Backup Jobs.'
                 Section -Style Heading2 'Backup Jobs' {
                     $BackupJobInfo = @()
                     foreach ($BackupJob in $BackupJobs) {
+                        Write-PScriboMessage -Message "Processing backup job '$($BackupJob.Name)'."
+                        $JobName = Invoke-AbrVb365TimedValue -Label "backup job '$($BackupJob.Name)' Name property" -ScriptBlock { $BackupJob.Name }
+                        $JobOrganization = Invoke-AbrVb365TimedValue -Label "backup job '$JobName' Organization property" -ScriptBlock { ConvertTo-AbrVb365DisplayValue -InputObject $BackupJob.Organization }
+                        $JobId = Get-AbrVb365PropertyValue -InputObject $BackupJob -Name 'Id'
+                        $JobLookupKey = ConvertTo-AbrVb365LookupKey -Id $JobId
+                        if (-not $JobLookupKey) {
+                            $JobLookupKey = $JobName
+                        }
+                        $JobRepository = if ($JobLookupKey -and $BackupJobRepositoryLookup.ContainsKey($JobLookupKey)) { $BackupJobRepositoryLookup[$JobLookupKey] } else { '--' }
+                        $JobLastStatus = Invoke-AbrVb365TimedValue -Label "backup job '$JobName' LastStatus property" -ScriptBlock { $BackupJob.LastStatus }
+                        $JobIsEnabled = Invoke-AbrVb365TimedValue -Label "backup job '$JobName' IsEnabled property" -ScriptBlock { $BackupJob.IsEnabled }
+
                         $inObj = [ordered] @{
-                            'Name' = $BackupJob.Name
-                            'Organization' = $BackupJob.Organization
-                            'Job Backup Type' = $BackupJob.JobBackupType
-                            'Selected Items' = switch ([string]::IsNullOrEmpty($BackupJob.SelectedItems)) {
+                            'Name' = $JobName
+                            'Organization' = $JobOrganization
+                            'Repository' = $JobRepository
+                            'Last Status' = $JobLastStatus
+                            'Is Enabled' = $JobIsEnabled
+                        }
+
+                        if ($InfoLevel.Jobs.BackupJob -ge 2) {
+                            $SelectedItems = switch ([string]::IsNullOrEmpty($BackupJob.SelectedItems)) {
                                 $true { '--' }
                                 $false { $BackupJob.SelectedItems }
                                 default { 'Unknown' }
                             }
-                            'Excluded Items' = switch ([string]::IsNullOrEmpty($BackupJob.ExcludedItems)) {
+                            $ExcludedItems = switch ([string]::IsNullOrEmpty($BackupJob.ExcludedItems)) {
                                 $true { '--' }
                                 $false {
-                                    & {
-                                        if (($BackupJob.ExcludedItems | Measure-Object).Count -gt 30) {
-                                            return 'Multiple'
-                                        } else {
-                                            return $BackupJob.ExcludedItems
-                                        }
+                                    if (($BackupJob.ExcludedItems | Measure-Object).Count -gt 30) {
+                                        'Multiple'
+                                    } else {
+                                        $BackupJob.ExcludedItems
                                     }
                                 }
                                 default { 'Unknown' }
                             }
-                            'Repository' = $BackupJob.Repository
-                            'Last Status' = $BackupJob.LastStatus
-                            'Last Run' = $BackupJob.LastRun
-                            'Next Run' = $BackupJob.NextRun
-                            'Last Backup' = $BackupJob.LastBackup
-                            'Is Enabled' = $BackupJob.IsEnabled
-                            'Description' = $BackupJob.Description
 
+                            $JobBackupType = Invoke-AbrVb365TimedValue -Label "backup job '$JobName' JobBackupType property" -ScriptBlock { $BackupJob.JobBackupType }
+                            $JobLastRun = Invoke-AbrVb365TimedValue -Label "backup job '$JobName' LastRun property" -ScriptBlock { $BackupJob.LastRun }
+                            $JobNextRun = Invoke-AbrVb365TimedValue -Label "backup job '$JobName' NextRun property" -ScriptBlock { $BackupJob.NextRun }
+                            $JobLastBackup = Invoke-AbrVb365TimedValue -Label "backup job '$JobName' LastBackup property" -ScriptBlock { $BackupJob.LastBackup }
+                            $JobDescription = Invoke-AbrVb365TimedValue -Label "backup job '$JobName' Description property" -ScriptBlock { $BackupJob.Description }
+
+                            $inObj.Add('Job Backup Type', $JobBackupType)
+                            $inObj.Add('Selected Items', $SelectedItems)
+                            $inObj.Add('Excluded Items', $ExcludedItems)
+                            $inObj.Add('Last Run', $JobLastRun)
+                            $inObj.Add('Next Run', $JobNextRun)
+                            $inObj.Add('Last Backup', $JobLastBackup)
+                            $inObj.Add('Description', $JobDescription)
                         }
+
                         $BackupJobInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
@@ -71,25 +118,33 @@ function Get-AbrVb365BackupJob {
                         $BackupJobInfo | Where-Object { $_.'Last Status' -eq 'Failed' } | Set-Style -Style Critical -Property 'Last Status'
                     }
 
-                    try {
-                        $Alljobs = @()
-                        if ($BackupJobs.LastStatus) {
-                            $Alljobs += $BackupJobs.LastStatus
+                    $chartFileItem = $null
+                    if ($Options.EnableCharts -ne $false) {
+                        try {
+                            $Alljobs = @()
+                            if ($BackupJobInfo.'Last Status') {
+                                $Alljobs += $BackupJobInfo.'Last Status'
+                            }
+
+                            $sampleData = [ordered]@{
+                                'Success' = ($Alljobs | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
+                                'Warning' = ($Alljobs | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
+                                'Failed' = ($Alljobs | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
+                                'Stopped' = ($Alljobs | Where-Object { $_ -eq 'Stopped' } | Measure-Object).Count
+                            }
+
+                            $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
+
+                            $chartLabels = [string[]]$sampleDataObj.Category
+                            $chartValues = [double[]]$sampleDataObj.Value
+
+                            $statusCustomPalette = @('#DFF0D0', '#FFF3C4', '#FECDD1', '#ADACAF')
+
+                            $chartFileItem = New-BarChart -Title 'Backup Jobs Latest Results' -Values $chartValues -Labels $chartLabels -LabelXAxis 'Status' -LabelYAxis 'Results' -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 400 -Format base64 -EnableLegend -LegendOrientation Horizontal -LegendAlignment UpperCenter -AxesMarginsTop 0.5 -TitleFontBold -TitleFontSize 16
+
+                        } catch {
+                            Write-PScriboMessage -IsWarning -Message "Backup Copy Chart Section: $($_.Exception.Message)"
                         }
-
-                        $sampleData = [ordered]@{
-                            'Success' = ($Alljobs | Where-Object { $_ -eq "Success" } | Measure-Object).Count
-                            'Warning' = ($Alljobs | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
-                            'Failed' = ($Alljobs | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
-                            'Stopped' = ($Alljobs | Where-Object { $_ -eq "Stopped" } | Measure-Object).Count
-                        }
-
-                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
-
-                        $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'BackupJobs' -AxisXTitle 'Status' -AxisYTitle 'Count' -ChartTitleName 'BackupJob' -ChartTitleText 'Backup Jobs Latest Results'
-
-                    } catch {
-                        Write-PScriboMessage -IsWarning -Message "Backup Copy Chart Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Jobs.BackupJob -ge 2) {

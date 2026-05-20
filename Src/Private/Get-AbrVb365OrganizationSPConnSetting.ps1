@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationSPConnSetting {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -25,14 +25,15 @@ function Get-AbrVb365OrganizationSPConnSetting {
     )
 
     begin {
-        Write-PScriboMessage -Message "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
+        $OrganizationInfoLevel = Get-AbrVb365InfoLevelValue -Scope 'Infrastructure' -Name 'Organization' -Alias 'Organizations', 'Organisation', 'Organisations'
+        Write-PScriboMessage -Message "Organizations InfoLevel set at $OrganizationInfoLevel."
     }
 
     process {
         try {
-            $Organizations = Get-VBOOrganization -Name $Organization
-            if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($Organizations.Office365SharePointConnectionSettings)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Office365 SharePoint Connection Settings."
+            $Organizations = Get-AbrVb365OrganizationByName -Name $Organization
+            if (($OrganizationInfoLevel -gt 0) -and ($Organizations.Office365SharePointConnectionSettings)) {
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Office365 SharePoint Connection Settings.'
                 Section -Style Heading4 'SharePoint Connection Setting' {
                     $OrganizationInfo = @()
                     foreach ($Org in $Organizations.Office365SharePointConnectionSettings) {

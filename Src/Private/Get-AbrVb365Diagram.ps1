@@ -5,7 +5,7 @@ function Get-AbrVb365Diagram {
     .DESCRIPTION
         Diagram the configuration of Veeam Backup for Microsoft 365 infrastructure in PDF/SVG/DOT/PNG formats using PSGraph and Graphviz.
     .NOTES
-        Version:        0.3.13
+        Version:        0.4.0
         Author(s):      Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -33,17 +33,44 @@ function Get-AbrVb365Diagram {
             $IconDebug = $false
         }
 
+        # Used to set diagram theme
         if ($Options.DiagramTheme -eq 'Black') {
+            $MainGraphBGColor = 'Black'
+            $TableBorderColor = 'White'
             $Edgecolor = 'White'
             $Fontcolor = 'White'
+            $NodeFontcolor = 'White'
+            $EdgeArrowSize = 1
+            $EdgeLineWidth = 3
+            $BackupServerBGColor = 'Black'
+            $BackupServerFontColor = 'White'
         } elseif ($Options.DiagramTheme -eq 'Neon') {
+            $MainGraphBGColor = 'grey14'
+            $TableBorderColor = 'gold2'
             $Edgecolor = 'gold2'
             $Fontcolor = 'gold2'
-        } else {
+            $NodeFontcolor = 'gold2'
+            $EdgeArrowSize = 1
+            $EdgeLineWidth = 3
+            $BackupServerBGColor = 'grey14'
+            $BackupServerFontColor = 'gold2'
+        } elseif ($Options.DiagramTheme -eq 'White') {
+            $MainGraphBGColor = 'White'
+            $TableBorderColor = '#71797E'
             $Edgecolor = '#71797E'
             $Fontcolor = '#565656'
+            $NodeFontcolor = 'Black'
+            $EdgeArrowSize = 1
+            $EdgeLineWidth = 3
+            $BackupServerBGColor = switch ($NewIcons) {
+                $true { '#dbdddf' }
+                $false { '#ceedc4' }
+            }
+            $BackupServerFontColor = switch ($NewIcons) {
+                $true { '#565656' }
+                $false { '#007F49' }
+            }
         }
-
     }
 
     process {
@@ -56,36 +83,43 @@ function Get-AbrVb365Diagram {
         #                     Graphviz: https://graphviz.org/doc/info/shapes.html                       #
         #-----------------------------------------------------------------------------------------------#
 
+        $ServerVersion = if ($script:VBOversion) { $script:VBOversion } else { (Get-VBOVersion).ProductVersion }
         $ServerInfo = @{
-            'Version' = switch ([string]::IsNullOrEmpty((Get-VBOVersion).ProductVersion)) {
+            'Version' = switch ([string]::IsNullOrEmpty($ServerVersion)) {
                 $true { 'Unknown' }
-                $false { (Get-VBOVersion).ProductVersion }
+                $false { $ServerVersion }
                 default { 'Unknown' }
             }
         }
 
-        $ServerConfigRestAPI = Get-VBORestAPISettings
+        $ServerConfigRestAPI = if ($script:ServerConfigRestAPI) { $script:ServerConfigRestAPI } else { Get-VBORestAPISettings }
 
 
-        if (($ServerConfigRestAPI = Get-VBORestAPISettings).IsServiceEnabled) {
+        if ($ServerConfigRestAPI.IsServiceEnabled) {
             $ServerInfo.Add('RestAPI Port', $ServerConfigRestAPI.HTTPSPort)
         }
 
         # VB365 Server Object
-        Node VB365Server @{Label = Add-DiaNodeIcon -Rows $ServerInfo -ImagesObj $Images -Name $VeeamBackupServer -IconType "VB365_Server" -Align "Center" -IconDebug $IconDebug -FontSize 18; shape = 'plain'; fillColor = 'transparent'; fontsize = 14 }
+        Node VB365Server @{Label = Add-NodeIcon -AditionalInfo $ServerInfo -ImagesObj $Images -Name $VeeamBackupServer -IconType 'VB365_Server' -Align 'Center' -IconDebug $IconDebug -FontSize 24 -FontColor $Fontcolor -TableBackgroundColor $MainGraphBGColor -CellBackgroundColor $MainGraphBGColor; shape = 'plain'; fillColor = 'transparent'; fontsize = 24 }
 
-        if (($RestorePortal = Get-VBORestorePortalSettings).IsServiceEnabled) {
+        $RestorePortal = if ($script:RestorePortal) { $script:RestorePortal } else { Get-VBORestorePortalSettings }
+        if ($RestorePortal.IsServiceEnabled) {
             $RestorePortalURL = @{
                 'Portal URI' = $RestorePortal.PortalUri
             }
-            Node VB365RestorePortal @{Label = Add-DiaNodeIcon -Rows $RestorePortalURL -ImagesObj $Images -Name 'Self-Service Portal' -IconType "VB365_Restore_Portal" -Align "Center" -IconDebug $IconDebug -FontSize 18; shape = 'plain'; fillColor = 'transparent'; fontsize = 14; url = $RestorePortal.PortalUri }
+            Node VB365RestorePortal @{Label = Add-NodeIcon -AditionalInfo $RestorePortalURL -ImagesObj $Images -Name 'Self-Service Portal' -IconType 'VB365_Restore_Portal' -Align 'Center' -IconDebug $IconDebug -FontSize 24 -FontColor $Fontcolor -TableBackgroundColor $MainGraphBGColor -CellBackgroundColor $MainGraphBGColor; shape = 'plain'; fillColor = 'transparent'; fontsize = 18; url = $RestorePortal.PortalUri }
         }
 
         # Proxy Graphviz Cluster
         try {
             $ProxiesInfo = @()
 
-            $Proxies = Get-VBOProxy -WarningAction SilentlyContinue | Sort-Object -Property Hostname
+            if ($script:Proxies) {
+                $Proxies = $script:Proxies
+            } else {
+                $Proxies = Get-VBOProxy -WarningAction SilentlyContinue | Sort-Object -Property Hostname
+                $script:Proxies = $Proxies
+            }
 
             $Proxies | ForEach-Object {
                 $inobj = [PSCustomObject] [ordered] @{
@@ -96,35 +130,40 @@ function Get-AbrVb365Diagram {
                 $ProxiesInfo += $inobj
             }
 
-            $ProxyNodes = Node Proxies @{Label = (Add-DiaHtmlNodeTable -ImagesObj $Images -inputObject ($Proxies.HostName | ForEach-Object { $_.split('.')[0] }) -Align "Center" -iconType "VB365_Proxy_Server" -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $ProxiesInfo -Subgraph -SubgraphIconType "VB365_Proxy" -SubgraphLabel "Backup Proxies" -SubgraphLabelPos "top" -SubgraphTableStyle "dashed,rounded" -TableBorderColor $Edgecolor -TableBorder "1" -SubgraphLabelFontSize 22 -FontSize 18 -SubgraphFontBold -FontColor '#000000' -SubgraphLabelFontColor $Fontcolor ); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Segoe Ui" }
+            $ProxyNodes = Node Proxies @{Label = (Add-HtmlNodeTable -Name 'Proxies' -ImagesObj $Images -inputObject ($Proxies.HostName | ForEach-Object { $_.split('.')[0] }) -Align 'Center' -iconType 'VB365_Proxy_Server' -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $ProxiesInfo -Subgraph -SubgraphIconType 'VB365_Proxy' -SubgraphLabel 'Backup Proxies' -SubgraphLabelPos 'top' -SubgraphTableStyle 'dashed,rounded' -TableBorderColor $Edgecolor -TableBorder '1' -SubgraphLabelFontSize 28 -FontSize 24 -SubgraphFontBold -FontColor $Fontcolor -SubgraphLabelFontColor $Fontcolor -TableBackgroundColor $MainGraphBGColor -CellBackgroundColor $MainGraphBGColor); shape = 'plain'; fillColor = 'transparent'; fontsize = 18; fontname = 'Segoe Ui' }
 
         } catch {
-            Write-PScriboMessage -Message "Error: Unable to create Proxies Objects. Disabling the section"
+            Write-PScriboMessage -Message 'Error: Unable to create Proxies Objects. Disabling the section'
             Write-PScriboMessage -Message "Error Message: $($_.Exception.Message)"
         }
         if ($Proxies -and $ProxyNodes) {
             $ProxyNodes
         } else {
-            SubGraph ProxyServer -Attributes @{Label = (Add-DiaHtmlLabel -ImagesObj $Images -Label "Backup Proxies" -IconType "VB365_Proxy" -SubgraphLabel -IconDebug $IconDebug); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
+            SubGraph ProxyServer -Attributes @{Label = (Add-HtmlLabel -ImagesObj $Images -Label 'Backup Proxies' -IconType 'VB365_Proxy' -SubgraphLabel -IconDebug $IconDebug); fontsize = 24; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
-                Node -Name Proxies -Attributes @{Label = 'No Backup Proxies'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
+                Node -Name Proxies -Attributes @{Label = 'No Backup Proxies'; shape = 'rectangle'; labelloc = 'c'; fixedsize = $true; width = '3'; height = '2'; fillColor = 'transparent'; penwidth = 0 }
             }
         }
 
         # Proxy Pools Graphviz Cluster
         try {
-            $ProxyPools = Get-VBOProxyPool -WarningAction SilentlyContinue | Sort-Object -Property Name
+            if ($script:ProxyPools) {
+                $ProxyPools = $script:ProxyPools
+            } else {
+                $ProxyPools = Get-VBOProxyPool -WarningAction SilentlyContinue | Sort-Object -Property Name
+                $script:ProxyPools = $ProxyPools
+            }
 
             $ProxyPoolNodes = foreach ($ProxyPool in $ProxyPools) {
-                Add-DiaHtmlTable -ImagesObj $Images -Rows ($ProxyPool.Proxies.Hostname | ForEach-Object { $_.Split('.')[0] }) -Align 'Center' -ColumnSize 2 -IconDebug $IconDebug -Subgraph -SubgraphIconType "VB365_Proxy_Server" -SubgraphLabel $ProxyPool.Name -SubgraphLabelPos "top" -FontColor '#000000' -TableStyle "dashed,rounded" -TableBorderColor $Edgecolor -TableBorder "1" -NoFontBold -SubgraphLabelFontsize 22 -FontSize 18 -SubgraphFontBold -SubgraphFontColor $Fontcolor
+                Add-HtmlTable -Name ('ProxyPool_{0}' -f ([regex]::Replace([string] $ProxyPool.Name, '[^A-Za-z0-9_]+', '_').Trim('_'))) -ImagesObj $Images -Rows ($ProxyPool.Proxies.Hostname | ForEach-Object { $_.Split('.')[0] }) -ALIGN 'Center' -ColumnSize 2 -IconDebug $IconDebug -Subgraph -SubgraphIconType 'VB365_Proxy_Server' -SubgraphLabel $ProxyPool.Name -SubgraphLabelPos 'top' -FontColor $Fontcolor -TableStyle 'dashed,rounded' -TableBorderColor $Edgecolor -TableBorder '1' -SubgraphTableStyle 'dashed,rounded' -NoFontBold -SubgraphLabelFontsize 28 -FontSize 24 -SubgraphFontBold -SubgraphFontColor $Fontcolor -TableBackgroundColor $MainGraphBGColor
             }
         } catch {
-            Write-PScriboMessage -Message "Error: Unable to create Proxies Pool Objects. Disabling the section"
+            Write-PScriboMessage -Message 'Error: Unable to create Proxies Pool Objects. Disabling the section'
             Write-PScriboMessage -Message "Error Message: $($_.Exception.Message)"
         }
         if ($ProxyPools -and $ProxyPoolNodes) {
 
-            $ProxyPoolSubgraphNode = Node -Name "ProxyPools" -Attributes @{Label = (Add-DiaHtmlSubGraph -ImagesObj $Images -TableArray $ProxyPoolNodes -Align 'Center' -IconDebug $IconDebug -IconType 'VB365_Proxy' -Label 'Backup Proxy Pools' -LabelPos "top" -FontColor $Fontcolor -TableStyle "dashed,rounded" -TableBorderColor $Edgecolor -TableBorder "1" -ColumnSize 2 -FontSize 22 -FontBold); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Segoe Ui" }
+            $ProxyPoolSubgraphNode = Node -Name 'ProxyPools' -Attributes @{Label = (Add-HtmlSubGraph -Name 'ProxyPools' -ImagesObj $Images -TableArray $ProxyPoolNodes -Align 'Center' -IconDebug $IconDebug -IconType 'VB365_Proxy' -Label 'Backup Proxy Pools' -LabelPos 'top' -FontColor $Fontcolor -TableStyle 'dashed,rounded' -TableBorderColor $Edgecolor -TableBorder '1' -ColumnSize 2 -FontSize 28 -FontBold -TableBackgroundColor $MainGraphBGColor); shape = 'plain'; fillColor = 'transparent'; fontsize = 18; fontname = 'Segoe Ui' }
 
             if ($ProxyPoolSubgraphNode) {
                 $ProxyPoolSubgraphNode
@@ -134,25 +173,33 @@ function Get-AbrVb365Diagram {
 
         # Restore Operator Graphviz Cluster
         try {
-            $RestoreOperators = try { Get-VBORbacRole | Sort-Object -Property Name } catch { Out-Null }
-
-            $RestoreOperatorsInfo = @()
-            $RestoreOperators | ForEach-Object {
-                $OrgId = $_.OrganizationId
-                $inobj = @{
-                    'Organization' = switch ([string]::IsNullOrEmpty(($Organizations | Where-Object { $_.Id -eq $OrgId }))) {
-                        $true { 'Unknown' }
-                        $false { ($Organizations | Where-Object { $_.Id -eq $OrgId }).Name }
-                        default { 'Unknown' }
-                    }
-                }
-                $RestoreOperatorsInfo += $inobj
+            if ($script:RestoreOperators) {
+                $RestoreOperators = $script:RestoreOperators
+            } else {
+                $script:RestoreOperators = try { Get-VBORbacRole | Sort-Object -Property Name } catch { Out-Null }
+                $RestoreOperators = $script:RestoreOperators
             }
 
-            $RestoreOperatorsNodes = Node RestoreOperators @{Label = (Add-DiaHtmlNodeTable -ImagesObj $Images -inputObject $RestoreOperators.Name -Align "Center" -iconType "VB365_User" -ColumnSize 2 -IconDebug $IconDebug -MultiIcon -AditionalInfo $RestoreOperatorsInfo -Subgraph -SubgraphIconType "VB365_User" -SubgraphLabel "Restore Operators" -SubgraphLabelPos "top" -SubgraphTableStyle "dashed,rounded" -FontColor '#000000' -TableBorderColor $Edgecolor -TableBorder "1" -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 22 -FontSize 18); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Segoe Ui" }
+            if ($RestoreOperators) {
+                $RestoreOperatorOrganizations = if ($script:Organizations) { $script:Organizations } else { Get-AbrVb365OrganizationInventory }
+                $RestoreOperatorsInfo = @()
+                $RestoreOperators | ForEach-Object {
+                    $OrgId = $_.OrganizationId
+                    $inobj = @{
+                        'Organization' = switch ([string]::IsNullOrEmpty(($RestoreOperatorOrganizations | Where-Object { $_.Id -eq $OrgId }))) {
+                            $true { 'Unknown' }
+                            $false { ($RestoreOperatorOrganizations | Where-Object { $_.Id -eq $OrgId }).Name }
+                            default { 'Unknown' }
+                        }
+                    }
+                    $RestoreOperatorsInfo += $inobj
+                }
+
+                $RestoreOperatorsNodes = Node RestoreOperators @{Label = (Add-HtmlNodeTable -Name 'RestoreOperators' -ImagesObj $Images -inputObject $RestoreOperators.Name -Align 'Center' -iconType 'VB365_User' -ColumnSize 2 -IconDebug $IconDebug -MultiIcon -AditionalInfo $RestoreOperatorsInfo -Subgraph -SubgraphIconType 'VB365_User' -SubgraphLabel 'Restore Operators' -SubgraphLabelPos 'top' -SubgraphTableStyle 'dashed,rounded' -FontColor $Fontcolor -TableBorderColor $Edgecolor -TableBorder '1' -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 28 -FontSize 24 -TableBackgroundColor $MainGraphBGColor -CellBackgroundColor $MainGraphBGColor); shape = 'plain'; fillColor = 'transparent'; fontsize = 18; fontname = 'Segoe Ui' }
+            }
 
         } catch {
-            Write-PScriboMessage -Message "Error: Unable to create RestoreOperators Objects. Disabling the section"
+            Write-PScriboMessage -Message 'Error: Unable to create RestoreOperators Objects. Disabling the section'
             Write-PScriboMessage -Message "Error Message: $($_.Exception.Message)"
         }
         if ($RestoreOperators -and $RestoreOperatorsNodes) {
@@ -160,16 +207,16 @@ function Get-AbrVb365Diagram {
             $RestoreOperatorsNodes
 
         } else {
-            SubGraph RestoreOp -Attributes @{Label = (Add-DiaHtmlLabel -ImagesObj $Images -Label "Restore Operators" -IconType "VB365_User_Group" -SubgraphLabel -IconDebug $IconDebug); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
+            SubGraph RestoreOp -Attributes @{Label = (Add-HtmlLabel -ImagesObj $Images -Label 'Restore Operators' -IconType 'VB365_User_Group' -SubgraphLabel -IconDebug $IconDebug); fontsize = 24; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
-                Node -Name RestoreOperators -Attributes @{Label = 'No Restore Operators'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
+                Node -Name RestoreOperators -Attributes @{Label = 'No Restore Operators'; shape = 'rectangle'; labelloc = 'c'; fixedsize = $true; width = '3'; height = '2'; fillColor = 'transparent'; penwidth = 0 }
             }
         }
 
         # Repositories Graphviz Cluster
         try {
 
-            $Repositories = Get-VBORepository | Sort-Object -Property Name
+            $Repositories = Get-AbrVb365BackupRepositoryInventory
 
             $RepositoriesInfo = @()
 
@@ -188,10 +235,10 @@ function Get-AbrVb365Diagram {
                 $RepositoriesInfo += $inobj
             }
 
-            $RepositoriesNodes = Node Repositories @{Label = (Add-DiaHtmlNodeTable -ImagesObj $Images -inputObject $Repositories.Name -Align "Center" -iconType "VB365_Repository" -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $RepositoriesInfo -Subgraph -SubgraphIconType "Veeam_Repository" -SubgraphLabel "Backup Repositories" -SubgraphLabelPos "top" -SubgraphTableStyle "dashed,rounded" -FontColor '#000000' -TableBorderColor $Edgecolor -TableBorder "1" -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 22 -FontSize 18); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Segoe Ui" }
+            $RepositoriesNodes = Node Repositories @{Label = (Add-HtmlNodeTable -Name 'Repositories' -ImagesObj $Images -inputObject $Repositories.Name -Align 'Center' -iconType 'VB365_Repository' -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $RepositoriesInfo -Subgraph -SubgraphIconType 'Veeam_Repository' -SubgraphLabel 'Backup Repositories' -SubgraphLabelPos 'top' -SubgraphTableStyle 'dashed,rounded' -FontColor $Fontcolor -TableBorderColor $Edgecolor -TableBorder '1' -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 28 -FontSize 24 -TableBackgroundColor $MainGraphBGColor -CellBackgroundColor $MainGraphBGColor); shape = 'plain'; fillColor = 'transparent'; fontsize = 18; fontname = 'Segoe Ui' }
 
         } catch {
-            Write-PScriboMessage -Message "Error: Unable to create Repositories Objects. Disabling the section"
+            Write-PScriboMessage -Message 'Error: Unable to create Repositories Objects. Disabling the section'
             Write-PScriboMessage -Message "Error Message: $($_.Exception.Message)"
         }
         if ($Repositories -and $RepositoriesNodes) {
@@ -199,15 +246,15 @@ function Get-AbrVb365Diagram {
             $RepositoriesNodes
 
         } else {
-            SubGraph Repos -Attributes @{Label = (Add-DiaHtmlLabel -ImagesObj $Images -Label "Backup Repositories" -IconType "Veeam_Repository" -SubgraphLabel -IconDebug $IconDebug); fontsize = 18; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
+            SubGraph Repos -Attributes @{Label = (Add-HtmlLabel -ImagesObj $Images -Label 'Backup Repositories' -IconType 'Veeam_Repository' -SubgraphLabel -IconDebug $IconDebug -TableBackgroundColor $MainGraphBGColor); fontsize = 24; penwidth = 1.5; labelloc = 'b'; style = 'dashed,rounded' } {
 
-                Node -Name Repositories -Attributes @{Label = 'No Backup Repositories'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
+                Node -Name Repositories -Attributes @{Label = 'No Backup Repositories'; shape = 'rectangle'; labelloc = 'c'; fixedsize = $true; width = '3'; height = '2'; fillColor = 'transparent'; penwidth = 0 }
             }
         }
         # Object Repositories Graphviz Cluster
         try {
 
-            $ObjectRepositories = Get-VBOObjectStorageRepository -WarningAction SilentlyContinue | Sort-Object -Property Name
+            $ObjectRepositories = Get-AbrVb365ObjectStorageRepository
 
             $ObjectRepositoriesInfo = @()
             $ORIconType = @()
@@ -223,14 +270,14 @@ function Get-AbrVb365Diagram {
                     'AmazonS3' { 'VBR365_Amazon_S3' }
                     'AmazonS3Compatible' { 'VBR365_Amazon_S3_Compatible' }
                     'AzureBlob' { 'VBR365_Azure_Blob' }
-                    default { $_.Type }
+                    default { 'VBR365_Amazon_S3_Compatible' }
                 }
             }
 
-            $ObjectRepositoriesNodes = Node ObjectRepositories @{Label = (Add-DiaHtmlNodeTable -ImagesObj $Images -inputObject $ObjectRepositories.Name -Align "Center" -iconType $ORIconType -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $ObjectRepositoriesInfo -Subgraph -SubgraphIconType "VB365_Object_Support" -SubgraphLabel "Object Repositories" -SubgraphLabelPos "top" -SubgraphTableStyle "dashed,rounded" -FontColor '#000000' -TableBorderColor $Edgecolor -TableBorder "1" -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 22 -FontSize 18); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Segoe Ui" }
+            $ObjectRepositoriesNodes = Node ObjectRepositories @{Label = (Add-HtmlNodeTable -Name 'ObjectRepositories' -ImagesObj $Images -inputObject $ObjectRepositories.Name -Align 'Center' -iconType $ORIconType -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $ObjectRepositoriesInfo -Subgraph -SubgraphIconType 'VB365_Object_Support' -SubgraphLabel 'Object Repositories' -SubgraphLabelPos 'top' -SubgraphTableStyle 'dashed,rounded' -FontColor $Fontcolor -TableBorderColor $Edgecolor -TableBorder '1' -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 28 -FontSize 24 -TableBackgroundColor $MainGraphBGColor -CellBackgroundColor $MainGraphBGColor); shape = 'plain'; fillColor = 'transparent'; fontsize = 18; fontname = 'Segoe Ui' }
 
         } catch {
-            Write-PScriboMessage -Message "Error: Unable to create ObjectRepositories Objects. Disabling the section"
+            Write-PScriboMessage -Message 'Error: Unable to create ObjectRepositories Objects. Disabling the section'
             Write-PScriboMessage -Message "Error Message: $($_.Exception.Message)"
         }
         if ($ObjectRepositories -and $ObjectRepositoriesNodes) {
@@ -238,16 +285,16 @@ function Get-AbrVb365Diagram {
             $ObjectRepositoriesNodes
 
         } else {
-            SubGraph ObjectRepos -Attributes @{Label = (Add-DiaHtmlLabel -ImagesObj $Images -Label "Object Repositories" -IconType "VB365_Object_Support" -SubgraphLabel -IconDebug $IconDebug); fontsize = 18; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
+            SubGraph ObjectRepos -Attributes @{Label = (Add-HtmlLabel -ImagesObj $Images -Label 'Object Repositories' -IconType 'VB365_Object_Support' -SubgraphLabel -IconDebug $IconDebug -TableBackgroundColor $MainGraphBGColor); fontsize = 24; penwidth = 1.5; labelloc = 't'; style = 'dashed,rounded' } {
 
-                Node -Name ObjectRepositories -Attributes @{Label = 'No Object Repositories'; shape = "rectangle"; labelloc = 'c'; fixedsize = $true; width = "3"; height = "2"; fillColor = 'transparent'; penwidth = 0 }
+                Node -Name ObjectRepositories -Attributes @{Label = 'No Object Repositories'; shape = 'rectangle'; labelloc = 'c'; fixedsize = $true; width = '3'; height = '2'; fillColor = 'transparent'; penwidth = 0 }
             }
         }
 
         # Organization Graphviz Cluster
         try {
 
-            $Organizations = Get-VBOOrganization | Sort-Object -Property Name
+            $Organizations = Get-AbrVb365OrganizationInventory
 
             $OrganizationsInfo = @()
 
@@ -260,10 +307,10 @@ function Get-AbrVb365Diagram {
             }
 
             if ($OrganizationsInfo) {
-                $OnPremisesNode = Add-DiaHtmlNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }).Name -Align "Center" -iconType "Datacenter" -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $OrganizationsInfo -Subgraph -SubgraphIconType "VB365_On_Premises" -SubgraphLabel "On-premises" -SubgraphLabelPos "top" -SubgraphTableStyle "dashed,rounded" -FontColor '#000000' -TableBorderColor $Edgecolor -TableBorder "1" -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 22 -FontSize 18
+                $OnPremisesNode = Add-HtmlNodeTable -Name 'OnPremisesOrganizations' -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'OnPremises' }).Name -Align 'Center' -iconType 'Datacenter' -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $OrganizationsInfo -Subgraph -SubgraphIconType 'VB365_On_Premises' -SubgraphLabel 'On-premises' -SubgraphLabelPos 'top' -SubgraphTableStyle 'dashed,rounded' -FontColor $Fontcolor -TableBorderColor $Edgecolor -TableBorder '1' -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 28 -FontSize 24 -TableBackgroundColor $MainGraphBGColor -CellBackgroundColor $MainGraphBGColor
             }
         } catch {
-            Write-PScriboMessage -Message "Error: Unable to create OnPremises Organization Objects. Disabling the section"
+            Write-PScriboMessage -Message 'Error: Unable to create OnPremises Organization Objects. Disabling the section'
             Write-PScriboMessage -Message "Error Message: $($_.Exception.Message)"
         }
 
@@ -279,10 +326,10 @@ function Get-AbrVb365Diagram {
             }
 
             if ($OrganizationsInfo) {
-                $Microsoft365Node = Add-DiaHtmlNodeTable -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'Office365' }).Name -Align "Center" -iconType "Microsoft_365" -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $OrganizationsInfo -Subgraph -SubgraphIconType "VB365_Microsoft_365" -SubgraphLabel "Microsoft 365" -SubgraphLabelPos "top" -SubgraphTableStyle "dashed,rounded" -FontColor '#000000' -TableBorderColor $Edgecolor -TableBorder "1" -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 22 -FontSize 18
+                $Microsoft365Node = Add-HtmlNodeTable -Name 'Microsoft365Organizations' -ImagesObj $Images -inputObject ($Organizations | Where-Object { $_.Type -eq 'Office365' }).Name -Align 'Center' -iconType 'Microsoft_365' -ColumnSize 3 -IconDebug $IconDebug -MultiIcon -AditionalInfo $OrganizationsInfo -Subgraph -SubgraphIconType 'VB365_Microsoft_365' -SubgraphLabel 'Microsoft 365' -SubgraphLabelPos 'top' -SubgraphTableStyle 'dashed,rounded' -FontColor $Fontcolor -TableBorderColor $Edgecolor -TableBorder '1' -SubgraphFontBold -SubgraphLabelFontColor $Fontcolor -SubgraphLabelFontSize 28 -FontSize 24 -TableBackgroundColor $MainGraphBGColor -CellBackgroundColor $MainGraphBGColor
             }
         } catch {
-            Write-PScriboMessage -Message "Error: Unable to create Microsoft365 Organization Objects. Disabling the section"
+            Write-PScriboMessage -Message 'Error: Unable to create Microsoft365 Organization Objects. Disabling the section'
             Write-PScriboMessage -Message "Error Message: $($_.Exception.Message)"
         }
 
@@ -300,7 +347,7 @@ function Get-AbrVb365Diagram {
         }
 
         if ($OrganizationsInfo) {
-            $OrganizationNode = Node -Name "Organizations" -Attributes @{Label = (Add-DiaHtmlSubGraph -ImagesObj $Images -TableArray $OrganizationsInfo -Align 'Center' -IconDebug $IconDebug -IconType 'VB365_On_Premises' -Label 'Organizations' -LabelPos "top" -FontColor $Fontcolor -TableStyle "dashed,rounded" -TableBorderColor $Edgecolor -TableBorder "1" -ColumnSize 3 -FontSize 22 -FontBold); shape = 'plain'; fillColor = 'transparent'; fontsize = 14; fontname = "Segoe Ui" }
+            $OrganizationNode = Node -Name 'Organizations' -Attributes @{Label = (Add-HtmlSubGraph -Name 'Organizations' -ImagesObj $Images -TableArray $OrganizationsInfo -Align 'Center' -IconDebug $IconDebug -IconType 'VB365_On_Premises' -Label 'Organizations' -LabelPos 'top' -FontColor $Fontcolor -TableStyle 'dashed,rounded' -TableBorderColor $Edgecolor -TableBorder '1' -ColumnSize 3 -FontSize 28 -FontBold -TableBackgroundColor $MainGraphBGColor); shape = 'plain'; fillColor = 'transparent'; fontsize = 18; fontname = 'Segoe Ui' }
 
             if ($OrganizationNode) {
                 $OrganizationNode
@@ -317,7 +364,7 @@ function Get-AbrVb365Diagram {
 
         # Veeam VB365 elements point of connection (Dummy Nodes!)
         $Node = @('VB365ServerPointSpace', 'VB365ProxyPoint', 'VB365ProxyPointSpace', 'VB365RepoPoint')
-        Node $Node -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeDebug.style; shape = $NodeDebug.shape }
+        Node $Node -NodeScript { $_ } @{Label = { $_ } ; fontcolor = $NodeDebug.color; fillColor = $NodeFillColor; shape = $NodeDebug.shape }
 
         $NodeStartEnd = @('VB365StartPoint', 'VB365EndPointSpace')
         Node $NodeStartEnd -NodeScript { $_ } @{Label = { $_ } ; fillColor = $NodeFillColor; fontcolor = $NodeDebug.color; shape = 'point'; fixedsize = 'true'; width = .2 ; height = .2 }
@@ -348,7 +395,7 @@ function Get-AbrVb365Diagram {
         # Connect the Dummy Node in a straight line
         # VB365StartPoint --- VB365ServerPointSpace --- VB365ProxyPoint --- VB365ProxyPointSpace --- VB365RepoPoint --- VB365EndPointSpace
         Edge -From VB365StartPoint -To VB365ServerPointSpace @{minlen = 12; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
-        Edge -From VB365ServerPointSpace -To VB365ProxyPoint @{minlen = 14; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
+        Edge -From VB365ServerPointSpace -To VB365ProxyPoint @{minlen = 18; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
         Edge -From VB365ProxyPoint -To VB365ProxyPointSpace @{minlen = 12; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
         Edge -From VB365ProxyPointSpace -To VB365RepoPoint @{minlen = 12; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }
         Edge -From VB365RepoPoint -To VB365EndPointSpace @{minlen = 12; arrowtail = 'none'; arrowhead = 'none'; style = 'filled' }

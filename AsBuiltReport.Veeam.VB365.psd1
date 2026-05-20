@@ -12,10 +12,10 @@
     RootModule = 'AsBuiltReport.Veeam.VB365.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.3.13'
+    ModuleVersion = '0.4.0'
 
     # Supported PSEditions
-    # CompatiblePSEditions = @()
+    CompatiblePSEditions = @('Desktop', 'Core')
 
     # ID used to uniquely identify this module
     GUID = '3da0eaed-e086-4c3d-ab3b-41291378fa05'
@@ -27,7 +27,7 @@
     # CompanyName = 'Unknown'
 
     # Copyright statement for this module
-    Copyright = '(c) 2025 Jonathan Colon. All rights reserved.'
+    Copyright = '(c) 2026 Jonathan Colon. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description = 'A PowerShell module to generate an as built report on the configuration of Veeam Backup for Microsoft 365.'
@@ -55,15 +55,15 @@
     RequiredModules = @(
         @{
             ModuleName = 'AsBuiltReport.Core';
-            ModuleVersion = '1.5.1'
+            ModuleVersion = '1.6.4'
         },
         @{
-            ModuleName = 'PScriboCharts';
-            ModuleVersion = '0.9.0'
+            ModuleName = 'AsBuiltReport.Chart';
+            ModuleVersion = '0.3.2'
         },
         @{
-            ModuleName = 'Diagrammer.Core';
-            ModuleVersion = '0.2.36'
+            ModuleName = 'AsBuiltReport.Diagram';
+            ModuleVersion = '1.0.7'
         }
     )
 
@@ -83,7 +83,7 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Invoke-AsBuiltReport.Veeam.VB365')
+    FunctionsToExport = @('Invoke-AsBuiltReport.Veeam.VB365', 'Get-AbrVboLog')
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @()

@@ -5,7 +5,7 @@ function Export-AbrVb365Diagram {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.13
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -24,41 +24,41 @@ function Export-AbrVb365Diagram {
 
     process {
         if ($Options.EnableDiagrams) {
-            Write-PScriboMessage -Message "Collecting Veeam Infrastructure diagram"
+            Write-PScriboMessage -Message 'Collecting Veeam Infrastructure diagram'
 
             # Variable translating Icon to Image Path ($IconPath)
             $script:Images = @{
-                "VB365_Server" = "VBR_server.png"
-                "VB365_Proxy_Server" = "Proxy_Server.png"
-                "VB365_Proxy" = "Veeam_Proxy.png"
-                "VBR_LOGO" = "Veeam_logo_new.png"
-                "VB365_LOGO_Footer" = "verified_recoverability.png"
-                "VB365_Repository" = "VBO_Repository.png"
-                "VB365_Windows_Repository" = "Windows_Repository.png"
-                "VB365_Object_Repository" = "Object_Storage.png"
-                "VB365_Object_Support" = "Object Storage support.png"
-                "Veeam_Repository" = "Veeam_Repository.png"
-                "VB365_On_Premises" = "SMB.png"
-                "VB365_Microsoft_365" = "Cloud.png"
-                "Microsoft_365" = "Microsoft_365.png"
-                "Datacenter" = "Datacenter.png"
-                "VB365_Restore_Portal" = "Web_console.png"
-                "VB365_User_Group" = "User_Group.png"
-                "VB365_User" = "User.png"
-                "VBR365_Amazon_S3_Compatible" = "S3-compatible.png"
-                "VBR365_Amazon_S3" = "AWS S3.png"
-                "VBR365_Azure_Blob" = "Azure Blob.png"
+                'VB365_Server' = 'Server.png'
+                'VB365_Proxy_Server' = 'Server.png'
+                'VB365_Proxy' = 'Proxy.png'
+                'VBR_LOGO' = 'Veeam_logo_new.png'
+                'VB365_LOGO_Footer' = 'verified_recoverability.png'
+                'VB365_Repository' = 'VBO_Repository.png'
+                'VB365_Windows_Repository' = 'Windows_Repository.png'
+                'VB365_Object_Repository' = 'Object_storage.png'
+                'VB365_Object_Support' = 'Object_storage.png'
+                'Veeam_Repository' = 'VBR_Repository.png'
+                'VB365_On_Premises' = 'Cluster.png'
+                'VB365_Microsoft_365' = 'Cloud.png'
+                'Microsoft_365' = 'Microsoft_Office_365.png'
+                'Datacenter' = 'Datacenter.png'
+                'VB365_Restore_Portal' = 'Web_console.png'
+                'VB365_User_Group' = 'User_Group.png'
+                'VB365_User' = 'User.png'
+                'VBR365_Amazon_S3_Compatible' = 'S3_compatible_Storage.png'
+                'VBR365_Amazon_S3' = 'AWS_S3.png'
+                'VBR365_Azure_Blob' = 'Microsoft_Azure_Blob_Storage.png'
             }
 
             $RootPath = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
             [System.IO.FileInfo]$IconPath = Join-Path $RootPath 'icons'
 
             $DiagramParams = @{
-                'FileName' = "AsBuiltReport.Veeam.VB365"
+                'FileName' = 'AsBuiltReport.Veeam.VB365'
                 'OutputFolderPath' = $OutputFolderPath
                 'Direction' = 'top-to-bottom'
                 'MainDiagramLabel' = 'Backup for Microsoft 365'
-                'MainDiagramLabelFontsize' = 28
+                'MainDiagramLabelFontsize' = 38
                 'MainDiagramLabelFontcolor' = '#565656'
                 'MainDiagramLabelFontname' = 'Segoe UI Black'
                 'IconPath' = $IconPath
@@ -92,7 +92,7 @@ function Export-AbrVb365Diagram {
                 }
                 $DiagramParams.Add('Format', $DiagramFormat)
             } else {
-                $DiagramParams.Add('Format', "base64")
+                $DiagramParams.Add('Format', 'base64')
             }
 
             if ($Options.EnableDiagramDebug) {
@@ -109,11 +109,11 @@ function Export-AbrVb365Diagram {
 
             if ($Options.ExportDiagrams) {
                 try {
-                    Write-PScriboMessage -Message "Generating Veeam Infrastructure diagram"
+                    Write-PScriboMessage -Message 'Generating Veeam Infrastructure diagram'
                     $Graph = Get-AbrVb365Diagram
                     if ($Graph) {
-                        Write-PScriboMessage -Message "Saving Veeam Infrastructure diagram"
-                        $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
+                        Write-PScriboMessage -Message 'Saving Veeam Infrastructure diagram'
+                        $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph -MainGraphLogoSizePercent 50 -DisableMainDiagramLogo
                         if ($Diagram) {
                             foreach ($OutputFormat in $DiagramFormat) {
                                 Write-Information -MessageData "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$($OutputFolderPath)'." -InformationAction Continue
@@ -126,15 +126,14 @@ function Export-AbrVb365Diagram {
             }
             try {
                 $DiagramParams.Remove('Format')
-                $DiagramParams.Add('Format', "base64")
+                $DiagramParams.Add('Format', 'base64')
 
                 $Graph = Get-AbrVb365Diagram
-                $Diagram = New-Diagrammer @DiagramParams -InputObject $Graph
+                $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph -MainGraphLogoSizePercent 50 -DisableMainDiagramLogo
                 if ($Diagram) {
-                    if ((Get-DiaImagePercent -GraphObj $Diagram).Width -gt 800) { $ImagePrty = 15 } else { $ImagePrty = 30 }
-                    Section -Style Heading2 "Infrastructure Diagram." {
-                        Image -Base64 $Diagram -Text "Veeam Backup for Microsoft 365 Diagram" -Percent $ImagePrty -Align Center
-                        Paragraph "Image preview: Opens the image in a new tab to view it at full resolution." -Tabs 2
+                    $BestAspectRatio = Get-BestImageAspectRatio -GraphObj $Diagram -MaxWidth 600 -MaxHeight 600
+                    Section -Style Heading2 'Infrastructure Diagram.' {
+                        Image -Base64 $Diagram -Text 'Veeam Backup for Microsoft 365 Diagram' -Width $BestAspectRatio.Width -Height $BestAspectRatio.Height -Align Center
                     }
                 }
             } catch {

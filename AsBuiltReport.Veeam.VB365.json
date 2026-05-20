@@ -11,6 +11,7 @@
     "Options": {
         "ReportStyle": "Veeam",
         "BackupServerPort": 9191,
+        "EnableCharts": true,
         "EnableDiagrams": true,
         "EnableDiagramDebug": false,
         "DiagramTheme": "White",
@@ -22,7 +23,8 @@
         "EnableDiagramSignature": false,
         "SignatureAuthorName": "",
         "SignatureCompanyName": "",
-        "RoundUnits": 1
+        "RoundUnits": 1,
+        "UpdateCheck": true
     },
     "InfoLevel": {
         "_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",

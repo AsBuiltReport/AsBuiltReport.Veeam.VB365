@@ -24,11 +24,11 @@ function ConvertTo-TextYN {
     )
 
     switch ($TEXT) {
-        "" { "--"; break }
-        " " { "--"; break }
-        $Null { "--"; break }
-        "True" { "Yes"; break }
-        "False" { "No"; break }
+        '' { '--'; break }
+        ' ' { '--'; break }
+        $Null { '--'; break }
+        'True' { 'Yes'; break }
+        'False' { 'No'; break }
         default { $TEXT }
     }
 } # end
@@ -51,7 +51,7 @@ function ConvertTo-EmptyToFiller {
     Used by As Built Report to convert empty culumns to "-".
     .DESCRIPTION
     .NOTES
-        Version:        0.5.0
+        Version:        0.4.0
         Author:         Jonathan Colon
     .EXAMPLE
     .LINK
@@ -68,7 +68,7 @@ function ConvertTo-EmptyToFiller {
     )
 
     switch ([string]::IsNullOrEmpty($TEXT)) {
-        $true { "--"; break }
+        $true { '--'; break }
         default { $TEXT }
     }
 } # end
@@ -119,7 +119,7 @@ function ConvertTo-FileSizeString {
     }
 
     if ($SourceSpaceUnit) {
-        return "$([math]::Round(($Size * $("1" + $SourceSpaceUnit) / $("1" + $TargetSpaceUnit)), $RoundUnits)) $TargetSpaceUnit"
+        return "$([math]::Round(($Size * $('1' + $SourceSpaceUnit) / $('1' + $TargetSpaceUnit)), $RoundUnits)) $TargetSpaceUnit"
     } else {
         $Unit = switch ($Size) {
             { $Size -gt 1PB } { 'PB' ; break }
@@ -128,309 +128,113 @@ function ConvertTo-FileSizeString {
             { $Size -gt 1Mb } { 'MB' ; break }
             default { 'KB' }
         }
-        return "$([math]::Round(($Size / $("1" + $Unit)), $RoundUnits)) $Unit"
+        return "$([math]::Round(($Size / $('1' + $Unit)), $RoundUnits)) $Unit"
     }
 } # end
 
 function Convert-Size {
     [cmdletbinding()]
     param(
-        [validateset("Bytes", "KB", "MB", "GB", "TB")]
+        [validateset('Bytes', 'KB', 'MB', 'GB', 'TB')]
         [string]$From,
-        [validateset("Bytes", "KB", "MB", "GB", "TB")]
+        [validateset('Bytes', 'KB', 'MB', 'GB', 'TB')]
         [string]$To,
         [Parameter(Mandatory = $true)]
         [double]$Value,
         [int]$Precision = 4
     )
     switch ($From) {
-        "Bytes" { $value = $Value }
-        "KB" { $value = $Value * 1024 }
-        "MB" { $value = $Value * 1024 * 1024 }
-        "GB" { $value = $Value * 1024 * 1024 * 1024 }
-        "TB" { $value = $Value * 1024 * 1024 * 1024 * 1024 }
+        'Bytes' { $value = $Value }
+        'KB' { $value = $Value * 1024 }
+        'MB' { $value = $Value * 1024 * 1024 }
+        'GB' { $value = $Value * 1024 * 1024 * 1024 }
+        'TB' { $value = $Value * 1024 * 1024 * 1024 * 1024 }
     }
 
     switch ($To) {
-        "Bytes" { return $value }
-        "KB" { $Value = $Value / 1KB }
-        "MB" { $Value = $Value / 1MB }
-        "GB" { $Value = $Value / 1GB }
-        "TB" { $Value = $Value / 1TB }
+        'Bytes' { return $value }
+        'KB' { $Value = $Value / 1KB }
+        'MB' { $Value = $Value / 1MB }
+        'GB' { $Value = $Value / 1GB }
+        'TB' { $Value = $Value / 1TB }
 
     }
 
     return [Math]::Round($value, $Precision, [MidPointRounding]::AwayFromZero)
 }
-function Get-PieChart {
-    <#
-    .SYNOPSIS
-    Used by As Built Report to generate PScriboChart pie charts.
-    .DESCRIPTION
-    .NOTES
-        Version:        0.1.0
-        Author:         Jonathan Colon
-    .EXAMPLE
-    .LINK
-    #>
+function Get-AbrVb365InfoLevelValue {
     [CmdletBinding()]
-    [OutputType([System.String])]
-    param
-    (
-        [Parameter (
-            Position = 0,
-            Mandatory)]
-        [System.Array]
-        $SampleData,
-        [String]
-        $ChartName,
-        [String]
-        $XField,
-        [String]
-        $YField,
-        [String]
-        $ChartLegendName,
-        [String]
-        $ChartLegendAlignment = 'Center',
-        [String]
-        $ChartTitleName = ' ',
-        [String]
-        $ChartTitleText = ' ',
-        [int]
-        $Width = 600,
-        [int]
-        $Height = 400,
-        [Switch]
-        $Status,
-        [bool]
-        $ReversePalette = $false
+    [OutputType([int])]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Scope,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Name,
+
+        [Parameter(Mandatory = $false)]
+        [string[]] $Alias = @(),
+
+        [Parameter(Mandatory = $false)]
+        [int] $Default = 0
     )
 
-    $StatusCustomPalette = @(
-        [System.Drawing.ColorTranslator]::FromHtml('#DFF0D0')
-        [System.Drawing.ColorTranslator]::FromHtml('#FFF4C7')
-        [System.Drawing.ColorTranslator]::FromHtml('#FEDDD7')
-        [System.Drawing.ColorTranslator]::FromHtml('#878787')
-    )
-
-    $AbrCustomPalette = @(
-        [System.Drawing.ColorTranslator]::FromHtml('#d5e2ff')
-        [System.Drawing.ColorTranslator]::FromHtml('#bbc9e9')
-        [System.Drawing.ColorTranslator]::FromHtml('#a2b1d3')
-        [System.Drawing.ColorTranslator]::FromHtml('#8999bd')
-        [System.Drawing.ColorTranslator]::FromHtml('#7082a8')
-        [System.Drawing.ColorTranslator]::FromHtml('#586c93')
-        [System.Drawing.ColorTranslator]::FromHtml('#40567f')
-        [System.Drawing.ColorTranslator]::FromHtml('#27416b')
-        [System.Drawing.ColorTranslator]::FromHtml('#072e58')
-    )
-
-    $VeeamCustomPalette = @(
-        [System.Drawing.ColorTranslator]::FromHtml('#ddf6ed')
-        [System.Drawing.ColorTranslator]::FromHtml('#c3e2d7')
-        [System.Drawing.ColorTranslator]::FromHtml('#aacec2')
-        [System.Drawing.ColorTranslator]::FromHtml('#90bbad')
-        [System.Drawing.ColorTranslator]::FromHtml('#77a898')
-        [System.Drawing.ColorTranslator]::FromHtml('#5e9584')
-        [System.Drawing.ColorTranslator]::FromHtml('#458370')
-        [System.Drawing.ColorTranslator]::FromHtml('#2a715d')
-        [System.Drawing.ColorTranslator]::FromHtml('#005f4b')
-    )
-
-    $exampleChart = New-Chart -Name $ChartName -Width $Width -Height $Height
-
-    $addChartAreaParams = @{
-        Chart = $exampleChart
-        Name = 'exampleChartArea'
-    }
-    $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
-
-    if ($Status) {
-        $CustomPalette = $StatusCustomPalette
-    } elseif ($Options.ReportStyle -eq 'Veeam') {
-        $CustomPalette = $VeeamCustomPalette
-
-    } else {
-        $CustomPalette = $AbrCustomPalette
+    $Config = $script:InfoLevel
+    if (-not $Config) {
+        $Config = $InfoLevel
     }
 
-    $addChartSeriesParams = @{
-        Chart = $exampleChart
-        ChartArea = $exampleChartArea
-        Name = 'exampleChartSeries'
-        XField = $XField
-        YField = $YField
-        CustomPalette = $CustomPalette
-        ColorPerDataPoint = $true
-        ReversePalette = $ReversePalette
+    $ScopeObject = Get-AbrVb365PropertyValue -InputObject $Config -Name $Scope
+    if (-not $ScopeObject) {
+        return $Default
     }
 
-    $sampleData | Add-PieChartSeries @addChartSeriesParams
+    foreach ($PropertyName in @($Name) + $Alias) {
+        $Property = $ScopeObject.PSObject.Properties[$PropertyName]
+        if ($Property) {
+            $Value = $Property.Value
+            if ($null -eq $Value -or "$Value" -eq '') {
+                return $Default
+            }
 
-    $addChartLegendParams = @{
-        Chart = $exampleChart
-        Name = $ChartLegendName
-        TitleAlignment = $ChartLegendAlignment
-    }
-    Add-ChartLegend @addChartLegendParams
-
-    $addChartTitleParams = @{
-        Chart = $exampleChart
-        ChartArea = $exampleChartArea
-        Name = $ChartTitleName
-        Text = $ChartTitleText
-        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Segoe Ui', '12', [System.Drawing.FontStyle]::Bold)
-    }
-    Add-ChartTitle @addChartTitleParams
-
-    $TempPath = Resolve-Path ([System.IO.Path]::GetTempPath())
-
-    $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format "PNG" -PassThru
-
-    $Base64Image = [convert]::ToBase64String((Get-Content $ChartImage -Encoding byte))
-
-    Remove-Item -Path $ChartImage.FullName
-
-    return $Base64Image
-
-} # end
-
-function Get-ColumnChart {
-    <#
-    .SYNOPSIS
-    Used by As Built Report to generate PScriboChart column charts.
-    .DESCRIPTION
-    .NOTES
-        Version:        0.1.0
-        Author:         Jonathan Colon
-    .EXAMPLE
-    .LINK
-    #>
-    [CmdletBinding()]
-    [OutputType([System.String])]
-    param
-    (
-        [Parameter (
-            Position = 0,
-            Mandatory)]
-        [System.Array]
-        $SampleData,
-        [String]
-        $ChartName,
-        [String]
-        $AxisXTitle,
-        [String]
-        $AxisYTitle,
-        [String]
-        $XField,
-        [String]
-        $YField,
-        [String]
-        $ChartAreaName,
-        [String]
-        $ChartTitleName = ' ',
-        [String]
-        $ChartTitleText = ' ',
-        [int]
-        $Width = 600,
-        [int]
-        $Height = 400,
-        [Switch]
-        $Status,
-        [bool]
-        $ReversePalette = $false
-    )
-
-    $StatusCustomPalette = @(
-        [System.Drawing.ColorTranslator]::FromHtml('#DFF0D0')
-        [System.Drawing.ColorTranslator]::FromHtml('#FFF4C7')
-        [System.Drawing.ColorTranslator]::FromHtml('#FEDDD7')
-        [System.Drawing.ColorTranslator]::FromHtml('#878787')
-    )
-
-    $AbrCustomPalette = @(
-        [System.Drawing.ColorTranslator]::FromHtml('#d5e2ff')
-        [System.Drawing.ColorTranslator]::FromHtml('#bbc9e9')
-        [System.Drawing.ColorTranslator]::FromHtml('#a2b1d3')
-        [System.Drawing.ColorTranslator]::FromHtml('#8999bd')
-        [System.Drawing.ColorTranslator]::FromHtml('#7082a8')
-        [System.Drawing.ColorTranslator]::FromHtml('#586c93')
-        [System.Drawing.ColorTranslator]::FromHtml('#40567f')
-        [System.Drawing.ColorTranslator]::FromHtml('#27416b')
-        [System.Drawing.ColorTranslator]::FromHtml('#072e58')
-    )
-
-    $VeeamCustomPalette = @(
-        [System.Drawing.ColorTranslator]::FromHtml('#ddf6ed')
-        [System.Drawing.ColorTranslator]::FromHtml('#c3e2d7')
-        [System.Drawing.ColorTranslator]::FromHtml('#aacec2')
-        [System.Drawing.ColorTranslator]::FromHtml('#90bbad')
-        [System.Drawing.ColorTranslator]::FromHtml('#77a898')
-        [System.Drawing.ColorTranslator]::FromHtml('#5e9584')
-        [System.Drawing.ColorTranslator]::FromHtml('#458370')
-        [System.Drawing.ColorTranslator]::FromHtml('#2a715d')
-        [System.Drawing.ColorTranslator]::FromHtml('#005f4b')
-    )
-
-    $exampleChart = New-Chart -Name $ChartName -Width $Width -Height $Height
-
-    $addChartAreaParams = @{
-        Chart = $exampleChart
-        Name = $ChartAreaName
-        AxisXTitle = $AxisXTitle
-        AxisYTitle = $AxisYTitle
-        NoAxisXMajorGridLines = $true
-        NoAxisYMajorGridLines = $true
-    }
-    $exampleChartArea = Add-ChartArea @addChartAreaParams -PassThru
-
-    if ($Status) {
-        $CustomPalette = $StatusCustomPalette
-    } elseif ($Options.ReportStyle -eq 'Veeam') {
-        $CustomPalette = $VeeamCustomPalette
-
-    } else {
-        $CustomPalette = $AbrCustomPalette
+            try {
+                return [int]$Value
+            } catch {
+                Write-PScriboMessage -IsWarning -Message "InfoLevel value '$Scope.$PropertyName' is not numeric: $Value"
+                return $Default
+            }
+        }
     }
 
-    $addChartSeriesParams = @{
-        Chart = $exampleChart
-        ChartArea = $exampleChartArea
-        Name = 'exampleChartSeries'
-        XField = $XField
-        YField = $YField
-        CustomPalette = $CustomPalette
-        ColorPerDataPoint = $true
-        ReversePalette = $ReversePalette
+    $SiblingLevels = @()
+    foreach ($Property in $ScopeObject.PSObject.Properties) {
+        if ($Property.Name -like '_*') {
+            continue
+        }
+
+        if ($null -eq $Property.Value -or "$($Property.Value)" -eq '') {
+            continue
+        }
+
+        try {
+            $SiblingLevels += [int]$Property.Value
+        } catch {
+            continue
+        }
     }
 
-    $sampleData | Add-ColumnChartSeries @addChartSeriesParams
-
-    $addChartTitleParams = @{
-        Chart = $exampleChart
-        ChartArea = $exampleChartArea
-        Name = $ChartTitleName
-        Text = $ChartTitleText
-        Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList @('Segoe Ui', '12', [System.Drawing.FontStyle]::Bold)
-    }
-    Add-ChartTitle @addChartTitleParams
-
-    $TempPath = Resolve-Path ([System.IO.Path]::GetTempPath())
-
-    $ChartImage = Export-Chart -Chart $exampleChart -Path $TempPath.Path -Format "PNG" -PassThru
-
-    if ($PassThru) {
-        Write-PScriboMessage -InputObject $chartFileItem
+    if ($SiblingLevels) {
+        $FallbackLevel = ($SiblingLevels | Measure-Object -Maximum).Maximum
+        if ($FallbackLevel -gt 0) {
+            Write-PScriboMessage -Message "InfoLevel value '$Scope.$Name' was not found. Using $Scope fallback level $FallbackLevel."
+            return [int]$FallbackLevel
+        }
     }
 
-    $Base64Image = [convert]::ToBase64String((Get-Content $ChartImage -Encoding byte))
-
-    Remove-Item -Path $ChartImage.FullName
-
-    return $Base64Image
-
-} # end
-
+    return $Default
+}
 # Used for debugging
 function Get-VB365DebugObject {
 
@@ -439,36 +243,36 @@ function Get-VB365DebugObject {
     )
 
     $script:RestoreOperators = @{
-        Name = "RestoreOperators1", "RestoreOperators2", "RestoreOperators3", "RestoreOperators4", "RestoreOperators5", "RestoreOperators6", "RestoreOperators7"
+        Name = 'RestoreOperators1', 'RestoreOperators2', 'RestoreOperators3', 'RestoreOperators4', 'RestoreOperators5', 'RestoreOperators6', 'RestoreOperators7'
     }
 
     $script:Proxies = @{
-        HostName = "Proxy1", "Proxy2", "Proxy3", "Proxy4", "Proxy5", "Proxy6", "Proxy7"
+        HostName = 'Proxy1', 'Proxy2', 'Proxy3', 'Proxy4', 'Proxy5', 'Proxy6', 'Proxy7'
     }
 
     $script:RestorePortal = @{
         IsServiceEnabled = $true
-        PortalUri = "https://publicurl.internet.com:4443"
+        PortalUri = 'https://publicurl.internet.com:4443'
     }
 
     $script:Repositories = @{
-        Name = "Repository1", "Repository2", "Repository3", "Repository4", "Repository5", "Repository6", "Repository7"
+        Name = 'Repository1', 'Repository2', 'Repository3', 'Repository4', 'Repository5', 'Repository6', 'Repository7'
     }
 
 
     $script:ObjectRepositories = @{
-        Name = "ObjectRepositor1", "ObjectRepositor2", "ObjectRepositor3", "ObjectRepositor4", "ObjectRepositor5", "ObjectRepositor6", "ObjectRepositor7"
+        Name = 'ObjectRepositor1', 'ObjectRepositor2', 'ObjectRepositor3', 'ObjectRepositor4', 'ObjectRepositor5', 'ObjectRepositor6', 'ObjectRepositor7'
     }
 
     $script:Organizations = @()
     $inOrganizationOffice365Obj = [ordered] @{
-        Name = "ObjectRepositor1", "ObjectRepositor2", "ObjectRepositor3", "ObjectRepositor7", "ObjectRepositor8", "ObjectRepositor9"
-        Type = "Office365"
+        Name = 'ObjectRepositor1', 'ObjectRepositor2', 'ObjectRepositor3', 'ObjectRepositor7', 'ObjectRepositor8', 'ObjectRepositor9'
+        Type = 'Office365'
     }
 
     $inOrganizationOnPremisesObj = [ordered] @{
-        Name = "ObjectRepositor4", "ObjectRepositor5", "ObjectRepositor6", "ObjectRepositor10", "ObjectRepositor11", "ObjectRepositor12"
-        Type = "OnPremises"
+        Name = 'ObjectRepositor4', 'ObjectRepositor5', 'ObjectRepositor6', 'ObjectRepositor10', 'ObjectRepositor11', 'ObjectRepositor12'
+        Type = 'OnPremises'
     }
 
     $Organizations += [PSCustomObject]$inOrganizationOffice365Obj

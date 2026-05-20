@@ -5,7 +5,7 @@ function Get-AbrVB365EncryptionKey {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -24,18 +24,57 @@ function Get-AbrVB365EncryptionKey {
 
     process {
         try {
-            $EncryptionKeys = Get-VBOEncryptionKey | Sort-Object -Property Description
-            if (($InfoLevel.Infrastructure.EncryptionKey -gt 0) -and ($EncryptionKeys)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Encryption Key."
+            if ($InfoLevel.Infrastructure.EncryptionKey -le 0) {
+                return
+            }
+
+            $script:EncryptionKeys = Get-VBOEncryptionKey | Sort-Object -Property Description
+            $EncryptionKeys = $script:EncryptionKeys
+            if ($EncryptionKeys) {
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Encryption Key.'
                 Section -Style Heading2 'Encryption Keys' {
+                    $EncryptionKeyUsage = @{}
+                    if ($InfoLevel.Infrastructure.EncryptionKey -ge 2) {
+                        $Repositories = Get-AbrVb365BackupRepositoryInventory
+
+                        foreach ($Repository in ($Repositories | Where-Object { $_ })) {
+                            $EncryptionKey = Get-AbrVb365PropertyValue -InputObject $Repository -Name 'ObjectStorageEncryptionKey'
+                            if (-not $EncryptionKey) {
+                                continue
+                            }
+
+                            $EncryptionKeyId = Get-AbrVb365PropertyValue -InputObject $EncryptionKey -Name 'Id'
+                            if (-not $EncryptionKeyId) {
+                                continue
+                            }
+
+                            $EncryptionKeyId = $EncryptionKeyId.ToString()
+                            if (-not $EncryptionKeyUsage.ContainsKey($EncryptionKeyId)) {
+                                $EncryptionKeyUsage[$EncryptionKeyId] = New-Object System.Collections.Generic.List[string]
+                            }
+
+                            $RepositoryName = Get-AbrVb365PropertyValue -InputObject $Repository -Name 'Name'
+                            if ($RepositoryName) {
+                                $EncryptionKeyUsage[$EncryptionKeyId].Add($RepositoryName)
+                            }
+                        }
+                    }
+
                     $EncryptionKeyInfo = @()
                     foreach ($EncryptionKey in $EncryptionKeys) {
-                        $UsedAT = Get-VBORepository | Where-Object { $_.ObjectStorageEncryptionKey.Id -eq $EncryptionKey.Id }
                         $inObj = [ordered] @{
                             'Id' = $EncryptionKey.Id
                             'Description' = $EncryptionKey.Description
                             'Last Modified' = $EncryptionKey.LastModified
-                            'Used At' = $UsedAT -join ", "
+                        }
+                        if ($InfoLevel.Infrastructure.EncryptionKey -ge 2) {
+                            $EncryptionKeyId = $EncryptionKey.Id.ToString()
+                            $UsedAt = if ($EncryptionKeyUsage.ContainsKey($EncryptionKeyId)) {
+                                ($EncryptionKeyUsage[$EncryptionKeyId] | Sort-Object -Unique) -join ', '
+                            } else {
+                                '--'
+                            }
+                            $inObj.Add('Used At', $UsedAt)
                         }
                         $EncryptionKeyInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }

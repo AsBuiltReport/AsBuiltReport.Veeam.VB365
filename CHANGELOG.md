@@ -7,20 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ##### This project is community maintained and has no sponsorship from Veeam, its employees or any of its affiliates.
 
-## [0.3.13] - Unreleased
+## [0.4.0] - Unreleased
 
 ### Added
 
 - Add Dependabot support
-- Add support for Veeam Backup for Microsoft 365 v8.3
+- Support for Veeam Backup for Microsoft 365 v8.4 (upgraded from v8.3) @acgdickie
+- Support for PowerShell 7 (Core) while maintaining full compatibility with Windows PowerShell 5.1 (Desktop) @acgdickie
+- Performance-enhancing shared cached inventory and lookups for organizations, repositories, jobs, restore sessions, and proxy pools to reduce API overhead in large environments @acgdickie
+- Defensive programming features including timed backup job property diagnostics and repository resolvers using `TryGetProperty('Repository')` @acgdickie
+- Repository lookup timeout boundaries to prevent report generation from hanging on unresponsive Veeam API properties @acgdickie
+- Add used and free space percentage calculations and chart generation for backup repositories
+- Add `Get-AbrVboLog` function to collect diagnostic information for AsBuiltReport.Veeam.VB365 troubleshooting
+- Add the `Options.EnableCharts` setting to allow report chart generation to be toggled on or off @acgdickie
 
 ### Changed
 
-- Improve Infrastructure diagram with latest Diagrammer.Core changes
-- Bump Diagrammer.Core to v0.2.36
-- Bump AsBuiltReport.Core to v1.5.1
-- Increase module to v0.3.13
-- Update report sample HTML file
+- Migrated infrastructure diagram engine from `Diagrammer.Core` to `AsBuiltReport.Diagram` with legacy compatibility aliases for report logic stability @acgdickie
+- Migrated report chart generation from `PScriboCharts` to `AsBuiltReport.Chart` @acgdickie
+- Updated chart rendering to use `AsBuiltReport.Chart` base64 output for PScribo image embedding @acgdickie
+- Implemented cross-edition binary content handling for chart images using dynamic parameter splatting (PS5.1 vs PS7 compatibility) @acgdickie
+- Refactored Veeam PowerShell module detection to support version 6.0+ and modern product versioning validation @acgdickie
+- Standardized logging by ensuring all `Write-PScriboMessage` calls explicitly use the `-Message` parameter @acgdickie
+- Optimized report generation speed for large environments by reducing redundant API lookups for encryption keys and organizations @acgdickie
+- Improved InfoLevel 1 performance by simplifying repository name collection and skipping expensive enrichment for restore points @acgdickie
+- Enhanced repository-map helper collection to automatically fallback between `pwsh`, `powershell.exe`, and `powershell` hosts @acgdickie
+- Improved PScribo table rendering by converting complex backup job and backup copy job summary object references into scalar display values @acgdickie
+- Upgrade actions/checkout to v6 in workflows
+- Change module version to 0.4.0 in manifest
+- Update dependencies and their versions
+- Enhance README and changelog with new features and compatibility
+- Increase diagram label font size and enhance HTML table styling in diagram functions
+- Migrate Diagram to use Veeam New Infrastructure Diagram shapes and icons
+- Improved VB365 PowerShell session lifecycle handling by forcing connection errors to terminate, retrying once after clearing existing sessions, and disconnecting after each target/report run. @acgdickie
+
+### Fixed
+
+- Increased top axis headroom on `AsBuiltReport.Chart` bar charts to prevent value labels from being clipped @acgdickie
+- Refactor expiration date checks to ensure proper datetime conversion in server configuration scripts
+
+### Removed
+
+- Remove duplicate health check warning about self-signed certificates from Get-AbrVB365ServerRestAPI function
+- Remove legacy `PScriboCharts` and `PSGraph` dependency references from the documented prerequisites @acgdickie
 
 ## [0.3.12] - 2025-07-25
 
@@ -240,4 +269,3 @@ Increase Diagrammer.Core to v0.2.12
     - Server Configuration
     - Object Repository
     - Organizations
-

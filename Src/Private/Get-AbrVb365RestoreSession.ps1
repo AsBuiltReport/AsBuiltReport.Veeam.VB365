@@ -5,7 +5,7 @@ function Get-AbrVb365RestoreSession {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -24,9 +24,21 @@ function Get-AbrVb365RestoreSession {
 
     process {
         try {
-            $RestoreSessions = Get-VBORestoreSession | Sort-Object -Property Name
+            if ($InfoLevel.Restore.RestoreSession -le 0) {
+                return
+            }
+
+            if ($script:RestoreSessions) {
+                Write-PScriboMessage -Message 'Using cached Veeam VB365 Restore Session inventory.'
+                $RestoreSessions = $script:RestoreSessions
+            } else {
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Restore Session inventory.'
+                $script:RestoreSessions = Get-VBORestoreSession | Sort-Object -Property Name
+                $RestoreSessions = $script:RestoreSessions
+            }
+
             if (($InfoLevel.Restore.RestoreSession -gt 0) -and ($RestoreSessions)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Restore Session."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Restore Session.'
                 Section -Style Heading2 'Restore Session' {
                     $RestoreSessionInfo = @()
                     foreach ($RestoreSession in $RestoreSessions) {
@@ -34,12 +46,16 @@ function Get-AbrVb365RestoreSession {
                             'Name' = $RestoreSession.Name
                             'Start Time' = $RestoreSession.StartTime
                             'End Time' = $RestoreSession.EndTime
-                            'Status' = $RestoreSession.Status
                             'Result' = $RestoreSession.Result
-                            'Type' = $RestoreSession.Type
                             'Initiated By' = $RestoreSession.InitiatedBy
-                            'Processed Objects' = $RestoreSession.ProcessedObjects
                         }
+
+                        if ($InfoLevel.Restore.RestoreSession -ge 2) {
+                            $inObj.Add('Status', $RestoreSession.Status)
+                            $inObj.Add('Type', $RestoreSession.Type)
+                            $inObj.Add('Processed Objects', $RestoreSession.ProcessedObjects)
+                        }
+
                         $RestoreSessionInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
@@ -49,19 +65,27 @@ function Get-AbrVb365RestoreSession {
                         $RestoreSessionInfo | Where-Object { $_.'Result' -eq 'Failed' } | Set-Style -Style Critical -Property 'Result'
                     }
 
-                    try {
-                        $sampleData = [ordered]@{
-                            'Success' = ($RestoreSessions.Result | Where-Object { $_ -eq "Success" } | Measure-Object).Count
-                            'Warning' = ($RestoreSessions.Result | Where-Object { $_ -eq "Warning" } | Measure-Object).Count
-                            'Failed' = ($RestoreSessions.Result | Where-Object { $_ -eq "Failed" } | Measure-Object).Count
+                    $chartFileItem = $null
+                    if ($Options.EnableCharts -ne $false) {
+                        try {
+                            $sampleData = [ordered]@{
+                                'Success' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
+                                'Warning' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
+                                'Failed' = ($RestoreSessionInfo.Result | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
+                            }
+
+                            $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
+
+                            $chartLabels = [string[]]$sampleDataObj.Category
+                            $chartValues = [double[]]$sampleDataObj.Value
+
+                            $statusCustomPalette = @('#DFF0D0', '#FFF3C4', '#FECDD1', '#ADACAF')
+
+                            $chartFileItem = New-BarChart -Title 'Restore Session Results' -Values $chartValues -Labels $chartLabels -LabelXAxis 'Status' -LabelYAxis 'Results' -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 400 -Format base64 -EnableLegend -LegendOrientation Horizontal -LegendAlignment UpperCenter -AxesMarginsTop 0.5 -TitleFontBold -TitleFontSize 16
+
+                        } catch {
+                            Write-PScriboMessage -IsWarning -Message "Restore Sessions Chart Section: $($_.Exception.Message)"
                         }
-
-                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
-
-                        $chartFileItem = Get-ColumnChart -Status -SampleData $sampleDataObj -ChartName 'RestoreSessions' -XField 'Category' -YField 'Value' -ChartAreaName 'RestoreSessions' -AxisXTitle 'Result' -AxisYTitle 'Count' -ChartTitleName 'RestoreSessions' -ChartTitleText 'Restore Session Results'
-
-                    } catch {
-                        Write-PScriboMessage -IsWarning -Message "Restore Sessions Chart Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Restore.RestoreSession -ge 2) {

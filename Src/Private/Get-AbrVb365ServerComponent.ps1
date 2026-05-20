@@ -6,7 +6,7 @@ function Get-AbrVB365ServerComponent {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -34,7 +34,7 @@ function Get-AbrVB365ServerComponent {
                         BlankLine
                         $OutObj = @()
                         try {
-                            foreach ($ServerComponent in ($ServerComponents | Where-Object { $_.Name -notlike "*Veeam Explorer for*" -and $_.Name -notlike "*PowerShell*" })) {
+                            foreach ($ServerComponent in ($ServerComponents | Where-Object { $_.Name -notlike '*Veeam Explorer for*' -and $_.Name -notlike '*PowerShell*' })) {
                                 Write-PScriboMessage -Message "Discovered $($ServerComponent.Name) Server Components."
                                 $inObj = [ordered] @{
                                     'Name' = $ServerComponent.Name

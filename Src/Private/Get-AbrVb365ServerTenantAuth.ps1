@@ -5,7 +5,7 @@ function Get-AbrVB365ServerTenantAuth {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -27,7 +27,7 @@ function Get-AbrVB365ServerTenantAuth {
             $TenantAuth = Get-VBOTenantAuthenticationSettings
             $OperatorAuth = Get-VBOOperatorAuthenticationSettings
             if (($InfoLevel.Infrastructure.ServerConfig -gt 0) -and ($TenantAuth -or $OperatorAuth)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Tenant Authentication."
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Tenant Authentication.'
                 Section -Style Heading4 'Authentication' {
                     if ($TenantAuth) {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Tenant Authentication' {
@@ -44,7 +44,7 @@ function Get-AbrVB365ServerTenantAuth {
 
                             if ($HealthCheck.Infrastructure.ServerConfig) {
                                 $TenantAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
-                                $TenantAuthInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                                $TenantAuthInfo | Where-Object { [datetime]((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
                             }
 
                             $TableParams = @{
@@ -57,12 +57,12 @@ function Get-AbrVB365ServerTenantAuth {
                             }
                             $TenantAuthInfo | Table @TableParams
                             if ($HealthCheck.Infrastructure.ServerConfig -and ($TenantAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
-                                Paragraph "Health Check:" -Bold -Underline
+                                Paragraph 'Health Check:' -Bold -Underline
                                 BlankLine
                                 Paragraph {
-                                    Text "Best Practice:" -Bold
-                                    Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates."
-                                    Text "https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage" -Color Blue
+                                    Text 'Best Practice:' -Bold
+                                    Text 'While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates.'
+                                    Text 'https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage' -Color Blue
                                 }
                                 BlankLine
                             }
@@ -83,7 +83,7 @@ function Get-AbrVB365ServerTenantAuth {
 
                             if ($HealthCheck.Infrastructure.ServerConfig) {
                                 $OperatorAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' } | Set-Style -Style Warning -Property 'Issued By'
-                                $OperatorAuthInfo | Where-Object { ((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
+                                $OperatorAuthInfo | Where-Object { [datetime]((Get-Date).AddDays(+90)).Date.DateTime -gt $_.'Expiration Date' } | Set-Style -Style Critical -Property 'Expiration Date'
                             }
 
                             $TableParams = @{
@@ -96,12 +96,12 @@ function Get-AbrVB365ServerTenantAuth {
                             }
                             $OperatorAuthInfo | Table @TableParams
                             if ($HealthCheck.Infrastructure.ServerConfig -and ($OperatorAuthInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
-                                Paragraph "Health Check:" -Bold -Underline
+                                Paragraph 'Health Check:' -Bold -Underline
                                 BlankLine
                                 Paragraph {
-                                    Text "Best Practice:" -Bold
-                                    Text "While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates."
-                                    Text "https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage" -Color Blue
+                                    Text 'Best Practice:' -Bold
+                                    Text 'While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. Protect your organization by making the switch to trusted CA certificates.'
+                                    Text 'https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage' -Color Blue
                                 }
                                 BlankLine
                             }

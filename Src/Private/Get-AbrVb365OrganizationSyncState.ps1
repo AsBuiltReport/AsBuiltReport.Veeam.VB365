@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationSyncState {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -25,15 +25,16 @@ function Get-AbrVb365OrganizationSyncState {
     )
 
     begin {
-        Write-PScriboMessage -Message "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
+        $OrganizationInfoLevel = Get-AbrVb365InfoLevelValue -Scope 'Infrastructure' -Name 'Organization' -Alias 'Organizations', 'Organisation', 'Organisations'
+        Write-PScriboMessage -Message "Organizations InfoLevel set at $OrganizationInfoLevel."
     }
 
     process {
         try {
-            $Organizations = Get-VBOOrganization -Name $Organization
+            $Organizations = Get-AbrVb365OrganizationByName -Name $Organization
             $SyncState = try { Get-VBOOrganizationSynchronizationState -Organization $Organizations } catch { Out-Null }
-            if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($SyncState)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Office365 Synchronization State Settings."
+            if (($OrganizationInfoLevel -gt 0) -and ($SyncState)) {
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Office365 Synchronization State Settings.'
                 Section -Style Heading4 'Synchronization State' {
                     $StateInfo = @()
                     foreach ($State in $SyncState) {
@@ -49,7 +50,7 @@ function Get-AbrVb365OrganizationSyncState {
                     }
 
                     if ($HealthCheck.Infrastructure.Organization) {
-                        $OrganizationInfo | Where-Object { $_.'Sync Status' -ne 'Success' } | Set-Style -Style Warning -Property 'Sync Status'
+                        $StateInfo | Where-Object { $_.'Sync Status' -ne 'Success' } | Set-Style -Style Warning -Property 'Sync Status'
                     }
 
                     foreach ($State in $StateInfo) {

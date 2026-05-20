@@ -5,7 +5,7 @@ function Get-AbrVb365OrganizationRestoreOperator {
     .DESCRIPTION
         Documents the configuration of Veeam VB365 in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.11
+        Version:        0.4.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -25,15 +25,23 @@ function Get-AbrVb365OrganizationRestoreOperator {
     )
 
     begin {
-        Write-PScriboMessage -Message "Organizations InfoLevel set at $($InfoLevel.Infrastructure.Organization)."
+        $OrganizationInfoLevel = Get-AbrVb365InfoLevelValue -Scope 'Infrastructure' -Name 'Organization' -Alias 'Organizations', 'Organisation', 'Organisations'
+        Write-PScriboMessage -Message "Organizations InfoLevel set at $OrganizationInfoLevel."
     }
 
     process {
         try {
-            $Organizations = Get-VBOOrganization -Name $Organization
-            $RestoreOperatorOrgs = try { Get-VBORbacRole -Organization $Organizations | Sort-Object -Property Name } catch { Out-Null }
-            if (($InfoLevel.Infrastructure.Organization -gt 0) -and ($RestoreOperators)) {
-                Write-PScriboMessage -Message "Collecting Veeam VB365 Office365 Restore Operators Settings."
+            $Organizations = Get-AbrVb365OrganizationByName -Name $Organization
+            if ($script:RestoreOperators) {
+                $OrganizationKey = ConvertTo-AbrVb365LookupKey -Id $Organizations.Id
+                $RestoreOperatorOrgs = $script:RestoreOperators | Where-Object { (ConvertTo-AbrVb365LookupKey -Id $_.OrganizationId) -eq $OrganizationKey } | Sort-Object -Property Name
+            } else {
+                $script:RestoreOperators = try { Get-VBORbacRole | Sort-Object -Property Name } catch { Out-Null }
+                $OrganizationKey = ConvertTo-AbrVb365LookupKey -Id $Organizations.Id
+                $RestoreOperatorOrgs = $script:RestoreOperators | Where-Object { (ConvertTo-AbrVb365LookupKey -Id $_.OrganizationId) -eq $OrganizationKey } | Sort-Object -Property Name
+            }
+            if (($OrganizationInfoLevel -gt 0) -and ($RestoreOperatorOrgs)) {
+                Write-PScriboMessage -Message 'Collecting Veeam VB365 Office365 Restore Operators Settings.'
                 Section -Style Heading4 'Restore Operators' {
                     foreach ($RestoreOperatorOrg in $RestoreOperatorOrgs) {
                         Section -ExcludeFromTOC -Style NOTOCHeading5 "$($RestoreOperatorOrg.Name)" {
