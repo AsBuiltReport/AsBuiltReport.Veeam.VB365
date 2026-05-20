@@ -113,7 +113,7 @@ function Export-AbrVb365Diagram {
                     $Graph = Get-AbrVb365Diagram
                     if ($Graph) {
                         Write-PScriboMessage -Message 'Saving Veeam Infrastructure diagram'
-                        $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph -MainGraphLogoSizePercent 50
+                        $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph -MainGraphLogoSizePercent 50 -DisableMainDiagramLogo
                         if ($Diagram) {
                             foreach ($OutputFormat in $DiagramFormat) {
                                 Write-Information -MessageData "Saved 'AsBuiltReport.Veeam.VB365.$($OutputFormat)' diagram to '$($OutputFolderPath)'." -InformationAction Continue
@@ -129,7 +129,7 @@ function Export-AbrVb365Diagram {
                 $DiagramParams.Add('Format', 'base64')
 
                 $Graph = Get-AbrVb365Diagram
-                $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph -MainGraphLogoSizePercent 50
+                $Diagram = New-AbrDiagram @DiagramParams -InputObject $Graph -MainGraphLogoSizePercent 50 -DisableMainDiagramLogo
                 if ($Diagram) {
                     $BestAspectRatio = Get-BestImageAspectRatio -GraphObj $Diagram -MaxWidth 600 -MaxHeight 600
                     Section -Style Heading2 'Infrastructure Diagram.' {
