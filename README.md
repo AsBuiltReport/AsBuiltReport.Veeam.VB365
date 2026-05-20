@@ -224,6 +224,15 @@ PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local
 PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local -Username 'Domain\veeam_admin' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
 ```
 
+### :memo: Log Collection
+
+The `Get-AbrVboLog` cmdlet can be used to collect AsBuiltReport.Veeam.VB365 logs for troubleshooting purposes. This cmdlet collects the logs and diagnostic information from the powershell host running the report and saves them to a specified output folder.
+
+```powershell
+# Collect powershell host logs and diagnostic information. Save logs to 'C:\Users\Jon\Desktop\'.
+PS C:\> Get-AbrVboLog -OutputFolderPath 'C:\Users\Jon\Desktop\' -IncludeErrorDetails
+```
+
 ## :x: Known Issues
 
 - Error when generating a report in Word format.
