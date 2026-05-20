@@ -120,23 +120,26 @@ function Get-AbrVB365BackupRepository {
 
                         $RepositoryInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
-                    try {
-                        $sampleData = $RepositoryInfo | Select-Object Name, 'Used Space %', 'Free Space %'
+                    $chartFileItem = $null
+                    if ($Options.EnableCharts -ne $false) {
+                        try {
+                            $sampleData = $RepositoryInfo | Select-Object Name, 'Used Space %', 'Free Space %'
 
-                        $chartLabels = [string[]]$sampleData.Name
-                        $chartCategories = @('Used Space %', 'Free Space %')
-                        $chartUsedValues = [double[]]@($sampleData.'Used Space %')
-                        $chartFreeValues = [double[]]@($sampleData.'Free Space %')
-                        $chartValues = @()
-                        foreach ($i in $chartLabels) {
-                            $chartValues += , @($chartUsedValues[$chartLabels.IndexOf($i)], $chartFreeValues[$chartLabels.IndexOf($i)])
+                            $chartLabels = [string[]]$sampleData.Name
+                            $chartCategories = @('Used Space %', 'Free Space %')
+                            $chartUsedValues = [double[]]@($sampleData.'Used Space %')
+                            $chartFreeValues = [double[]]@($sampleData.'Free Space %')
+                            $chartValues = @()
+                            foreach ($i in $chartLabels) {
+                                $chartValues += , @($chartUsedValues[$chartLabels.IndexOf($i)], $chartFreeValues[$chartLabels.IndexOf($i)])
+                            }
+
+                            $statusCustomPalette = @('#DFF0D0', '#FFF3C4')
+
+                            $chartFileItem = New-StackedBarChart -Title 'Backup Repository' -Values $chartValues -Labels $chartLabels -LegendCategories $chartCategories -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 600 -Format base64 -TitleFontBold -TitleFontSize 16 -AreaOrientation Horizontal -LabelXAxis 'Backup Repositories' -LabelYAxis 'Percentage %' -EnableLegend -LegendAlignment UpperCenter -AxesMarginsTop 0.2 -LegendOrientation Horizontal
+                        } catch {
+                            Write-PScriboMessage -IsWarning -Message "Backup Repository graph Section: $($_.Exception.Message)"
                         }
-
-                        $statusCustomPalette = @('#DFF0D0', '#FFF3C4')
-
-                        $chartFileItem = New-StackedBarChart -Title 'Backup Repository' -Values $chartValues -Labels $chartLabels -LegendCategories $chartCategories -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 600 -Format base64 -TitleFontBold -TitleFontSize 16 -AreaOrientation Horizontal -LabelXAxis 'Backup Repositories' -LabelYAxis 'Percentage %' -EnableLegend -LegendAlignment UpperCenter -AxesMarginsTop 0.2 -LegendOrientation Horizontal
-                    } catch {
-                        Write-PScriboMessage -IsWarning "Backup Repository graph Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Infrastructure.Repository -ge 2) {

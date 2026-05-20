@@ -78,46 +78,66 @@ function Invoke-AsBuiltReport.Veeam.VB365 {
 
     #region foreach loop
     foreach ($System in $Target) {
-        if (Select-String -InputObject $System -Pattern '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$') {
-            throw "IP address format is not supported for the Target parameter. Please provide a hostname or FQDN for the Veeam Backup Server Host: $System"
-        }
+        try {
+            if (Select-String -InputObject $System -Pattern '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$') {
+                throw "IP address format is not supported for the Target parameter. Please provide a hostname or FQDN for the Veeam Backup Server Host: $System"
+            }
 
-        Get-AbrVB365RequiredModule -Name 'Veeam.Archiver.PowerShell' -Version '6.0'
-        Get-AbrVB365ServerConnection
+            Get-AbrVB365RequiredModule -Name 'Veeam.Archiver.PowerShell' -Version '6.0'
+            Get-AbrVB365ServerConnection
 
-        $script:VeeamBackupServer = ((Get-VBOServerComponents -Name Server).ServerName).ToString().ToUpper().Split('.')[0]
-        $script:VBOversion = try { (Get-VBOVersion).ProductVersion } catch { Out-Null }
-        if ($script:VBOversion) {
-            Write-PScriboMessage -Message "Detected Veeam VB365 product version $($script:VBOversion)."
-        }
-
-        #---------------------------------------------------------------------------------------------#
-        #                            Backup Infrastructure Section                                    #
-        #---------------------------------------------------------------------------------------------#
-
-        Section -Style Heading1 $($VeeamBackupServer) {
-            Paragraph 'The following section provides an overview of the implemented components of Veeam Backup for Microsoft 365.'
-            BlankLine
+            $script:VeeamBackupServer = ((Get-VBOServerComponents -Name Server).ServerName).ToString().ToUpper().Split('.')[0]
+            $script:VBOversion = try { (Get-VBOVersion).ProductVersion } catch { Out-Null }
+            if ($script:VBOversion) {
+                Write-PScriboMessage -Message "Detected Veeam VB365 product version $($script:VBOversion)."
+                $VersionMatch = [regex]::Match([string]$script:VBOversion, '\d+(\.\d+){1,3}')
+                if ($VersionMatch.Success -and ([version]$VersionMatch.Value -lt [version]'8.4')) {
+                    Write-PScriboMessage -IsWarning -Message "This v8.4, Diagrammer Migration and PS7 Compatibility Fork is being validated against Veeam Backup for Microsoft 365 8.4 or later. Detected product version $($script:VBOversion)."
+                }
+            }
 
             #---------------------------------------------------------------------------------------------#
-            #                            Export Infrastructure Diagram Section                            #
+            #                            Backup Infrastructure Section                                    #
             #---------------------------------------------------------------------------------------------#
 
-            Export-AbrVb365Diagram
+            Section -Style Heading1 $($VeeamBackupServer) -Orientation Portrait {
+                Paragraph 'The following section provides an overview of the implemented components of Veeam Backup for Microsoft 365.'
+                BlankLine
 
-            Get-AbrVb365InstalledLicense
-            Get-AbrVb365ServerConfiguration
-            Get-AbrVb365CloudCredential
-            Get-AbrVb365EncryptionKey
-            Get-AbrVb365ServerComponent
-            Get-AbrVb365Proxy
-            Get-AbrVb365ObjectRepository
-            Get-AbrVb365BackupRepository
-            Get-AbrVb365RestoreOperator
-            Get-AbrVb365Organization
-            Get-AbrVb365BackupJob
-            Get-AbrVb365RestoreSession
-            Get-AbrVb365RestorePoint
+                #---------------------------------------------------------------------------------------------#
+                #                            Export Infrastructure Diagram Section                            #
+                #---------------------------------------------------------------------------------------------#
+
+                Export-AbrVb365Diagram
+
+                Get-AbrVb365InstalledLicense
+                Get-AbrVb365ServerConfiguration
+                Get-AbrVb365CloudCredential
+                Get-AbrVb365EncryptionKey
+                Get-AbrVb365ServerComponent
+                Get-AbrVb365Proxy
+                Get-AbrVb365ObjectRepository
+                Get-AbrVb365BackupRepository
+                Get-AbrVb365RestoreOperator
+                Get-AbrVb365Organization
+                Get-AbrVb365BackupJob
+                Get-AbrVb365RestoreSession
+                Get-AbrVb365RestorePoint
+            }
+        } finally {
+            try {
+                Write-PScriboMessage -Message "Disconnecting from Veeam Backup Server for Microsoft 365: $($System)."
+                Disconnect-VBOServer -ErrorAction SilentlyContinue
+            } catch {
+                Write-Verbose -Message "Unable to disconnect from Veeam Backup Server for Microsoft 365 '$($System)': $($_.Exception.Message)"
+            }
         }
     } #endregion foreach loop
+
+    try {
+        Write-PScriboMessage -Message 'Ensuring Veeam Backup Server for Microsoft 365 session is disconnected.'
+        Disconnect-VBOServer -ErrorAction SilentlyContinue
+    } catch {
+        Write-Verbose -Message "Unable to perform final Veeam VB365 server disconnect: $($_.Exception.Message)"
+    }
 }

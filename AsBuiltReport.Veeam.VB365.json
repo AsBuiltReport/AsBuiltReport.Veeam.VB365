@@ -11,6 +11,7 @@
     "Options": {
         "ReportStyle": "Veeam",
         "BackupServerPort": 9191,
+        "EnableCharts": true,
         "EnableDiagrams": true,
         "EnableDiagramDebug": false,
         "DiagramTheme": "White",

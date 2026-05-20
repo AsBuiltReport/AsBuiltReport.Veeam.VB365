@@ -19,10 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repository lookup timeout boundaries to prevent report generation from hanging on unresponsive Veeam API properties
 - Add used and free space percentage calculations and chart generation for backup repositories
 - Add `Get-AbrVboLog` function to collect diagnostic information for AsBuiltReport.Veeam.VB365 troubleshooting.
+- Add the `Options.EnableCharts` setting to allow report chart generation to be toggled on or off.
 
 ### Changed
 
 - Migrated infrastructure diagram engine from `Diagrammer.Core` to `AsBuiltReport.Diagram` with legacy compatibility aliases for report logic stability
+- Migrated report chart generation from `PScriboCharts` to `AsBuiltReport.Chart`.
+- Updated chart rendering to use `AsBuiltReport.Chart` base64 output for PScribo image embedding.
 - Implemented cross-edition binary content handling for chart images using dynamic parameter splatting (PS5.1 vs PS7 compatibility)
 - Refactored Veeam PowerShell module detection to support version 6.0+ and modern product versioning validation
 - Standardized logging by ensuring all `Write-PScriboMessage` calls explicitly use the `-Message` parameter
@@ -36,10 +39,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhance README and changelog with new features and compatibility
 - Increase diagram label font size and enhance HTML table styling in diagram functions
 - Migrate Diagram to use Veeam New Infrastructure Diagram shapes and icons
+- Improved VB365 PowerShell session lifecycle handling by forcing connection errors to terminate, retrying once after clearing existing sessions, and disconnecting after each target/report run.
+
+### Fixed
+
+- Increased top axis headroom on `AsBuiltReport.Chart` bar charts to prevent value labels from being clipped.
 
 ### Removed
 
 - Remove duplicate health check warning about self-signed certificates from Get-AbrVB365ServerRestAPI function
+- Remove legacy `PScriboCharts` and `PSGraph` dependency references from the documented prerequisites.
 
 ## [0.3.12] - 2025-07-25
 

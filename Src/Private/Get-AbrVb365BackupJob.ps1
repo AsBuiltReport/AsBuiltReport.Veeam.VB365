@@ -118,30 +118,33 @@ function Get-AbrVb365BackupJob {
                         $BackupJobInfo | Where-Object { $_.'Last Status' -eq 'Failed' } | Set-Style -Style Critical -Property 'Last Status'
                     }
 
-                    try {
-                        $Alljobs = @()
-                        if ($BackupJobInfo.'Last Status') {
-                            $Alljobs += $BackupJobInfo.'Last Status'
+                    $chartFileItem = $null
+                    if ($Options.EnableCharts -ne $false) {
+                        try {
+                            $Alljobs = @()
+                            if ($BackupJobInfo.'Last Status') {
+                                $Alljobs += $BackupJobInfo.'Last Status'
+                            }
+
+                            $sampleData = [ordered]@{
+                                'Success' = ($Alljobs | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
+                                'Warning' = ($Alljobs | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
+                                'Failed' = ($Alljobs | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
+                                'Stopped' = ($Alljobs | Where-Object { $_ -eq 'Stopped' } | Measure-Object).Count
+                            }
+
+                            $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
+
+                            $chartLabels = [string[]]$sampleDataObj.Category
+                            $chartValues = [double[]]$sampleDataObj.Value
+
+                            $statusCustomPalette = @('#DFF0D0', '#FFF3C4', '#FECDD1', '#ADACAF')
+
+                            $chartFileItem = New-BarChart -Title 'Backup Jobs Latest Results' -Values $chartValues -Labels $chartLabels -LabelXAxis 'Status' -LabelYAxis 'Results' -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 400 -Format base64 -EnableLegend -LegendOrientation Horizontal -LegendAlignment UpperCenter -AxesMarginsTop 0.5 -TitleFontBold -TitleFontSize 16
+
+                        } catch {
+                            Write-PScriboMessage -IsWarning -Message "Backup Copy Chart Section: $($_.Exception.Message)"
                         }
-
-                        $sampleData = [ordered]@{
-                            'Success' = ($Alljobs | Where-Object { $_ -eq 'Success' } | Measure-Object).Count
-                            'Warning' = ($Alljobs | Where-Object { $_ -eq 'Warning' } | Measure-Object).Count
-                            'Failed' = ($Alljobs | Where-Object { $_ -eq 'Failed' } | Measure-Object).Count
-                            'Stopped' = ($Alljobs | Where-Object { $_ -eq 'Stopped' } | Measure-Object).Count
-                        }
-
-                        $sampleDataObj = $sampleData.GetEnumerator() | Select-Object @{ Name = 'Category'; Expression = { $_.key } }, @{ Name = 'Value'; Expression = { $_.value } }
-
-                        $chartLabels = [string[]]$sampleDataObj.Category
-                        $chartValues = [double[]]$sampleDataObj.Value
-
-                        $statusCustomPalette = @('#DFF0D0', '#FFF3C4', '#FECDD1', '#ADACAF')
-
-                        $chartFileItem = New-BarChart -Title 'Backup Jobs Latest Results' -Values $chartValues -Labels $chartLabels -LabelXAxis 'Status' -LabelYAxis 'Results' -EnableCustomColorPalette -CustomColorPalette $statusCustomPalette -Width 600 -Height 400 -Format base64 -EnableLegend -LegendOrientation Horizontal -LegendAlignment UpperCenter -AxesMarginsTop 0.5 -TitleFontBold -TitleFontSize 16
-
-                    } catch {
-                        Write-PScriboMessage -IsWarning -Message "Backup Copy Chart Section: $($_.Exception.Message)"
                     }
 
                     if ($InfoLevel.Jobs.BackupJob -ge 2) {
