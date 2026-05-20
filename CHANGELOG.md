@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update dependencies and their versions
 - Enhance README and changelog with new features and compatibility
 - Increase diagram label font size and enhance HTML table styling in diagram functions
+- Migrate Diagram to use Veeam New Infrastructure Diagram shapes and icons
 
 ### Removed
 
