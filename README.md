@@ -26,11 +26,7 @@
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 
 > [!WARNING]
-> I have recently been contacted to ask about the status of this project. Maintaining this report and all the tools that make this project work is time and resource consuming. If you want to keep this project alive, support its development by donating through ko-fi.
-
-<p align="center">
-    <a href='https://ko-fi.com/F1F8DEV80' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://ko-fi.com/img/githubbutton_sm.svg' border='0' alt='Want to keep alive this project? Support me on Ko-fi' /></a>
-</p>
+> I was recently contacted regarding the status of this project. Maintaining this report and the associated tools requires significant time and resources. If you would like to help keep this project active, please consider supporting its development by donating through Ko-fi.
 
 #### This project is community maintained and has no sponsorship from Veeam, its employees, or any of its affiliates.
 
@@ -70,16 +66,16 @@ This report is compatible with the following PowerShell versions:
 
 | Windows PowerShell 5.1 | PowerShell 7 |
 | :--------------------: | :----------: |
-|   :white_check_mark:   |     :x:      |
+|   :white_check_mark:   | :white_check_mark: |
 
 ## :wrench: System Requirements
 
-PowerShell 5.1 and the following PowerShell modules are required for generating a Veeam VB365 As Built Report:
+PowerShell 5.1 or PowerShell 7 and the following PowerShell modules are required for generating a Veeam VB365 As Built Report:
 
 - [Veeam.Archiver.PowerShell Module](https://helpcenter.veeam.com/docs/vbo365/powershell/getting_started.html?ver=70)
-- [PScriboCharts Module](https://github.com/iainbrighton/PScriboCharts)
-- [PSGraph Module](https://github.com/KevinMarquette/PSGraph)
-- [Diagrammer.Core Module](https://github.com/rebelinux/Diagrammer.Core)
+- [AsBuiltReport.Core Module](https://www.powershellgallery.com/packages/AsBuiltReport.Core/)
+- [AsBuiltReport.Chart Module](https://www.powershellgallery.com/packages/AsBuiltReport.Chart/)
+- [AsBuiltReport.Diagram Module](https://www.powershellgallery.com/packages/AsBuiltReport.Diagram/)
 - [AsBuiltReport.Veeam.VB365 Module](https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/)
 
 ### :closed_lock_with_key: Required Privileges
@@ -91,8 +87,13 @@ Only users with Local Administrator group permissions can generate a Veeam VB365
 ### PowerShell
 
 ```powershell
+Install-Module AsBuiltReport.Core
+Install-Module AsBuiltReport.Diagram
+Install-Module AsBuiltReport.Chart
 Install-Module AsBuiltReport.Veeam.VB365
 ```
+
+`AsBuiltReport.Chart` is used for report chart generation. This replaces the legacy `PScriboCharts` dependency.
 
 ### GitHub
 
@@ -149,6 +150,7 @@ The **Options** schema allows certain options within the report to be toggled on
 | ---------------------- | ------------------- | ------- | -------------------------------------------------------------------------------------------- |
 | BackupServerPort       | TCP Port            | 9191    | Specifies the custom port for the backup service.                                            |
 | ReportStyle            | Veeam/AsBuiltReport | Veeam   | Sets the report style template.                                                              |
+| EnableCharts           | true/false          | true    | Enables or disables report chart generation.                                                 |
 | EnableDiagrams         | true/false          | true    | Enables or disables the creation of infrastructure diagrams.                                 |
 | EnableDiagramsDebug    | true/false          | false   | Enables or disables the diagram debug option.                                                |
 | DiagramWaterMark       | string              | empty   | Sets the watermark for the diagram.                                                          |
@@ -159,6 +161,7 @@ The **Options** schema allows certain options within the report to be toggled on
 | SignatureAuthorName    | string              | empty   | Sets the author name for the diagram signature.                                              |
 | SignatureCompanyName   | string              | empty   | Sets the company name for the diagram signature.                                             |
 | RoundUnits             | int                 | 1       | Sets the rounding units for data values.                                                     |
+| UpdateCheck            | true/false          | true    | Enables or disables the update check option.                                                 |
 
 ### InfoLevel
 
@@ -219,6 +222,15 @@ PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local
 
 # Generate a Veeam VB365 As Built Report for Backup Server veeam-vbr365.pharmax.local using stored credentials. Export report to HTML & DOCX formats. Use default report style. Reports are saved to the user profile folder by default. Attach and send reports via e-mail.
 PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local -Username 'Domain\veeam_admin' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
+```
+
+### :memo: Log Collection
+
+The `Get-AbrVboLog` cmdlet can be used to collect AsBuiltReport.Veeam.VB365 logs for troubleshooting purposes. This cmdlet collects the logs and diagnostic information from the powershell host running the report and saves them to a specified output folder.
+
+```powershell
+# Collect powershell host logs and diagnostic information. Save logs to 'C:\Users\Jon\Desktop\'.
+PS C:\> Get-AbrVboLog -OutputFolderPath 'C:\Users\Jon\Desktop\' -IncludeErrorDetails
 ```
 
 ## :x: Known Issues
