@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Defensive programming features including timed backup job property diagnostics and repository resolvers using `TryGetProperty('Repository')`
 - Repository lookup timeout boundaries to prevent report generation from hanging on unresponsive Veeam API properties
 - Add used and free space percentage calculations and chart generation for backup repositories
+- Add `Get-AbrVboLog` function to collect diagnostic information for AsBuiltReport.Veeam.VB365 troubleshooting.
 
 ### Changed
 
