@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase diagram label font size and enhance HTML table styling in diagram functions
 - Migrate Diagram to use Veeam New Infrastructure Diagram shapes and icons
 - Improved VB365 PowerShell session lifecycle handling by forcing connection errors to terminate, retrying once after clearing existing sessions, and disconnecting after each target/report run. @acgdickie
+- Migrate the report folder structure to a more standard format to comply with asbuiltreport requirements
 
 ### Fixed
 

@@ -28,7 +28,7 @@ jobs:
       - name: Test Module Manifest
         shell: pwsh
         run: |
-          Test-ModuleManifest .\AsBuiltReport.Veeam.VB365.psd1
+          Test-ModuleManifest .\AsBuiltReport.Veeam.VB365\AsBuiltReport.Veeam.VB365.psd1
       - name: Publish module to PowerShell Gallery
         shell: pwsh
         run: |
