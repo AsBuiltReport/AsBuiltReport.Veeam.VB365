@@ -32,7 +32,7 @@ jobs:
       - name: Publish module to PowerShell Gallery
         shell: pwsh
         run: |
-          Publish-Module -Path ./ -NuGetApiKey ${{ secrets.PSGALLERY_API_KEY }} -Verbose
+          Publish-Module -Path ./AsBuiltReport.Veeam.VB365 -NuGetApiKey ${{ secrets.PSGALLERY_API_KEY }} -Verbose
   bsky-post:
     needs: publish-to-gallery
     runs-on: ubuntu-latest
