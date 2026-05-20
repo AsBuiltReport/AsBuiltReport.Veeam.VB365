@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Increased top axis headroom on `AsBuiltReport.Chart` bar charts to prevent value labels from being clipped.
+- Refactor expiration date checks to ensure proper datetime conversion in server configuration scripts
 
 ### Removed
 
