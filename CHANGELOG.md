@@ -36,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhance README and changelog with new features and compatibility
 - Increase diagram label font size and enhance HTML table styling in diagram functions
 
+### Removed
+
+- Remove duplicate health check warning about self-signed certificates from Get-AbrVB365ServerRestAPI function
+
 ## [0.3.12] - 2025-07-25
 
 ### Changed

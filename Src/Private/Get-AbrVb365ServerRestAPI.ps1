@@ -73,16 +73,6 @@ function Get-AbrVB365ServerRestAPI {
                         }
                         BlankLine
                     }
-                    if ($HealthCheck.Infrastructure.ServerConfig -and ($ServerConfigRestAPIInfo | Where-Object { $_.'Issued By' -eq 'CN=Veeam Software, O=Veeam Software, OU=Veeam Software' })) {
-                        Paragraph 'Health Check:' -Bold -Underline
-                        BlankLine
-                        Paragraph {
-                            Text 'Best Practice:' -Bold
-                            Text 'While self-signed certificates may seem harmless, they open up dangerous vulnerabilities from MITM attacks to disrupted services. For the Restore Portal and API Server, consider using trusted certificates as these are services accessed by end users.'
-                            Text 'https://bp.veeam.com/vb365/guide/supplemental/security.html#certificate-usage' -Color Blue
-                        }
-                        BlankLine
-                    }
                 }
             }
         } catch {
