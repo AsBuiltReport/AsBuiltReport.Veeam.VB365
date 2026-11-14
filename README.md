@@ -1,15 +1,15 @@
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 <p align="center">
-    <a href="https://www.asbuiltreport.com/" alt="AsBuiltReport"></a>
-    <img src='https://avatars.githubusercontent.com/u/42958564' width="8%" height="8%" /></a>
+    <a href="https://www.asbuiltreport.com/">
+        <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/repo-banners/AsBuiltReport.Veeam.VB365.png" alt="AsBuiltReport.Veeam.VB365" width="880"></a>
 </p>
 <p align="center">
     <a href="https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/" alt="PowerShell Gallery Version">
-        <img src="https://img.shields.io/powershellgallery/v/AsBuiltReport.Veeam.VB365.svg" /></a>
+        <img src="https://img.shields.io/powershellgallery/v/AsBuiltReport.Veeam.VB365.svg?color=1F5FD0" /></a>
     <a href="https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/" alt="PS Gallery Downloads">
-        <img src="https://img.shields.io/powershellgallery/dt/AsBuiltReport.Veeam.VB365.svg" /></a>
+        <img src="https://img.shields.io/powershellgallery/dt/AsBuiltReport.Veeam.VB365.svg?color=012456" /></a>
     <a href="https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/" alt="PS Platform">
-        <img src="https://img.shields.io/powershellgallery/p/AsBuiltReport.Veeam.VB365.svg" /></a>
+        <img src="https://img.shields.io/powershellgallery/p/AsBuiltReport.Veeam.VB365.svg?color=FFD02B" /></a>
 </p>
 <p align="center">
     <a href="https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/graphs/commit-activity" alt="GitHub Last Commit">
@@ -17,11 +17,7 @@
     <a href="https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/master/LICENSE" alt="GitHub License">
         <img src="https://img.shields.io/github/license/AsBuiltReport/AsBuiltReport.Veeam.VB365.svg" /></a>
     <a href="https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365/graphs/contributors" alt="GitHub Contributors">
-        <img src="https://img.shields.io/github/contributors/AsBuiltReport/AsBuiltReport.Veeam.VB365.svg"/></a>
-</p>
-<p align="center">
-    <a href="https://twitter.com/AsBuiltReport" alt="Twitter">
-        <img src="https://img.shields.io/twitter/follow/AsBuiltReport.svg?style=social"/></a>
+        <img src="https://img.shields.io/github/contributors/AsBuiltReport/AsBuiltReport.Veeam.VB365.svg?color=012456"/></a>
 </p>
 <!-- ********** DO NOT EDIT THESE LINKS ********** -->
 
@@ -30,15 +26,13 @@
 
 #### This project is community maintained and has no sponsorship from Veeam, its employees, or any of its affiliates.
 
-# Veeam VB365 As Built Report
-
 Veeam VB365 As Built Report is a PowerShell module that works in conjunction with [AsBuiltReport.Core](https://github.com/AsBuiltReport/AsBuiltReport.Core).
 
 [AsBuiltReport](https://github.com/AsBuiltReport/AsBuiltReport) is an open-source community project that utilizes PowerShell to produce as-built documentation in multiple document formats for various vendors and technologies.
 
 Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for more detailed information about this project.
 
-# :books: Sample Reports
+# <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/sample-reports.svg" alt="" width="28" height="28" align="top"> Sample Reports
 
 ## Sample Report - Veeam Style with EnableHealthCheck
 
@@ -50,11 +44,11 @@ Sample Veeam VB365 As Built report diagram file: [Sample Veeam VB365 As Built Re
 
 ![Sample Diagram](Samples/AsBuiltReport.Veeam.VB365.png)
 
-# :beginner: Getting Started
+# <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/getting-started.svg" alt="" width="28" height="28" align="top"> Getting Started
 
 Below are the instructions on how to install, configure, and generate a Veeam VB365 As Built report.
 
-## :floppy_disk: Supported Versions
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/supported-versions.svg" alt="" width="24" height="24" align="top"> Supported Versions
 
 The Veeam VB365 As Built Report supports the following Veeam Backup for Microsoft 365 version:
 
@@ -68,7 +62,7 @@ This report is compatible with the following PowerShell versions:
 | :--------------------: | :----------: |
 |   :white_check_mark:   | :white_check_mark: |
 
-## :wrench: System Requirements
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/system-requirements.svg" alt="" width="24" height="24" align="top"> System Requirements
 
 PowerShell 5.1 or PowerShell 7 and the following PowerShell modules are required for generating a Veeam VB365 As Built Report:
 
@@ -78,11 +72,11 @@ PowerShell 5.1 or PowerShell 7 and the following PowerShell modules are required
 - [AsBuiltReport.Diagram Module](https://www.powershellgallery.com/packages/AsBuiltReport.Diagram/)
 - [AsBuiltReport.Veeam.VB365 Module](https://www.powershellgallery.com/packages/AsBuiltReport.Veeam.VB365/)
 
-### :closed_lock_with_key: Required Privileges
+### <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/required-privileges.svg" alt="" width="20" height="20" align="top"> Required Privileges
 
 Only users with Local Administrator group permissions can generate a Veeam VB365 As Built Report.
 
-## :package: Module Installation
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/module-installation.svg" alt="" width="24" height="24" align="top"> Module Installation
 
 ### PowerShell
 
@@ -110,7 +104,7 @@ If you are unable to use the PowerShell Gallery, you can still install the modul
 
 _Note: You are not limited to installing the module to those example paths; you can add a new entry to the environment variable PSModulePath if you want to use another path._
 
-## :pencil2: Configuration
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/configuration.svg" alt="" width="24" height="24" align="top"> Configuration
 
 The Veeam VB365 As Built Report utilizes a JSON file to allow configuration of report information, options, detail, and health checks.
 
@@ -205,7 +199,7 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 
 The **Healthcheck** schema is used to toggle health checks on or off.
 
-## :computer: Examples
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/examples.svg" alt="" width="24" height="24" align="top"> Examples
 
 There are a few examples listed below on running the AsBuiltReport script against a Veeam Backup Server. Refer to the `README.md` file in the main AsBuiltReport project repository for more examples.
 
@@ -224,7 +218,7 @@ PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local
 PS C:\> New-AsBuiltReport -Report Veeam.VB365 -Target veeam-vbr365.pharmax.local -Username 'Domain\veeam_admin' -Password 'P@ssw0rd' -Format Html,Word -OutputFolderPath 'C:\Users\Jon\Documents' -SendEmail
 ```
 
-### :memo: Log Collection
+### <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/log-collection.svg" alt="" width="20" height="20" align="top"> Log Collection
 
 The `Get-AbrVboLog` cmdlet can be used to collect AsBuiltReport.Veeam.VB365 logs for troubleshooting purposes. This cmdlet collects the logs and diagnostic information from the powershell host running the report and saves them to a specified output folder.
 
@@ -233,7 +227,7 @@ The `Get-AbrVboLog` cmdlet can be used to collect AsBuiltReport.Veeam.VB365 logs
 PS C:\> Get-AbrVboLog -OutputFolderPath 'C:\Users\Jon\Desktop\' -IncludeErrorDetails
 ```
 
-## :x: Known Issues
+## <img src="https://raw.githubusercontent.com/AsBuiltReport/.github/main/assets/section-icons/known-issues.svg" alt="" width="24" height="24" align="top"> Known Issues
 
 - Error when generating a report in Word format.
   - Error Message: New-AsBuiltReport : The variable '$Images' cannot be retrieved because it has not been set
